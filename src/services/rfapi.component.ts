@@ -83,28 +83,28 @@ export class Api {
         this.storage = {
           issues      : new PouchDB(`rfWriter-issues-${this.credentials.user}`, this.dbsettings),
           settings    : new PouchDB(`rfWriter-settings-${this.credentials.user}`, this.dbsettings),
-          data        : new PouchDB(`rfWriter-data-${this.credentials.user}`, this.dbsettings)
+          data        : []
         };
 
         console.log(`Local DB:\n- rfWriter-issues-${this.credentials.user}\n- rfWriter-settings-${this.credentials.user}\n- rfWriter-data-${this.credentials.user}`);
 
         this.syncIssues().then((success) => {
-          this.syncData().then((success) => {
-            this.dbIssuesGet('issues').then((issues_offline) => {
-              this.issues = issues_offline || false;
-              this.storage.settings.get('current_issue').then((current_issue) => {
-
-                console.log("--------> current issue:", current_issue);
-
-                this.current_issue = current_issue.data ||
-                                    (this.issues === false ? false : this.issues.Issues[0].Id);
-                /* Loading Local Data */
-                this.loadData(this.current_issue);
-              }).catch((error) => {
-                this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
-                this.loadData(this.current_issue);
-                console.log("---NO CURRENT ISSUE---", error);
+          this.dbIssuesGet('issues').then((issues_offline) => {
+            this.issues = issues_offline || false;
+            this.storage.settings.get('current_issue').then((current_issue) => {
+              console.log("--------> current issue:", current_issue);
+              this.current_issue = current_issue.data ||
+                                  (this.issues === false ? false : this.issues.Issues[0].Id);
+              this.loadData(this.current_issue).then((success) => {
+                console.log("... Data Loaded");
+                this.syncData().then(()=>{
+                  console.log("... Data Synced");
+                })
               });
+            }).catch((error) => {
+              //this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
+              //this.loadData(this.current_issue);
+              console.log("---NO CURRENT ISSUE---", error);
             });
           })
         });
@@ -117,15 +117,21 @@ export class Api {
     });
   }
 
-  loadData(issue:number) {
-    this.dbGet(issue).then((local_data) => {
-      this.data = local_data || [];
-      //this.dbIssuesGet('current').then((d) => {
-      //  console.log("- loading current page");
-      //  this.current = d || this.current;
-        this.initialized = true;
-        this.events.publish('page:change', this.current);
-      //});
+  loadData(issue:number): Promise<any> {
+    if (this.storage.data[issue] === undefined) {
+      this.storage.data[issue] = new PouchDB(`rfWriter-data-${issue}`, this.dbsettings);
+    }
+    return new Promise(resolve => {
+      this.dbGet(issue).then((local_data) => {
+        this.data = local_data || [];
+        //this.dbIssuesGet('current').then((d) => {
+        //  console.log("- loading current page");
+        //  this.current = d || this.current;
+          this.initialized = true;
+          this.events.publish('page:change', this.current);
+          resolve(true);
+        //});
+      })
     })
   }
 
@@ -174,10 +180,24 @@ export class Api {
     }
 
     syncData(): Promise<any> {
+
+      this.sync.contributions = this.sync.contributions || [];
+
       var __this = this;
       return new Promise(resolve => {
+        if (this.storage.data[this.current_issue] === undefined){
+          console.log("Cannot Sync: No Storage Engine")
+          resolve(false);
+          return;
+        }
+        if (this.sync.contributions[this.current_issue]) {
+          console.log("Syncing Set up for this issue")
+          resolve(true);
+          return;
+        }
+
         console.log(`setting up sync data for issue ${this.current_issue}`)
-        this.sync.contributions = this.storage.data.sync(`${this.credentials.server}/data-${this.credentials.user}`, {
+        this.sync.contributions[this.current_issue] = this.storage.data[this.current_issue].sync(`${this.credentials.server}/issue-${this.current_issue}`, {
           live: true,
           retry: true,
           continuous: true,
@@ -312,9 +332,9 @@ export class Api {
           resolve(false);
           return;
         }
-        __this.storage.data.get(document)
+        __this.storage.data[issue].get(document)
         .then(function(doc) {
-          __this.storage.data.put({
+          __this.storage.data[issue].put({
             _id: document,
             _rev: doc._rev,
             data: data
@@ -325,7 +345,7 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.storage.data.put({
+          __this.storage.data[issue].put({
             _id: document,
             data: data
           })
@@ -350,7 +370,7 @@ export class Api {
       return new Promise(resolve => {
         console.log(`ok - here we go. trying to read all contributions starting with: contribution-${issue}`);
 
-        __this.storage.data.allDocs({
+        __this.storage.data[issue].allDocs({
           include_docs: true,
           attachments: true,
           startkey: `contribution-${issue}`,
@@ -381,10 +401,14 @@ export class Api {
               _rev: doc._rev,
               data: __this.current_issue
             }).then((response) => {
-              console.log("Switched to " + __this.current_issue);
               __this.setCurrent(0);
-              __this.loadData(__this.current_issue);
-              resolve(true);
+              __this.loadData(__this.current_issue).then(()=>{
+                console.log("Switched to " + __this.current_issue);
+                __this.syncData().then(()=>{
+                  console.log("Data Synced");
+                  resolve(true);
+                })
+              })
             }).catch((err) => {
               resolve(false);
             });
@@ -395,10 +419,14 @@ export class Api {
               data: __this.current_issue
             })
             .then((response) => {
-              console.log("Switched to " + __this.current_issue);
               __this.setCurrent(0);
-              __this.loadData(__this.current_issue);
-              resolve(true);
+              __this.loadData(__this.current_issue).then(()=>{
+                console.log("Switched to " + __this.current_issue);
+                __this.syncData().then(()=>{
+                  console.log("Data Synced");
+                  resolve(true);
+                })
+              })
             })
             .catch((err)=>{
               resolve(false);
@@ -439,7 +467,7 @@ export class Api {
       let __this = this;
       console.log(`Deleting: ${_doc}`);
 
-      this.storage.data.get(_doc).then(function (doc) {
+      this.storage.data[this.current_issue].get(_doc).then(function (doc) {
         console.log(`Deleted ${_delete[0].syncId} from DB`);
         /*__this.data.forEach((e,i) => {
           if (e.sort != i) {
@@ -447,7 +475,7 @@ export class Api {
             __this.dbStore(__this.current_issue, e);
           }
         })*/
-        return __this.storage.data.put({
+        return __this.storage.data[this.current_issue].put({
           _id: doc._id,
           _rev: doc._rev,
           _deleted: true,
@@ -560,8 +588,10 @@ export class Api {
         if (this.sync.issues && typeof this.sync.issues.cancel === "function") {
           this.sync.issues.cancel(); // whenever you want to cancel
         }
-        if (this.sync.contributions && typeof this.sync.contributions.cancel === "function") {
-          this.sync.contributions.cancel();
+        for (let i = 0; i < this.sync.contributions.length; i++) {
+          if (this.sync.contributions[i] && typeof this.sync.contributions[i].cancel === "function") {
+            this.sync.contributions[i].cancel();
+          }
         }
         this.sync = {};
       }

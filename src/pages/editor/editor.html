@@ -7,7 +7,6 @@
 
     <ion-title *ngIf="api.data.length > 0 && api.data[api.current]">
       <ion-input
-        (focus)="selectAll($event)"
         (change)="api.change()"
         (ngModelChange)="api.data[api.current].modified = 1;"
         [(ngModel)]='api.data[api.current].name'
@@ -42,7 +41,7 @@
     <ion-slide *ngFor="let e of api.data">
       <ion-item [hidden]="!initialized">
         <ion-label stacked>Titel</ion-label>
-        <ion-input [(ngModel)]="e.title" (change)="api.change()" (ngModelChange)="e.modified = 1;" (focus)="selectAll($event)" placeholder="{{e.title}}"></ion-input>
+        <ion-input [(ngModel)]="e.title" (change)="api.change()" (ngModelChange)="e.modified = 1;" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
         <codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
