@@ -70,7 +70,9 @@ export class Api {
       this.current = 0;
       this.onDevice = platform.is('cordova');
       this.zone = zone;
-      this.sync = {};
+      this.sync = {
+        contributions: []
+      };
       this.initialize();
   }
 
@@ -475,7 +477,7 @@ export class Api {
             __this.dbStore(__this.current_issue, e);
           }
         })*/
-        return __this.storage.data[this.current_issue].put({
+        return __this.storage.data[__this.current_issue].put({
           _id: doc._id,
           _rev: doc._rev,
           _deleted: true,
@@ -593,7 +595,9 @@ export class Api {
             this.sync.contributions[i].cancel();
           }
         }
-        this.sync = {};
+        this.sync = {
+          contributions: []
+        };
       }
       this.storage = {};
       this.issues = false;
