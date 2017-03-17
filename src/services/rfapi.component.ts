@@ -104,8 +104,13 @@ export class Api {
                 })
               });
             }).catch((error) => {
-              //this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
-              //this.loadData(this.current_issue);
+              this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
+              this.loadData(this.current_issue).then((success) => {
+                console.log("... Data Loaded");
+                this.syncData().then(()=>{
+                  console.log("... Data Synced");
+                })
+              });
               console.log("---NO CURRENT ISSUE---", error);
             });
           })
@@ -187,7 +192,7 @@ export class Api {
 
       var __this = this;
       return new Promise(resolve => {
-        if (this.storage.data[this.current_issue] === undefined){
+        if (this.storage.data[this.current_issue] === undefined || !this.current_issue){
           console.log("Cannot Sync: No Storage Engine")
           resolve(false);
           return;
