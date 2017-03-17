@@ -45,23 +45,17 @@
 
       <ion-item>
          <ion-label stacked>Username</ion-label>
-         <ion-input clearInput (change)="api.storeCredentials()" [(ngModel)]="api.credentials.user"></ion-input>
+         <ion-input clearInput placeholder="Username" [(ngModel)]="api.credentials.user"></ion-input>
       </ion-item>
 
-
        <ion-item>
-         <ion-label stacked>Read Key</ion-label>
-         <ion-input clearInput (change)="api.storeCredentials()" [(ngModel)]="api.credentials.rokey"></ion-input>
-       </ion-item>
-
-       <ion-item>
-         <ion-label stacked>Write Key</ion-label>
-         <ion-input clearInput (change)="api.storeCredentials()" [(ngModel)]="api.credentials.rwkey"></ion-input>
+         <ion-label stacked>Access Key</ion-label>
+         <ion-input clearInput  placeholder="Access Key" [(ngModel)]="api.credentials.rwkey"></ion-input>
        </ion-item>
 
        <ion-item>
           <ion-label stacked>Server Url</ion-label>
-          <ion-input clearInput (change)="api.storeCredentials()" [(ngModel)]="api.credentials.server"></ion-input>
+          <ion-input clearInput placeholder="https://writerdb.rokfor.ch:443" [(ngModel)]="api.credentials.server"></ion-input>
        </ion-item>
 
        <ion-item>

@@ -3,7 +3,7 @@
   "author": "Rokfor & Urs Hofer",
   "homepage": "http://www.rokfor.ch/",
   "private": true,
-  "version": "1.0.0-beta",
+  "version": "0.0.2",
   "main": "./www/index.js",
   "scripts": {
     "ionic:build": "ionic-app-scripts build",
@@ -27,6 +27,7 @@
     "app": "^0.1.0",
     "browser-window": "^0.4.0",
     "codemirror": "^5.23.0",
+    "fs": "0.0.1-security",
     "ionic-angular": "2.0.0-rc.3",
     "ionic-native": "2.2.3",
     "ionicons": "3.0.0",
@@ -35,10 +36,12 @@
     "ng2-codemirror": "^1.1.1",
     "pouchdb": "^6.1.1",
     "rxjs": "5.0.0-beta.12",
+    "showdown": "^1.6.4",
     "zone.js": "0.6.26"
   },
   "devDependencies": {
     "@ionic/app-scripts": "^1.0.0",
+    "@types/showdown": "^1.4.32",
     "electron": "^1.4.13",
     "typescript": "2.0.6"
   },

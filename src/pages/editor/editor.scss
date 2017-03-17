@@ -5,6 +5,23 @@ page-editor {
       margin-top: 0 !important;
       margin-bottom: 0 !important;
     }
+    & ion-item {
+      visibility: hidden;
+    }
+    &.paper {
+      background: #FFF !important;
+    }
+    & .editorWrapper {
+      padding-top: 0;
+    }
+    & .CodeMirror-sizer {
+      max-width: 850px !important;
+      margin: auto !important;
+    }
+
+    ion-slide {
+      max-width: 100% !important;
+    }
   }
 
   ion-slide {

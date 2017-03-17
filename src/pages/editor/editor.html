@@ -1,11 +1,11 @@
-<ion-header *ngIf="!fullscreen">
+<ion-header *ngIf="!api.fullscreen">
   <ion-toolbar>
 
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
 
-    <ion-title *ngIf="api.data.length > 0">
+    <ion-title *ngIf="api.data.length > 0 && api.data[api.current]">
       <ion-input
         (focus)="selectAll($event)"
         (change)="api.change()"
@@ -31,8 +31,13 @@
   </ion-toolbar>
 </ion-header>
 
+<!--<ion-fab top left edge *ngIf="api.fullscreen">
+   <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>
+ </ion-fab>-->
 
-<ion-content class="no-scroll paper" [ngClass]="{'fullscreen': fullscreen}">
+
+<ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.fullscreen}">
+
   <ion-slides #mySlider [options]="mySlideOptions" (ionDidChange)="slideDidChange()" (ionWillChange)="slideWillChange()">
     <ion-slide *ngFor="let e of api.data">
       <ion-item [hidden]="!initialized">
@@ -47,26 +52,19 @@
   </ion-slides>
 </ion-content>
 
-<ion-footer *ngIf="!fullscreen">
+<ion-footer *ngIf="!api.fullscreen">
   <ion-toolbar>
-    <ion-buttons start  *ngIf="api.data.length > 0">
-      <ion-badge item-right color="dark">Chars: {{api.data[api.current].body.length}} Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
-    </ion-buttons>
     <ion-title>
-      <button ion-button small (click)="addPage()">
-        <ion-icon name="add"></ion-icon>
-      </button>
-      <button *ngIf="api.data.length > 0" ion-button small (click)="api.change()" [disabled]="api.data[api.current].modified == 0">
-        <ion-icon name="send"></ion-icon>
-      </button>
-      <button ion-button small (click)="toggleFs()">
-        <ion-icon name="resize"></ion-icon>
-      </button>
+      <ion-buttons start  *ngIf="api.data.length > 0 && api.data[api.current]">
+        <ion-badge item-right color="{{api.data[api.current].modified == 0 ? 'dark' : 'alert'}}">Id: {{api.data[api.current].id}} Chars: {{api.data[api.current].body.length}} Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
+      </ion-buttons>
     </ion-title>
+
     <ion-buttons end *ngIf="initialized">
       <button ion-button clear small (click)="slider.slideNext()" [disabled]="slider.isEnd()">
         <ion-icon name="arrow-down"></ion-icon>
       </button>
     </ion-buttons>
+
   </ion-toolbar>
 </ion-footer>

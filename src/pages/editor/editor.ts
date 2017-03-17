@@ -1,15 +1,13 @@
-import { Component, NgZone, ViewChild } from '@angular/core';
-//import { FormControl } from '@angular/forms';
-import { NavController, LoadingController, Slides, Events, AlertController } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
+import { Printer, PrintOptions } from 'ionic-native';
+import { Platform, NavController, LoadingController, Slides, Events, AlertController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 import 'codemirror/mode/markdown/markdown.js';
 import 'codemirror/addon/scroll/simplescrollbars.js';
 import 'codemirror/addon/fold/foldcode.js';
 import 'codemirror/addon/fold/foldgutter.js';
 import 'codemirror/addon/fold/markdown-fold.js';
-
-declare var ipcRenderer: any;
-declare var electron: any;
+import {Converter} from "showdown/dist/showdown";
 
 @Component({
   selector: 'page-editor',
@@ -19,7 +17,6 @@ declare var electron: any;
 export class Editor {
   service: any;
   content: any;
-  fullscreen: boolean = false;
   mySlideOptions: any;
   initialSlide: number = 0;
   initialized: boolean = false;
@@ -44,8 +41,8 @@ export class Editor {
     public api:Api,
     public loadingCtrl: LoadingController,
     public events: Events,
-    public zone: NgZone,
     public alert: AlertController,
+    public platform: Platform,
   ) {
     var _this = this;
     let loading = this.loadingCtrl.create({
@@ -53,32 +50,7 @@ export class Editor {
     });
     loading.present();
     //this.ctrl = new FormControl();
-    if (ipcRenderer) {
-      ipcRenderer.on('main:ipc', (event, message) => {
-        if (message === 'leave-full-screen') {
-          _this.fullscreen = false;
-          zone.run(() => {});
-        }
-        if (message === 'enter-full-screen') {
-          _this.fullscreen = true;
-          zone.run(() => {});
-        }
-        if (message === 'next-document' && !_this.slider.isEnd()) {
-          _this.slider.slideNext();
-        }
-        if (message === 'previous-document' && !_this.slider.isBeginning()) {
-          _this.slider.slidePrev();
-        }
-        if (message === 'save-document') {
-          _this.api.change();
-        }
-        if (message === 'new-document') {
-          _this.addPage();
-        }
-      })
-    }
-
-
+    
     events.subscribe('page:change', (page) => {
       console.log("got page change");
       if (_this.slider.getSlider() !== undefined && typeof _this.slider.slideTo === "function") {
@@ -88,6 +60,20 @@ export class Editor {
         }, 250);
       }
     });
+
+    events.subscribe('page:redraw', (page) => {
+      console.log("got page redraw");
+      if (_this.slider.getSlider() !== undefined) {
+        setTimeout(() => {
+          let s = _this.slider.getSlider();
+          s.update();
+          _this.slider.slideTo(_this.slider.getActiveIndex(), 0, false);
+        }, 250);
+      }
+    });
+
+
+
     //console.log("Initialize Slide ", _this.initialSlide);
     //if (_this.initialized && _this.slider) {
     //  _this.slider.slideTo(_this.initialSlide, 0);
@@ -105,6 +91,54 @@ export class Editor {
         _this.initialized = true;
       }
     };
+  }
+
+  openModal(mode) {
+
+    var _title, _message, _placeholder, _data;
+
+    var _this = this;
+
+    if (mode === "set-title") {
+      _title = "Title";
+      _placeholder = this.api.data[this.api.current].title;
+      _data = "title";
+      _message = "Set Document Title";
+    }
+    if (mode === "set-identifier") {
+      _title = "ID";
+      _placeholder = this.api.data[this.api.current].name;
+      _data = "name";
+      _message = "Set Document Identifier";
+    }
+
+    let confirm = this.alert.create({
+      title: _title,
+      message: _message,
+      inputs: [
+        {
+          name: _title,
+          placeholder: _placeholder
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Save',
+          handler: data => {
+            console.log('Saved clicked', data);
+            _this.api.data[_this.api.current][_data] = data[_title];
+            _this.api.change();
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
 
 /*
@@ -145,7 +179,6 @@ export class Editor {
     })
   }
 
-
   slideWillChange() {
     if (!this.initialized) return false;
     this.api.setCurrent(this.slider.getActiveIndex());
@@ -157,9 +190,74 @@ export class Editor {
 
   addPage() {
     if (!this.initialized) return false;
-    this.api.add(this.slider.getActiveIndex() + 1).then((d) => {
+    let index = this.api.data.length == 0 ? 0 : this.slider.getActiveIndex() + 1;
+    this.api.add(index).then((d) => {
       console.log("Page Added")
     });
+  }
+
+  printPage() {
+    const converter = new Converter();
+    var _this  = this;
+    var _print = '<!DOCTYPE html><html><head>  '
+               + '<link href="build/print.css" rel="stylesheet" media="print">'
+               + '</head><body class="print">'
+               + '<div class="title">' + converter.makeHtml(_this.api.data[_this.api.current].title) + '</div>'
+               + '<div class="body">' + converter.makeHtml(_this.api.data[_this.api.current].body) + '</div>'
+               + '</html>';
+
+    /* Cordova Air Print */
+
+    if (_this.platform.is('cordova')) {
+      Printer.isAvailable().then(
+        () => {
+        let options: PrintOptions = {
+             name: _this.api.data[_this.api.current].title,
+             duplex: true,
+             landscape: false,
+             grayscale: true
+         };
+         Printer.print(_print, options).then(
+          () => {console.log("Printing succeeded");},
+          () => {console.log("No Printer Available");}
+         );
+       },
+       () => {console.log("No Printer Available");}
+     );
+    }
+    else {
+
+      /* Browser Print */
+
+      if (!window.frames["print-frame"]) {
+        var elm = document.createElement('iframe');
+        elm.setAttribute('id', 'print-frame');
+        elm.setAttribute('name', 'print-frame');
+        elm.setAttribute('style', 'display: none;');
+        document.body.appendChild(elm);
+      }
+
+      var _frame = <HTMLIFrameElement>document.getElementById('print-frame');
+      var _doc;
+      if (_frame.contentDocument) { // DOM
+          _doc = _frame.contentDocument;
+      } else if (_frame.contentWindow) { // IE win
+          _doc = _frame.contentWindow.document;
+      } else {
+          _doc = false;
+      }
+
+      if (_doc !== false) {
+        _doc.write(_print);
+        _doc.close();
+        if (window.navigator.userAgent.indexOf ("MSIE") > 0) {
+            _frame.contentWindow.document.execCommand('print', false, null);
+        } else {
+            _frame.contentWindow.focus();
+            _frame.contentWindow.print();
+        }
+      }
+    }
   }
 
   selectAll(event) {
@@ -167,17 +265,7 @@ export class Editor {
     event.target.select();
   }
 
-  toggleFs() {
-    /* Electron: Setting the local fullscreen flag after ipc callback in construtor */
-    if (electron) {
-      var window = electron.remote.getCurrentWindow();
-      window.setFullScreen(!this.fullscreen);
-    }
-    /* Browser, Cordova: Just toggeling the flag */
-    else {
-      this.fullscreen = !this.fullscreen;
-    }
-  }
+
 
   wordcount(str) {
     return str.split(/[^\s]+/).length;

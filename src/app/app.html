@@ -35,6 +35,29 @@
     </ion-list>
   </ion-content>
 
+  <ion-footer>
+    <ion-toolbar>
+      <ion-title>
+        <ion-buttons start>
+          <button ion-button small  icon-only [disabled]="!editor" (click)="editor.addPage()">
+            <ion-icon name="add"></ion-icon>
+          </button>
+          <button *ngIf="api.data.length > 0 && api.data[api.current]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.current].modified == 0">
+            <ion-icon name="send"></ion-icon>
+          </button>
+        </ion-buttons>
+      </ion-title>
+      <ion-buttons end>
+        <button ion-button small  icon-only (click)="toggleFs()">
+          <ion-icon name="resize"></ion-icon>
+        </button>
+        <button ion-button small  icon-only [disabled]="!editor" (click)="editor.printPage()">
+          <ion-icon name="print"></ion-icon>
+        </button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
+
 </ion-menu>
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->

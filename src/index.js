@@ -1,6 +1,9 @@
 const electron = require('electron')
+const fs = require('fs')
 // Module to control application life.
 const app = electron.app
+const dialog = electron.dialog
+const ipcMain = electron.ipcMain
 
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
@@ -23,7 +26,7 @@ let mainWindow
 
 function createWindow () {
 
-
+  let filename = "";
 
   // Create the browser window.
   mainWindow = new BrowserWindow({show: false, width: 800, height: 600})
@@ -57,6 +60,13 @@ function createWindow () {
     mainWindow.webContents.send('main:ipc', 'enter-full-screen');
   })
 
+
+   ipcMain.on('master:ipc:export', (event, message) => {
+     if (filename !== "") {
+       fs.writeFile(filename, `Identifier: ${message.name}\n\nTitle: ${message.title}\n\n${message.body}`, function (err) {});
+       filename = "";
+     }
+   });
 
   // Create the Application's main menu
    var template = [{
@@ -104,7 +114,7 @@ function createWindow () {
      label: 'File',
      submenu: [
        {
-         label: 'New File',
+         label: 'New Document',
          accelerator: 'Command+N',
          click: function() {
            mainWindow.webContents.send('main:ipc', 'new-document');
@@ -118,20 +128,29 @@ function createWindow () {
          }
        },
        {
-         type: 'separator'
-       },
-       {
-         label: 'Previous Document',
-         accelerator: 'Alt+Command+Up',
+         label: 'Export',
+         accelerator: 'Command+E',
          click: function() {
-           mainWindow.webContents.send('main:ipc', 'previous-document');
+           dialog.showSaveDialog({
+             title: "Export Data",
+             filters: [
+              { name: 'markdown', extensions: ['md'] }
+             ]
+           }, function(_fileName){
+             if (_fileName === undefined) return;
+             filename = _fileName;
+             let _data = mainWindow.webContents.send('main:ipc', 'export-data');
+           })
          }
        },
        {
-         label: 'Next Document',
-         accelerator: 'Alt+Command+Down',
+         type: 'separator'
+       },
+       {
+         label: 'Print',
+         accelerator: 'Command+P',
          click: function() {
-           mainWindow.webContents.send('main:ipc', 'next-document');
+           mainWindow.webContents.send('main:ipc', 'print-document');
          }
        }
      ]
@@ -171,6 +190,40 @@ function createWindow () {
          label: 'Select All',
          accelerator: 'Command+A',
          selector: 'selectAll:'
+       },
+       {
+         type: 'separator'
+       },
+       {
+         label: 'Previous Document',
+         accelerator: 'Alt+Command+Up',
+         click: function() {
+           mainWindow.webContents.send('main:ipc', 'previous-document');
+         }
+       },
+       {
+         label: 'Next Document',
+         accelerator: 'Alt+Command+Down',
+         click: function() {
+           mainWindow.webContents.send('main:ipc', 'next-document');
+         }
+       },
+       {
+         type: 'separator'
+       },
+       {
+         label: 'Set Title',
+         accelerator: 'Command+T',
+         click: function() {
+           mainWindow.webContents.send('main:ipc', 'set-title');
+         }
+       },
+       {
+         label: 'Set Identifier',
+         accelerator: 'Command+I',
+         click: function() {
+           mainWindow.webContents.send('main:ipc', 'set-identifier');
+         }
        }
      ]
    },
@@ -178,7 +231,7 @@ function createWindow () {
      label: 'View',
      submenu: [
        {
-         label: 'Togle Full Screen',
+         label: 'Toggle Full Screen',
          accelerator: 'Alt+Command+F',
          click: function() {
            BrowserWindow.getFocusedWindow().setFullScreen(BrowserWindow.getFocusedWindow().isFullScreen() ? false : true);

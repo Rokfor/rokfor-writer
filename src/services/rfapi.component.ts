@@ -18,18 +18,9 @@ interface dataset {
     sort:     number;
     moddate:  number;
     modified: number;
+    issue:    number;
     syncId:   string;
 };
-
-interface rfContributions {
-    Documents: any;
-    Hash: string;
-    Limit: number;
-    NumFound: number;
-    Offset: number;
-    QueryTime: number;
-}
-
 
 declare function emit (val: any);
 
@@ -37,7 +28,8 @@ declare function emit (val: any);
 
 export class Api {
     http: any;
-    storage:  any;
+    storage:  any = {};
+    credentialsdb: any;
     current: number = 0;
     jwt: boolean = false;
     getOptions: any;
@@ -49,13 +41,17 @@ export class Api {
     zone: any;
     events: any;
     sync: any;
+    fullscreen: boolean = false;
+    dbsettings: any = {
+      size: 50,
+      auto_compaction: true
+    };
 
 
     data: Array < dataset > = [];
 
-    credentials: {user: string, rokey: string, rwkey: string, server: string} = {
+    credentials: {user: string, rwkey: string, server: string} = {
       user:   "",
-      rokey:  "",
       rwkey:  "",
       server: ""
     };
@@ -70,52 +66,51 @@ export class Api {
     ) {
       this.http = http;
       this.events = events;
-      let dbsettings = {
-        size: 50,
-        auto_compaction: true
-      };
-      this.storage = {
-        issues      : new PouchDB('rfWriter-issues', dbsettings),
-        settings    : new PouchDB('rfWriter-settings', dbsettings),
-        data        : new PouchDB('rfWriter-data', dbsettings),
-        credentials : new PouchDB('rfWriter-credentials', dbsettings)
-      };
+      this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
       this.current = 0;
       this.onDevice = platform.is('cordova');
       this.zone = zone;
-      this.sync = null;
+      this.sync = {};
       this.initialize();
   }
 
   initialize() {
     console.log("Initializing API");
-    this.storage.credentials.get('credentials').then((credentials) => {
-      if (credentials) {
-        console.log("- loading credentials");
+    this.credentialsdb.get('credentials').then((credentials) => {
+      if (credentials && credentials.data) {
         this.credentials = credentials.data;
 
-        this.syncIssues();
-        this.syncData();
+        this.storage = {
+          issues      : new PouchDB(`rfWriter-issues-${this.credentials.user}`, this.dbsettings),
+          settings    : new PouchDB(`rfWriter-settings-${this.credentials.user}`, this.dbsettings),
+          data        : new PouchDB(`rfWriter-data-${this.credentials.user}`, this.dbsettings)
+        };
 
-        this.dbIssuesGet('issues').then((issues_offline) => {
-          this.issues = issues_offline || false;
-          this.storage.settings.get('current_issue').then((current_issue) => {
+        console.log(`Local DB:\n- rfWriter-issues-${this.credentials.user}\n- rfWriter-settings-${this.credentials.user}\n- rfWriter-data-${this.credentials.user}`);
 
-            console.log("--------> current issue:", current_issue);
+        this.syncIssues().then((success) => {
+          this.syncData().then((success) => {
+            this.dbIssuesGet('issues').then((issues_offline) => {
+              this.issues = issues_offline || false;
+              this.storage.settings.get('current_issue').then((current_issue) => {
 
-            this.current_issue = current_issue.data ||
-                                (this.issues === false ? false : this.issues.Issues[0].Id);
-            /* Loading Local Data */
-            this.loadData(this.current_issue);
-          }).catch((error) => {
-            this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
-            this.loadData(this.current_issue);
-            console.log("---NO CURRENT ISSUE---", error);
-          });
+                console.log("--------> current issue:", current_issue);
+
+                this.current_issue = current_issue.data ||
+                                    (this.issues === false ? false : this.issues.Issues[0].Id);
+                /* Loading Local Data */
+                this.loadData(this.current_issue);
+              }).catch((error) => {
+                this.current_issue = this.issues === false ? false : this.issues.Issues[0].Id;
+                this.loadData(this.current_issue);
+                console.log("---NO CURRENT ISSUE---", error);
+              });
+            });
+          })
         });
       }
       else {
-        this.initialized = true;
+        this.initialized = false;
       }
     }).catch((error) => {
       console.log("---NO CREDENTIALS---", error);
@@ -134,113 +129,127 @@ export class Api {
     })
   }
 
-    syncIssues() {
+  syncIssues(): Promise<any> {
       var __this = this;
-      this.sync = {};
-      this.sync.issues = this.storage.issues.sync(`${this.credentials.server}/rf-${this.credentials.user}`, {
-        live: true,
-        retry: true,
-        continuous: true,
-        auth: {
-          username: __this.credentials.user,
-          password: __this.credentials.rwkey
-        }
-      }).on('change', function (info) {
-        // handle change
-        if (info.direction === "pull") {
-          console.log('GOT ISSUES SYNC');
+      return new Promise(resolve => {
+        this.sync.issues = this.storage.issues.sync(`${this.credentials.server}/rf-${this.credentials.user}`, {
+          live: true,
+          retry: true,
+          continuous: true,
+          auth: {
+            username: __this.credentials.user,
+            password: __this.credentials.rwkey
+          }
+        }).on('change', function (info) {
+          // handle change
+          if (info.direction === "pull") {
+            console.log('GOT ISSUES SYNC');
 
-          info.change.docs.forEach((d) => {
+            info.change.docs.forEach((d) => {
 
-              /*
-               Keys in the Database
-               credentials
-               current
-               current_issue
-               issues
-              */
+                /*
+                 Keys in the Database
+                 credentials
+                 current
+                 current_issue
+                 issues
+                */
 
 
-              if (d._id === "issues"){
-                console.log("Sync Issues", d.data, __this);
-                __this.issues = d.data;
-              }
-          });
-          __this.zone.run(() => {});
-        }
-      })
-      .on('paused',   function (err)  {console.log("----> paused");})
-      .on('active',   function ()     {__this.jwt = true; console.log("----> active");})
-      .on('denied',   function (err)  {__this.jwt = false; console.log("----> denied");})
-      .on('complete', function (info) {console.log("----> complete");})
-      .on('error',    function (err)  {__this.jwt = false; console.log("----> error");});
+                if (d._id === "issues"){
+                  console.log("Sync Issues", d.data, __this);
+                  __this.issues = d.data;
+                }
+            });
+            __this.zone.run(() => {});
+            resolve(true);
+          }
+        })
+        .on('paused',   function (err)  {__this.jwt = true; console.log("----> paused"); resolve(true);})
+        .on('active',   function ()     {__this.jwt = true; console.log("----> active"); resolve(true);})
+        .on('denied',   function (err)  {__this.jwt = false; console.log("----> denied"); resolve(false);})
+        .on('complete', function (info) {console.log("----> complete"); resolve(true);})
+        .on('error',    function (err)  {__this.jwt = false; console.log("----> error");  resolve(false);});
+      });
     }
 
-    syncData() {
+    syncData(): Promise<any> {
       var __this = this;
-      console.log(`setting up sync data for issue ${this.current_issue}`)
-      this.sync.data = this.storage.data.sync(`${this.credentials.server}/data-${this.credentials.user}`, {
-        live: true,
-        retry: true,
-        continuous: true,
-        auth: {
-          username: __this.credentials.user,
-          password: __this.credentials.rwkey
-        }
-      }).on('change', function (info) {
-        // handle change
+      return new Promise(resolve => {
+        console.log(`setting up sync data for issue ${this.current_issue}`)
+        this.sync.contributions = this.storage.data.sync(`${this.credentials.server}/data-${this.credentials.user}`, {
+          live: true,
+          retry: true,
+          continuous: true,
+          auth: {
+            username: __this.credentials.user,
+            password: __this.credentials.rwkey
+          }
+        }).on('change', function (info) {
+          // handle change
 
-        //console.log(info)
+          //console.log(info)
 
-        if (info.direction === "pull" ) {
-          let fullSync = false;
-          let reSort = false;
+          if (info.direction === "pull" ) {
+            let fullSync = false;
+            let reSort = false;
 
-          console.log(info.change.docs, __this.data);
+            console.log(info.change.docs, __this.data);
 
-          info.change.docs.forEach((d) => {
-            let needsUpdate = true;
+            info.change.docs.forEach((d) => {
+              let needsUpdate = true;
 
-            for (let k = 0; k < __this.data.length; k++) {
-              let ld = __this.data[k];
-              console.log(k, d, ld);
-              if (d._id.indexOf(ld.syncId) !== -1) {
-                if (d._deleted === true) {
-                  console.log(`add ${k} to delete array`, ld);
-                  __this.data.splice(k, 1);
-                  __this.data.forEach((e,i) => {
-                    if (e.sort != i) {
-                      e.sort = i;
+              for (let k = 0; k < __this.data.length; k++) {
+                let ld = __this.data[k];
+                console.log(k, d, ld);
+                if (d._id.indexOf(ld.syncId) !== -1) {
+                  if (d._deleted === true) {
+                    console.log(`add ${k} to delete array`, ld);
+                    __this.data.splice(k, 1);
+                    __this.data.forEach((e,i) => {
+                      if (e.sort != i) {
+                        e.sort = i;
+                      }
+                    })
+                  }
+                  else {
+                    console.log(`GOT DATA SYNC ---> ${ld.syncId}`, d.data);
+                    __this.data[k] = d.data;
+                    needsUpdate = false;
+                    if (ld.sort != d.data.sort) {
+                      reSort = true;
                     }
-                  })
-                }
-                else {
-                  console.log(`GOT DATA SYNC ---> ${ld.syncId}`, d.data);
-                  __this.data[k] = d.data;
-                  needsUpdate = false;
-                  if (ld.sort != d.data.sort) {
-                    reSort = true;
                   }
                 }
               }
-            }
-            if (needsUpdate) fullSync = true;
-          });
-
-
-          if (fullSync) {
-            console.log(`FULL SYNC NEEDED`);
-            __this.loadData(__this.current_issue);
-          }
-          else if (reSort) {
-            console.log(`RESORT NEEDED`);
-            __this.data.sort(function (a, b) {
-              return a.sort - b.sort;
+              if (needsUpdate) fullSync = true;
             });
+
+
+            if (fullSync) {
+              console.log(`FULL SYNC NEEDED`);
+              __this.loadData(__this.current_issue);
+            }
+            else if (reSort) {
+              console.log(`RESORT NEEDED`);
+              __this.data.sort(function (a, b) {
+                return a.sort - b.sort;
+              });
+            }
+            __this.zone.run(() => {});
+            resolve(true);
           }
-          __this.zone.run(() => {});
-        }
-      })
+        })
+        .on('paused',   function (err)  {console.log("----> sync data paused"); resolve(true);})
+        .on('active',   function ()     {console.log("----> sync data active"); resolve(true);})
+        .on('denied',   function (err)  {console.log("----> sync data denied", err); resolve(false);})
+        .on('complete', function (info) {console.log("----> sync data complete"); resolve(true);})
+        .on('error',    function (err)  {console.log("----> sync data error", err); resolve(false);})
+        .catch((err) => {
+          console.log(err);
+          resolve(false);
+        });
+      });
     }
 
     dbIssuesStore(document:string, data:any): Promise<any> {
@@ -438,7 +447,13 @@ export class Api {
             __this.dbStore(__this.current_issue, e);
           }
         })*/
-        return __this.storage.data.remove(doc);
+        return __this.storage.data.put({
+          _id: doc._id,
+          _rev: doc._rev,
+          _deleted: true,
+          data: doc.data.id
+        })
+        //return __this.storage.data.remove(doc);
       });
     }
 
@@ -447,10 +462,11 @@ export class Api {
         name: 'rf001',
         title: 'Empty Title',
         body: "Write Here",
-        id: 0,
+        id: -1,
         sort: 0,
         moddate: 0,
         modified: 0,
+        issue: this.current_issue,
         syncId: this.guid(),
       };
       let __this = this;
@@ -492,10 +508,11 @@ export class Api {
     /* Called if settings changed */
     storeCredentials() {
       var __this = this;
+      console.log(this.credentials);
       return new Promise(resolve => {
-        __this.storage.credentials.get('credentials')
+        __this.credentialsdb.get('credentials')
         .then(function(doc) {
-          __this.storage.credentials.put({
+          __this.credentialsdb.put({
             _id: 'credentials',
             _rev: doc._rev,
             data: __this.credentials
@@ -509,7 +526,7 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.storage.credentials.put({
+          __this.credentialsdb.put({
             _id: 'credentials',
             data: __this.credentials
           })
@@ -527,19 +544,31 @@ export class Api {
     }
 
     logIn() {
-      if (this.jwt == false) {
-        this.syncIssues();
-        this.syncData();
-      }
+      var _this = this;
+      this.storeCredentials().then((response) => {
+        /*_this.syncIssues();
+        _this.syncData();*/
+        _this.initialize();
+      }).catch((err) => {
+        console.log(err)
+      });
     }
 
     logOut() {
       this.jwt = false;
       if (this.sync) {
-        this.sync.issues.cancel(); // whenever you want to cancel
-        this.sync.data.cancel();
-        this.sync = null;
+        if (this.sync.issues && typeof this.sync.issues.cancel === "function") {
+          this.sync.issues.cancel(); // whenever you want to cancel
+        }
+        if (this.sync.contributions && typeof this.sync.contributions.cancel === "function") {
+          this.sync.contributions.cancel();
+        }
+        this.sync = {};
       }
+      this.storage = {};
+      this.issues = false;
+      this.data = [];
+      this.initialized = false;
     }
 
     guid() {
