@@ -444,6 +444,7 @@ export class Api {
 
     change() {
       if (this.initialized === false) return;
+      if (this.data[this.current] === undefined) return;
       this.data[this.current].modified = 0;
       this.dbStore(this.current_issue, this.data[this.current]);
       console.log('Local Store Doc Complete', this.current, this.data[this.current]);

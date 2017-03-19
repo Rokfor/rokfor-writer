@@ -36,7 +36,7 @@ export class MyApp {
     this.pages = [
       { title: 'Settings', component: Settings, icon: 'settings' },
       { title: 'Book',   component: Book, icon: 'book' },
-      { title: 'Page',   component: Editor, icon: 'document' }
+      { title: 'Editor',   component: Editor, icon: 'document' }
     ];
   }
 
