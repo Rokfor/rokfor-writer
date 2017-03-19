@@ -66,18 +66,56 @@ export class Api {
     ) {
       this.http = http;
       this.events = events;
-      this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
-      this.current = 0;
       this.onDevice = platform.is('cordova');
       this.zone = zone;
-      this.sync = {
-        contributions: []
-      };
+      this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
       this.initialize();
+  }
+
+  destroyDB() {
+
+
+    this.storage.issues.destroy().then(function () {
+      console.log("issues destroyed")
+    }).catch(function (err) {
+      console.log("issues not found")
+    })
+    this.credentialsdb.destroy().then(function () {
+      console.log("credentials destroyed")
+    }).catch(function (err) {
+      console.log("credentials not found")
+    })
+    this.storage.settings.destroy().then(function () {
+      console.log("settings destroyed")
+    }).catch(function (err) {
+      console.log("settings not found")
+    })
+
+    for (let k = 0; k < this.storage.data.length; k++) {
+      let d = this.storage.data[k];
+      if (d && typeof d.destroy === "function") {
+        d.destroy().then(function () {
+          console.log("data destroyed")
+        }).catch(function (err) {
+          console.log("data not found")
+        })
+      }
+    }
+
+    this.storage = {};
+    this.data = [];
+    this.credentialsdb = false;
+
+
+
   }
 
   initialize() {
     console.log("Initializing API");
+    this.current = 0;
+    this.sync = {
+      contributions: []
+    };
     this.credentialsdb.get('credentials').then((credentials) => {
       if (credentials && credentials.data) {
         this.credentials = credentials.data;
@@ -553,9 +591,6 @@ export class Api {
             _rev: doc._rev,
             data: __this.credentials
           }).then((response) => {
-            if (!this.initialized) {
-              this.initialize();
-            }
             resolve(true);
           }).catch((err) => {
             resolve(false);
@@ -567,9 +602,6 @@ export class Api {
             data: __this.credentials
           })
           .then((response) => {
-            if (!this.initialized) {
-              this.initialize();
-            }
             resolve(true);
           })
           .catch((err)=>{
@@ -581,10 +613,20 @@ export class Api {
 
     logIn() {
       var _this = this;
+      if (!this.credentialsdb) {
+        this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
+      }
       this.storeCredentials().then((response) => {
         /*_this.syncIssues();
         _this.syncData();*/
-        _this.initialize();
+        if (response === true) {
+          if (!_this.initialized) {
+            _this.initialize();
+            setTimeout(function() {
+                window.location.reload();
+            }, 1000);            
+          }
+        }
       }).catch((err) => {
         console.log(err)
       });
@@ -605,10 +647,10 @@ export class Api {
           contributions: []
         };
       }
-      this.storage = {};
       this.issues = false;
-      this.data = [];
       this.initialized = false;
+      this.credentials = {user: "", rwkey: "", server: ""};
+      this.destroyDB();
     }
 
     guid() {

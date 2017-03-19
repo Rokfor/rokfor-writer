@@ -50,7 +50,7 @@ export class Editor {
     });
     loading.present();
     //this.ctrl = new FormControl();
-    
+
     events.subscribe('page:change', (page) => {
       console.log("got page change");
       if (_this.slider.getSlider() !== undefined && typeof _this.slider.slideTo === "function") {
@@ -198,6 +198,7 @@ export class Editor {
 
   printPage() {
     const converter = new Converter();
+    converter.setOption('simpleLineBreaks', true);
     var _this  = this;
     var _print = '<!DOCTYPE html><html><head>  '
                + '<link href="build/print.css" rel="stylesheet" media="print">'
