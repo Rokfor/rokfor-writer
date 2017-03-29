@@ -17,14 +17,10 @@
 
     <ion-buttons end *ngIf="initialized">
 
-      <button ion-button (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.current]" color="{{api.data[api.current].modified == 0 ? 'dark' : 'alert'}}">
-        <ion-badge *ngIf="tgInfo" item-right>Id: {{api.data[api.current].id}} Chars: {{api.data[api.current].body.length}} Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
-        <ion-icon *ngIf="!tgInfo" name="information-circle"></ion-icon>
+      <button *ngIf="api.data.length > 0 && api.data[api.current]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.current].modified == 0">
+        <ion-icon name="send"></ion-icon>
       </button>
 
-      <button ion-button clear small icon-only (click)="slider.slidePrev()" [disabled]="slider.isBeginning()">
-        <ion-icon name="arrow-up"></ion-icon>
-      </button>
     </ion-buttons>
 
   </ion-toolbar>
@@ -36,7 +32,6 @@
 
 
 <ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.fullscreen}">
-
   <ion-slides #mySlider
   [direction] = "vertical"
   [slidesPerView] = "1"
@@ -56,27 +51,31 @@
       </div>
     </ion-slide>
   </ion-slides>
+
 </ion-content>
 
 <ion-footer *ngIf="!api.fullscreen">
   <ion-toolbar>
 
     <ion-buttons start>
-      <button ion-button small icon-only (click)="addPage()">
-        <ion-icon name="add"></ion-icon>
+      <button ion-button clear icon-only (click)="slider.slidePrev()" [disabled]="slider.isBeginning()">
+        <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
 
     <ion-title>
-      <button *ngIf="api.data.length > 0 && api.data[api.current]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.current].modified == 0">
-        <ion-icon name="send"></ion-icon>
+      <button ion-button clear icon-only (click)="addPage()">
+        <ion-icon name="add"></ion-icon>
       </button>
-
+      <button ion-button clear (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.current]">
+        <ion-badge *ngIf="tgInfo" item-right>Id: {{api.data[api.current].id}} Chars: {{api.data[api.current].body.length}} Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
+        <ion-icon *ngIf="!tgInfo" name="information-circle-outline"></ion-icon>
+      </button>
     </ion-title>
 
     <ion-buttons end *ngIf="initialized">
-      <button ion-button clear small icon-only (click)="slider.slideNext()" [disabled]="slider.isEnd()">
-        <ion-icon name="arrow-down"></ion-icon>
+      <button ion-button clear icon-only (click)="slider.slideNext()" [disabled]="slider.isEnd()">
+        <ion-icon name="arrow-forward"></ion-icon>
       </button>
     </ion-buttons>
 

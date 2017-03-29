@@ -41,9 +41,10 @@
     "zone.js": "0.8.5"
   },
   "devDependencies": {
+    "@ionic/app-scripts": "1.2.2",
     "@types/showdown": "^1.4.32",
     "electron": "^1.4.13",
-    "@ionic/app-scripts": "1.2.2",
+    "electron-updater": "^1.11.1",
     "typescript": "2.2.2"
   },
   "cordovaPlugins": [

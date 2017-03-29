@@ -174,7 +174,7 @@ export class Editor {
   }
 
   ionViewCanLeave(): Promise<boolean> {
-    if (this.initialized && this.api.data.length > 0) {
+    if (this.initialized && this.api.data && this.api.data.length > 0) {
       this.api.change();
     }
     return new Promise((resolve, reject) => {
@@ -188,7 +188,7 @@ export class Editor {
           },
         }],
       });
-      if (this.api.data.length > 0 && this.api.data[this.api.current].modified == 1) {
+      if (this.api.data && this.api.data.length > 0 && this.api.data[this.api.current].modified == 1) {
         confirm.present();
       }
       else {
