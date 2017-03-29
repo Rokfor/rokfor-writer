@@ -21,12 +21,14 @@ export class Editor {
   initialSlide: number = 0;
   initialized: boolean = false;
   //ctrl: any;
+  loading: any;
 
   cm_options: any = {
     viewportMargin: 10,
     mode: 'markdown',
     lineNumbers: false,
     theme: "default",
+    inputStyle: "textarea",
     lineWrapping: true,
     scrollbarStyle: 'overlay',
     foldGutter: true,
@@ -45,31 +47,40 @@ export class Editor {
     public platform: Platform,
   ) {
     var _this = this;
-    let loading = this.loadingCtrl.create({
+
+    _this.cm_options.cursorBlinkRate = _this.platform.is('core') ? "500" : -1;
+
+
+    _this.loading = this.loadingCtrl.create({
       content: "Please wait..."
     });
-    loading.present();
+    _this.loading.present();
     //this.ctrl = new FormControl();
 
     events.subscribe('page:change', (page) => {
       console.log("got page change");
+      _this.slider.slideTo(page);
+      /*
       if (_this.slider.getSlider() !== undefined && typeof _this.slider.slideTo === "function") {
         setTimeout(() => {
           console.log('done')
           _this.slider.slideTo(page);
         }, 250);
-      }
+      }*/
     });
 
     events.subscribe('page:redraw', (page) => {
       console.log("got page redraw");
+      _this.slider.slideTo(_this.slider.getActiveIndex(), 0, false)
+      /*
+      console.log(_this.slider);
       if (_this.slider.getSlider() !== undefined) {
         setTimeout(() => {
           let s = _this.slider.getSlider();
-          s.update();
+          //s.update();
           _this.slider.slideTo(_this.slider.getActiveIndex(), 0, false);
         }, 250);
-      }
+      }*/
     });
 
 
@@ -87,7 +98,7 @@ export class Editor {
       preventClicks: false,
       initialSlide: _this.api.getCurrent(),
       onInit: (slides: any) => {
-        loading.dismiss();
+        _this.loading.dismiss();
         _this.initialized = true;
       }
     };
@@ -139,6 +150,13 @@ export class Editor {
       ]
     });
     confirm.present();
+  }
+
+  ngAfterViewInit() {
+    this.loading.dismiss();
+    this.initialized = true;
+    //this.slider.onlyExternal = true;
+    this.slider.paginationType = "fraction";
   }
 
 /*

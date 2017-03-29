@@ -12,16 +12,29 @@ page-editor {
       background: #FFF !important;
     }
     & .editorWrapper {
-      padding-top: 0;
+      padding-top: 1em;
     }
     & .CodeMirror-sizer {
       max-width: 850px !important;
+      padding: 0.2em;
       margin: auto !important;
     }
 
     ion-slide {
       max-width: 100% !important;
     }
+    .swiper-pagination {
+      top: 1em !important;
+    }
+  }
+
+  .swiper-pagination {
+    position: absolute !important;
+    right: 1em !important;
+    top: 2.5em !important;
+    text-align: right;
+    width: auto;
+    height: 2em;
   }
 
   ion-slide {
@@ -34,9 +47,8 @@ page-editor {
     right: 0;
     bottom: 0;
     overflow: hidden;
-    max-width: 850px;
     padding: 0em;
-    background: white;
+    background: transparent;
     margin: 0 auto;
     z-index: 1;
   }
@@ -50,6 +62,9 @@ page-editor {
     background: transparent !important;
     .item-inner {
       padding-left: 1em;
+      max-width: 850px !important;
+      margin: auto !important;
+      background: white;
     }
   }
 
@@ -59,14 +74,16 @@ page-editor {
     display: block;
     position: absolute;
     top: 0em;
-    left: 0;
-    right: 0;
-    bottom: 0;
     padding-top: 4em;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
     overflow: hidden;
     z-index: 9;
+    max-width: 850px !important;
+    margin: auto !important;
+    background: white;
   }
-
 
   .paper {
     background: rgb(238,238,238);
