@@ -46,11 +46,11 @@
         <ion-input [(ngModel)]="e.title" (change)="api.change()" (ngModelChange)="e.modified = 1;" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
-        <codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
-        </codemirror>
-        <!--
-        <prosemirror [(data)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [config]="cm_options">
-        </prosemirror>-->
+        <!--<codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
+        </codemirror>-->
+
+        <prosemirror [(data)]="e.body">
+        </prosemirror>
       </div>
     </ion-slide>
   </ion-slides>

@@ -156,8 +156,10 @@ export class Editor {
     this.loading.dismiss();
     this.initialized = true;
     this.slider.onlyExternal = true;
-    this.slider.touchEventsTarget = "container";
     this.slider.paginationType = "fraction";
+    this.slider.simulateTouch = false;
+    this.slider.touchEventsTarget = "container";
+    this.slider.keyboardControl = false;
   }
 
 /*

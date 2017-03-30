@@ -1,8 +1,5 @@
 .ProseMirror {
   position: absolute;
-  -webkit-user-select: all !important;
-  -moz-user-select: all !important;
-  user-select: all !important;
   word-wrap: break-word;
   white-space: pre-wrap;
 
@@ -11,13 +8,19 @@
   width: 100%;
   color: black;
   font-size: 1em;
-  line-height: 1.5em;
+  line-height: 1.35em;
   overflow-x: hidden;
   overflow-y: auto;
+
+  -moz-user-select: all !important;
+  -webkit-user-select: all !important;
+  user-select: all !important;
+
+  padding: .5em; /* Vertical padding around content */
 }
 
 .ProseMirror ul, .ProseMirror ol {
-  padding-left: 30px;
+  padding-left: 1em;
   cursor: default;
 }
 
@@ -34,9 +37,28 @@
 .ProseMirror li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  &:before {
+    content: "-";
+    float: left;
+    margin-left: -1em;
+  }
 }
 .ProseMirror li > * {
   pointer-events: auto;
+}
+
+.ProseMirror li > p {
+  margin: 0;
+}
+
+.ProseMirror {
+  h1, h2, h3, h4, h5, h6 {
+    font-size: 1em;
+    font-weight: bold;
+  }
 }
 
 .ProseMirror-hideselection *::selection { background: transparent; }
