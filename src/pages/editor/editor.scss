@@ -69,7 +69,6 @@ page-editor {
   }
 
   .editorWrapper {
-    font-family: Inconsolata;
     text-align: left !important;
     display: block;
     position: absolute;
@@ -101,3 +100,4 @@ page-editor {
 }
 
 @import "codemirror.scss";
+@import "prosemirror.scss";

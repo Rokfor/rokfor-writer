@@ -1,6 +1,7 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { CodemirrorModule } from 'ng2-codemirror';
+import { ProsemirrorModule } from 'ng2-prosemirror';
 import { MyApp } from './app.component';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
@@ -15,7 +16,8 @@ import { Book } from '../pages/book/book';
   ],
   imports: [
     IonicModule.forRoot(MyApp),
-    CodemirrorModule
+    CodemirrorModule,
+    ProsemirrorModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

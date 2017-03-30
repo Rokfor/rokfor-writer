@@ -48,6 +48,9 @@
       <div class="editorWrapper">
         <codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
         </codemirror>
+        <!--
+        <prosemirror [(data)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [config]="cm_options">
+        </prosemirror>-->
       </div>
     </ion-slide>
   </ion-slides>

@@ -155,7 +155,8 @@ export class Editor {
   ngAfterViewInit() {
     this.loading.dismiss();
     this.initialized = true;
-    //this.slider.onlyExternal = true;
+    this.slider.onlyExternal = true;
+    this.slider.touchEventsTarget = "container";
     this.slider.paginationType = "fraction";
   }
 
