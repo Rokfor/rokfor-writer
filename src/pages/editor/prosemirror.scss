@@ -12,9 +12,9 @@
   overflow-x: hidden;
   overflow-y: auto;
 
-  -moz-user-select: all !important;
-  -webkit-user-select: all !important;
-  user-select: all !important;
+  -moz-user-select: text !important;
+  -webkit-user-select: text !important;
+  user-select: text !important;
 
   padding: .5em; /* Vertical padding around content */
 }

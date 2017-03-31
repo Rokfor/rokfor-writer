@@ -104,6 +104,10 @@ export class Editor {
     };
   }
 
+  trackByFn(index, i) {
+    return i.syncId;
+  }
+
   openModal(mode) {
 
     var _title, _message, _placeholder, _data;

@@ -12,7 +12,7 @@ page-editor {
       background: #FFF !important;
     }
     & .editorWrapper {
-      padding-top: 1em;
+      top: 1em;
     }
     & .CodeMirror-sizer {
       max-width: 850px !important;
@@ -25,6 +25,10 @@ page-editor {
     }
     .swiper-pagination {
       top: 1em !important;
+    }
+
+    .ProseMirror-menubar {
+      display: none !important;
     }
   }
 
@@ -72,8 +76,7 @@ page-editor {
     text-align: left !important;
     display: block;
     position: absolute;
-    top: 0em;
-    padding-top: 4em;
+    top: 3.5em;
     left: 0px;
     right: 0px;
     bottom: 0px;

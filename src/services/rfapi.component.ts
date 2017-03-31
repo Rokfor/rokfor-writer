@@ -301,7 +301,7 @@ export class Api {
                 return a.sort - b.sort;
               });
             }
-            __this.zone.run(() => {});
+            //__this.zone.run(() => {});
             resolve(true);
           }
         })
@@ -624,7 +624,7 @@ export class Api {
             _this.initialize();
             setTimeout(function() {
                 window.location.reload();
-            }, 1000);            
+            }, 1000);
           }
         }
       }).catch((err) => {
