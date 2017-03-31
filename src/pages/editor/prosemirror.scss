@@ -4,11 +4,12 @@
   white-space: pre-wrap;
 
   font-family: ic, Courier, monospace;
-  height: 100%;
+  bottom: 0em;
+  top: 1.5em;
   width: 100%;
   color: black;
   font-size: 1em;
-  line-height: 1.35em;
+  line-height: 1.5em;
   overflow-x: hidden;
   overflow-y: auto;
 
@@ -17,6 +18,11 @@
   user-select: text !important;
 
   padding: .5em; /* Vertical padding around content */
+
+  & > p:first-child {
+    margin-top: 0em;
+    padding-top: 0em;
+  }
 }
 
 .ProseMirror ul, .ProseMirror ol {
@@ -100,6 +106,7 @@ li.ProseMirror-selectednode:after {
 .ProseMirror-menuitem {
   margin-right: 3px;
   display: inline-block;
+  font-family: ic, Courier, monospace;
 }
 
 .ProseMirror-menuseparator {
@@ -108,12 +115,12 @@ li.ProseMirror-selectednode:after {
 }
 
 .ProseMirror-menu-dropdown, .ProseMirror-menu-dropdown-menu {
-  font-size: 90%;
+  font-size: 75%;
   white-space: nowrap;
 }
 
 .ProseMirror-menu-dropdown {
-  vertical-align: 1px;
+  vertical-align: 10px;
   cursor: pointer;
   position: relative;
   padding-right: 15px;
@@ -140,8 +147,13 @@ li.ProseMirror-selectednode:after {
   position: absolute;
   background: white;
   color: #666;
-  border: 1px solid #aaa;
-  padding: 2px;
+  padding: 4px;
+  left: -4px;
+  margin-top: 2px;
+  background: rgba(0,0,0,0.03);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-left: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgba(0,0,0,0.1);
 }
 
 .ProseMirror-menu-dropdown-menu {
@@ -204,12 +216,12 @@ li.ProseMirror-selectednode:after {
   border-top-left-radius: inherit;
   border-top-right-radius: inherit;
   position: relative;
-  min-height: 1em;
-  color: #666;
+  min-height: 1.5em;
+  color: black;
   padding: 1px 6px;
   top: 0; left: 0; right: 0;
-  border-bottom: 1px solid silver;
-  background: white;
+  background: rgba(0,0,0,0.03);
+  border-bottom: 1px solid rgba(0,0,0,0.1);
   z-index: 10;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -226,11 +238,11 @@ li.ProseMirror-selectednode:after {
 
 .ProseMirror-icon svg {
   fill: currentColor;
-  height: 1em;
+  height: 0.8em;
 }
 
 .ProseMirror-icon span {
-  vertical-align: text-top;
+  vertical-align: center;
 }
 /* Add space around the hr to make clicking it easier */
 
