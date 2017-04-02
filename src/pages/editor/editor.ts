@@ -110,13 +110,14 @@ export class Editor {
 
   openModal(mode) {
 
-    var _title, _message, _placeholder, _data;
+    var _title, _message, _placeholder, _data, _value;
 
     var _this = this;
 
     if (mode === "set-title") {
       _title = "Title";
       _placeholder = this.api.data[this.api.current].title;
+      _value = _placeholder != 'Empty Title' ? _placeholder : false;
       _data = "title";
       _message = "Set Document Title";
     }
@@ -124,6 +125,7 @@ export class Editor {
       _title = "ID";
       _placeholder = this.api.data[this.api.current].name;
       _data = "name";
+      _value = _placeholder != 'rf001' ? _placeholder : false;
       _message = "Set Document Identifier";
     }
 
@@ -133,7 +135,8 @@ export class Editor {
       inputs: [
         {
           name: _title,
-          placeholder: _placeholder
+          placeholder: _placeholder,
+          value: _value
         },
       ],
       buttons: [

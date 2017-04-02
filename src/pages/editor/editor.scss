@@ -38,6 +38,9 @@ page-editor {
     .ProseMirror-menubar {
       display: none !important;
     }
+    .ProseMirror {
+      top: 0 !important;
+    }
   }
 
   .swiper-pagination {
@@ -73,7 +76,7 @@ page-editor {
     z-index: 10;
     background: transparent !important;
     .item-inner {
-      padding-left: 1em;
+      padding-left: 0.5em;
       max-width: 850px !important;
       margin: auto !important;
       background: white;

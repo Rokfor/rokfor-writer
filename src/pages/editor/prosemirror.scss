@@ -23,6 +23,10 @@
     margin-top: 0em;
     padding-top: 0em;
   }
+
+  @media screen and (max-width : 700px) {
+    top: 0;
+  }
 }
 
 .ProseMirror ul, .ProseMirror ol {
@@ -226,6 +230,9 @@ li.ProseMirror-selectednode:after {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: visible;
+  @media screen and (max-width : 700px) {
+    display: none;
+  }
 }
 
 .ProseMirror-icon {
