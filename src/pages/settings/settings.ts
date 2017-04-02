@@ -20,8 +20,5 @@ export class Settings {
   ngOnInit() {
   }
 
-  deleteIssue(issueId) {
-    console.log(issueId);
-  }
 
 }

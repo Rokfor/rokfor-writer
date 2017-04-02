@@ -23,4 +23,9 @@ export class Book {
     console.log(this.api.issues.Issues, this.api.current_issue);
   }
 
+
+  deleteIssue(issueId) {
+    console.log(issueId);
+  }
+
 }

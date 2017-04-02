@@ -6,13 +6,15 @@ import { MyApp } from './app.component';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
 import { Book } from '../pages/book/book';
+import { Autoresize } from '../directives/shrink';
 
 @NgModule({
   declarations: [
     MyApp,
     Settings,
     Editor,
-    Book
+    Book,
+    Autoresize
   ],
   imports: [
     IonicModule.forRoot(MyApp),

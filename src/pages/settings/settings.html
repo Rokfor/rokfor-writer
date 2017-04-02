@@ -11,43 +11,15 @@
 
 <ion-content>
 
-  <ion-card *ngIf="api.issues">
-    <ion-list radio-group [(ngModel)]="api.current_issue" (ionChange)="api.changeIssue()">
-      <ion-card-header color="primary">
-        Book Selection
-      </ion-card-header>
-
-
-      <ion-item-sliding *ngFor="let i of api.issues.Issues">
-        <ion-item>
-          <ion-label>{{i.Name}}</ion-label>
-          <ion-radio value="{{i.Id}}"></ion-radio>
-        </ion-item>
-        <ion-item-options side="left">
-          <button ion-button color="danger" (click)="deleteIssue(i.Id)">
-            <ion-icon name="trash"></ion-icon>
-          </button>
-        </ion-item-options>
-      </ion-item-sliding>
-
-
-    </ion-list>
-  </ion-card>
-
-
-  <ion-card>
-
-    <ion-card-header color="primary">
-      Server Settings
-    </ion-card-header>
 
     <ion-list>
-
+      <ion-list-header color="primary">
+        Server Settings
+      </ion-list-header>
       <ion-item>
          <ion-label stacked>Username</ion-label>
          <ion-input clearInput placeholder="Username" [(ngModel)]="api.credentials.user"></ion-input>
       </ion-item>
-
        <ion-item>
          <ion-label stacked>Access Key</ion-label>
          <ion-input clearInput  placeholder="Access Key" [(ngModel)]="api.credentials.rwkey"></ion-input>
@@ -63,5 +35,6 @@
          <button ion-button color="secondary" block (click)="api.logIn()" *ngIf="!api.jwt">Log In</button>
        </ion-item>
     </ion-list>
-  </ion-card>
+
+
 </ion-content>

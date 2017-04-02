@@ -4,12 +4,58 @@
         <ion-icon name="menu"></ion-icon>
       </button>
     <ion-title>
-      <!--{{api.issues.Issues[api.current_issue].Name}}-->
+      Book Coniguration
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-
-<ion-content padding>
-
+<ion-content>
+  <ion-list  *ngIf="api.issues" radio-group [(ngModel)]="api.current_issue" (ionChange)="api.changeIssue()">
+    <ion-list-header color="primary">
+      Active Book
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let i of api.issues.Issues">
+      <ion-item>
+        <ion-label>{{i.Name}}</ion-label>
+        <ion-radio value="{{i.Id}}"></ion-radio>
+      </ion-item>
+      <ion-item-options side="left">
+        <button ion-button color="danger" (click)="deleteIssue(i.Id)">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+  <ion-list  *ngIf="api.issues && api.current_issue">
+    <ion-list-header color="secondary">
+      Book Settings
+    </ion-list-header>
+    <ion-item>
+       <ion-label stacked>Title</ion-label>
+       <ion-input clearInput placeholder="Title"></ion-input>
+    </ion-item>
+    <ion-item>
+       <ion-label stacked>Subtitle</ion-label>
+       <ion-input clearInput placeholder="Title"></ion-input>
+    </ion-item>
+    <ion-item>
+       <ion-label stacked>Autor</ion-label>
+       <ion-input clearInput placeholder="Title"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-list  *ngIf="api.issues && api.current_issue">
+    <ion-list-header color="secondary">
+      Imprint
+    </ion-list-header>
+    <ion-item>
+       <ion-textarea autoresize placeholder="Enter a description"></ion-textarea>
+    </ion-item>
+  </ion-list>
+  <ion-list  *ngIf="api.issues && api.current_issue">
+    <ion-list-header color="secondary">
+      Preface
+    </ion-list-header>
+    <ion-item>
+       <ion-textarea autoresize placeholder="Enter a description"></ion-textarea>
+    </ion-item>
+  </ion-list>
 </ion-content>
