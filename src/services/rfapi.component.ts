@@ -266,7 +266,7 @@ export class Api {
 
               for (let k = 0; k < __this.data.length; k++) {
                 let ld = __this.data[k];
-                console.log(k, d, ld);
+                //console.log(k, d, ld);
                 if (d._id.indexOf(ld.syncId) !== -1) {
                   if (d._deleted === true) {
                     console.log(`add ${k} to delete array`, ld);
@@ -301,7 +301,7 @@ export class Api {
                 return a.sort - b.sort;
               });
             }
-            //__this.zone.run(() => {});
+            __this.zone.run(() => {});
             resolve(true);
           }
         })
@@ -624,7 +624,7 @@ export class Api {
             _this.initialize();
             setTimeout(function() {
                 window.location.reload();
-            }, 1000);
+            }, 2000);
           }
         }
       }).catch((err) => {
