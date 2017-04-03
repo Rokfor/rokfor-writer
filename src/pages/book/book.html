@@ -25,42 +25,42 @@
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-  <ion-list (ngModelChange)="api.bookStore()" *ngIf="api.issues && api.current_issue">
+  <ion-list *ngIf="api.issues && api.current_issue">
     <ion-list-header color="secondary">
       Book Settings
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Title" [(ngModel)]="api.Issue.Name" value="api.Issue.Name"></ion-input>
+       <ion-input placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Name" value="api.Issue.Name"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Short Title</ion-label>
-       <ion-input placeholder="Short Title" [(ngModel)]="api.Issue.Options.ShortTitle" value="api.Issue.Options.ShortTitle"></ion-input>
+       <ion-input placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.ShortTitle" value="api.Issue.Options.ShortTitle"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Inside Title</ion-label>
-       <ion-input placeholder="Inside Title" [(ngModel)]="api.Issue.Options.InsideTitle" value="api.Issue.Options.InsideTitle"></ion-input>
+       <ion-input placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.InsideTitle" value="api.Issue.Options.InsideTitle"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Subtitle</ion-label>
-       <ion-input placeholder="Subtitle" [(ngModel)]="api.Issue.Options.Subtitle" value="api.Issue.Options.Subtitle"></ion-input>
+       <ion-input placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.Subtitle" value="api.Issue.Options.Subtitle"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Author</ion-label>
-       <ion-input placeholder="Author" [(ngModel)]="api.Issue.Options.Author" value="api.Issue.Options.Author"></ion-input>
+       <ion-input placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.Author" value="api.Issue.Options.Author"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Author Short</ion-label>
-       <ion-input placeholder="Author Short Variant" [(ngModel)]="api.Issue.Options.AuthorShort" value="api.Issue.Options.AuthorShort"></ion-input>
+       <ion-input placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.AuthorShort" value="api.Issue.Options.AuthorShort"></ion-input>
     </ion-item>
   </ion-list>
-  <ion-list (ngModelChange)="api.bookStore()" *ngIf="api.issues && api.current_issue">
+  <ion-list *ngIf="api.issues && api.current_issue">
     <ion-list-header color="secondary">
       Imprint
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Imprint Title" [(ngModel)]="api.Issue.Options.ImprintTitle" value="api.Issue.Options.ImprintTitle"></ion-input>
+       <ion-input placeholder="Imprint Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.ImprintTitle" value="api.Issue.Options.ImprintTitle"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Imprint</ion-label>
@@ -68,17 +68,18 @@
         autoresize
         placeholder="Enter a imprint"
         [(ngModel)]="api.Issue.Options.Imprint"
+        (ngModelChange)="api.bookStore()"
         value="api.Issue.Options.Imprint"
        ></ion-textarea>
     </ion-item>
   </ion-list>
-  <ion-list  (ngModelChange)="api.bookStore()" *ngIf="api.issues && api.current_issue">
+  <ion-list *ngIf="api.issues && api.current_issue">
     <ion-list-header color="secondary">
       Preface
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Preface Title" [(ngModel)]="api.Issue.Options.PrefaceTitle" value="api.Issue.Options.PrefaceTitle"></ion-input>
+       <ion-input placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options.PrefaceTitle" value="api.Issue.Options.PrefaceTitle"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Preface</ion-label>
@@ -86,6 +87,7 @@
         autoresize
         placeholder="Enter a preface"
         [(ngModel)]="api.Issue.Options.Preface"
+        (ngModelChange)="api.bookStore()"
         value="api.Issue.Options.Preface"
        ></ion-textarea>
     </ion-item>

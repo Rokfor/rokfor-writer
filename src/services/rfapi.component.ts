@@ -665,6 +665,7 @@ export class Api {
     }
 
     bookStore() {
+      console.log(`Init Issue Storing...`);
       this.dbIssuesStore('issues', this.issues).then((e) => {
         console.log(`Issues Stored: ${e}`);
       })
