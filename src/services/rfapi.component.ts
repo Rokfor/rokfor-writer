@@ -35,6 +35,7 @@ export class Api {
     getOptions: any;
     postOptions: any;
     issues: any;
+    Issue: any;
     current_issue: number = 0;
     initialized: any = false;
     onDevice: boolean;
@@ -162,10 +163,20 @@ export class Api {
     });
   }
 
+  resolveIssue() {
+    this.issues.Issues.forEach((i) => {
+      if (i.Id == this.current_issue) {
+        this.Issue = i;
+        console.log(this.Issue);
+      }
+    })
+  }
+
   loadData(issue:number): Promise<any> {
     if (this.storage.data[issue] === undefined) {
       this.storage.data[issue] = new PouchDB(`rfWriter-data-${issue}`, this.dbsettings);
     }
+    this.resolveIssue();
     return new Promise(resolve => {
       this.dbGet(issue).then((local_data) => {
         this.data = local_data || [];
@@ -437,47 +448,48 @@ export class Api {
     }
 
     changeIssue() {
-        var __this = this;
-        return new Promise(resolve => {
-          __this.storage.settings.get('current_issue')
-          .then(function(doc) {
-            __this.storage.settings.put({
-              _id: 'current_issue',
-              _rev: doc._rev,
-              data: __this.current_issue
-            }).then((response) => {
-              __this.setCurrent(0);
-              __this.loadData(__this.current_issue).then(()=>{
-                console.log("Switched to " + __this.current_issue);
-                __this.syncData().then(()=>{
-                  console.log("Data Synced");
-                  resolve(true);
-                })
-              })
-            }).catch((err) => {
-              resolve(false);
-            });
-          })
-          .catch(function (err) {
-            __this.storage.settings.put({
-              _id: 'current_issue',
-              data: __this.current_issue
-            })
-            .then((response) => {
-              __this.setCurrent(0);
-              __this.loadData(__this.current_issue).then(()=>{
-                console.log("Switched to " + __this.current_issue);
-                __this.syncData().then(()=>{
-                  console.log("Data Synced");
-                  resolve(true);
-                })
+      var __this = this;
+      __this.resolveIssue();
+      return new Promise(resolve => {
+        __this.storage.settings.get('current_issue')
+        .then(function(doc) {
+          __this.storage.settings.put({
+            _id: 'current_issue',
+            _rev: doc._rev,
+            data: __this.current_issue
+          }).then((response) => {
+            __this.setCurrent(0);
+            __this.loadData(__this.current_issue).then(()=>{
+              console.log("Switched to " + __this.current_issue);
+              __this.syncData().then(()=>{
+                console.log("Data Synced");
+                resolve(true);
               })
             })
-            .catch((err)=>{
-              resolve(false);
-            })
+          }).catch((err) => {
+            resolve(false);
           });
+        })
+        .catch(function (err) {
+          __this.storage.settings.put({
+            _id: 'current_issue',
+            data: __this.current_issue
+          })
+          .then((response) => {
+            __this.setCurrent(0);
+            __this.loadData(__this.current_issue).then(()=>{
+              console.log("Switched to " + __this.current_issue);
+              __this.syncData().then(()=>{
+                console.log("Data Synced");
+                resolve(true);
+              })
+            })
+          })
+          .catch((err)=>{
+            resolve(false);
+          })
         });
+      });
     }
 
     change() {
@@ -661,5 +673,11 @@ export class Api {
       }
       return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
         s4() + '-' + s4() + s4() + s4();
+    }
+
+    bookStore() {
+      this.dbIssuesStore('issues', this.issues).then((e) => {
+        console.log(`Issues Stored: ${e}`);        
+      })
     }
 }

@@ -20,7 +20,7 @@ export class Book {
   ) {}
 
   ionViewDidLoad() {
-    console.log(this.api.issues.Issues, this.api.current_issue);
+    console.log(this.api.issues, this.api.current_issue);
   }
 
 
