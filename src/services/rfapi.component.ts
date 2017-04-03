@@ -206,18 +206,7 @@ export class Api {
           // handle change
           if (info.direction === "pull") {
             console.log('GOT ISSUES SYNC');
-
             info.change.docs.forEach((d) => {
-
-                /*
-                 Keys in the Database
-                 credentials
-                 current
-                 current_issue
-                 issues
-                */
-
-
                 if (d._id === "issues"){
                   console.log("Sync Issues", d.data, __this);
                   __this.issues = d.data;
@@ -677,7 +666,7 @@ export class Api {
 
     bookStore() {
       this.dbIssuesStore('issues', this.issues).then((e) => {
-        console.log(`Issues Stored: ${e}`);        
+        console.log(`Issues Stored: ${e}`);
       })
     }
 }
