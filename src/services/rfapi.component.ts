@@ -167,6 +167,10 @@ export class Api {
     this.issues.Issues.forEach((i) => {
       if (i.Id == this.current_issue) {
         this.Issue = i;
+        if (this.Issue.Options[0] == null) {
+          this.Issue.Options[0] = {};  
+        }
+
         console.log(this.Issue);
       }
     })
