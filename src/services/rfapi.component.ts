@@ -37,6 +37,8 @@ export class Api {
     issues: any;
     Issue: any;
     current_issue: number = 0;
+    debounce: any = null;
+    debounceBookStore: any = null;
     initialized: any = false;
     onDevice: boolean;
     zone: any;
@@ -168,7 +170,7 @@ export class Api {
       if (i.Id == this.current_issue) {
         this.Issue = i;
         if (this.Issue.Options[0] == null) {
-          this.Issue.Options[0] = {};  
+          this.Issue.Options[0] = {};
         }
 
         console.log(this.Issue);
@@ -214,6 +216,7 @@ export class Api {
                 if (d._id === "issues"){
                   console.log("Sync Issues", d.data, __this);
                   __this.issues = d.data;
+                  console.log(`Current Issue: ${__this.current_issue}`)
                 }
             });
             __this.zone.run(() => {});
@@ -427,10 +430,15 @@ export class Api {
         }).then(function (result) {
           let _data = [];
           result.rows.sort(function (a, b) {
-            return a.doc.data.sort - b.doc.data.sort;
+            if (a.doc.data != null && b.doc.data != null && a.doc.data.sort && b.doc.data.sort)
+              return a.doc.data.sort - b.doc.data.sort;
+            else
+              return 0;
           });
           result.rows.forEach((d) => {
-            _data.push(d.doc.data);
+            if (d.doc.data) {
+              _data.push(d.doc.data);
+            }
           })
           //console.log(result.rows);
           resolve(_data);
@@ -484,6 +492,16 @@ export class Api {
         });
       });
     }
+
+    changeDebounce() {
+      if (this.debounce !== null) {
+        clearTimeout(this.debounce);
+      }
+      this.debounce = setTimeout(() => {
+        this.change();
+      }, 1000);
+    }
+
 
     change() {
       if (this.initialized === false) return;
@@ -669,9 +687,16 @@ export class Api {
     }
 
     bookStore() {
-      console.log(`Init Issue Storing...`);
-      this.dbIssuesStore('issues', this.issues).then((e) => {
-        console.log(`Issues Stored: ${e}`);
-      })
+      if (this.debounceBookStore !== null) {
+        clearTimeout(this.debounceBookStore);
+      }
+      this.debounceBookStore = setTimeout(() => {
+        console.log(`Init Issue Storing...`);
+        this.dbIssuesStore('issues', this.issues).then((e) => {
+          console.log(`Issues Stored: ${e}`);
+        })
+      }, 1000);
+
+
     }
 }

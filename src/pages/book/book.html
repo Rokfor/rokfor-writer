@@ -9,11 +9,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list  *ngIf="api.issues" radio-group [(ngModel)]="api.current_issue" (ionChange)="api.changeIssue()">
+  <ion-list  *ngIf="api.issues">
     <ion-list-header color="primary">
       Active Book
     </ion-list-header>
-    <ion-item-sliding *ngFor="let i of api.issues.Issues">
+    <ion-item-sliding *ngFor="let i of api.issues.Issues" radio-group [(ngModel)]="api.current_issue" (ionChange)="api.changeIssue()">
       <ion-item>
         <ion-label>{{i.Name}}</ion-label>
         <ion-radio value="{{i.Id}}"></ion-radio>

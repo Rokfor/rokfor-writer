@@ -7,7 +7,7 @@
 
     <ion-title *ngIf="api.data.length > 0 && api.data[api.current]">
       <ion-input
-        (ngModelChange)="api.change()"
+        (ngModelChange)="api.changeDebounce()"
         [(ngModel)]='api.data[api.current].name'
         placeholder="{{api.data[api.current].name}}">
       </ion-input>
@@ -42,7 +42,7 @@
     <ion-slide *ngFor="let e of api.data; trackBy: trackByFn">
       <ion-item [hidden]="!initialized">
         <ion-label stacked>Titel</ion-label>
-        <ion-input [(ngModel)]="e.title" (ngModelChange)="api.change()" placeholder="{{e.title}}"></ion-input>
+        <ion-input [(ngModel)]="e.title" (ngModelChange)="api.changeDebounce()" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
         <!--<codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">

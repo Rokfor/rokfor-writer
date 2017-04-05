@@ -38,7 +38,7 @@
   <ion-footer>
     <ion-toolbar>
       <ion-buttons>
-        <button ion-button small  icon-only (click)="toggleFs()">
+        <button ion-button small  *ngIf="electron" icon-only (click)="toggleFs()">
           <ion-icon name="resize"></ion-icon>
         </button>
         <button ion-button small  icon-only [disabled]="!editor" (click)="editor.printPage()">

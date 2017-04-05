@@ -23,6 +23,7 @@ export class MyApp {
   events: any;
   editor: any = false;
   pages: Array<{title: string, component: any, icon: string}>;
+  electron: any;
 
   constructor(
     public platform: Platform,
@@ -31,6 +32,7 @@ export class MyApp {
   ) {
     this.events = events;
     this.initializeApp();
+    this.electron = electron;
 
 
     // used for an example of ngFor and navigation
