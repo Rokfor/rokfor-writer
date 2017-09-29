@@ -46,61 +46,62 @@ export class Editor {
     public events: Events,
     public alert: AlertController,
     public platform: Platform,
+    public printer: Printer
   ) {
-    var _this = this;
+    var self = this;
 
-    _this.cm_options.cursorBlinkRate = _this.platform.is('core') ? "500" : -1;
+    self.cm_options.cursorBlinkRate = self.platform.is('core') ? "500" : -1;
 
 
-    _this.loading = this.loadingCtrl.create({
+    self.loading = this.loadingCtrl.create({
       content: "Please wait..."
     });
-    _this.loading.present();
+    self.loading.present();
     //this.ctrl = new FormControl();
 
     events.subscribe('page:change', (page) => {
       console.log("got page change");
-      _this.slider.slideTo(page);
+      self.slider.slideTo(page);
       /*
-      if (_this.slider.getSlider() !== undefined && typeof _this.slider.slideTo === "function") {
+      if (self.slider.getSlider() !== undefined && typeof self.slider.slideTo === "function") {
         setTimeout(() => {
           console.log('done')
-          _this.slider.slideTo(page);
+          self.slider.slideTo(page);
         }, 250);
       }*/
     });
 
     events.subscribe('page:redraw', (page) => {
       console.log("got page redraw");
-      _this.slider.slideTo(_this.slider.getActiveIndex(), 0, false)
+      self.slider.slideTo(self.slider.getActiveIndex(), 0, false)
       /*
-      console.log(_this.slider);
-      if (_this.slider.getSlider() !== undefined) {
+      console.log(self.slider);
+      if (self.slider.getSlider() !== undefined) {
         setTimeout(() => {
-          let s = _this.slider.getSlider();
+          let s = self.slider.getSlider();
           //s.update();
-          _this.slider.slideTo(_this.slider.getActiveIndex(), 0, false);
+          self.slider.slideTo(self.slider.getActiveIndex(), 0, false);
         }, 250);
       }*/
     });
 
 
 
-    //console.log("Initialize Slide ", _this.initialSlide);
-    //if (_this.initialized && _this.slider) {
-    //  _this.slider.slideTo(_this.initialSlide, 0);
+    //console.log("Initialize Slide ", self.initialSlide);
+    //if (self.initialized && self.slider) {
+    //  self.slider.slideTo(self.initialSlide, 0);
     //}
-    _this.mySlideOptions = {
+    self.mySlideOptions = {
       direction: "vertical",
       onlyExternal: true,
       slidesPerView: 1,
       runCallbacksOnInit: false,
       preventClicksPropagation: false,
       preventClicks: false,
-      initialSlide: _this.api.getCurrent(),
+      initialSlide: self.api.getCurrent(),
       onInit: (slides: any) => {
-        _this.loading.dismiss();
-        _this.initialized = true;
+        self.loading.dismiss();
+        self.initialized = true;
       }
     };
   }
@@ -113,7 +114,7 @@ export class Editor {
 
     var _title, _message, _placeholder, _data, _value;
 
-    var _this = this;
+    var self = this;
 
     if (mode === "set-title") {
       _title = "Title";
@@ -151,8 +152,8 @@ export class Editor {
           text: 'Save',
           handler: data => {
             console.log('Saved clicked', data);
-            _this.api.data[_this.api.current][_data] = data[_title];
-            _this.api.change();
+            self.api.data[self.api.current][_data] = data[_title];
+            self.api.change();
           }
         }
       ]
@@ -228,26 +229,26 @@ export class Editor {
   printPage() {
     const converter = new Converter();
     converter.setOption('simpleLineBreaks', true);
-    var _this  = this;
+    var self  = this;
     var _print = '<!DOCTYPE html><html><head>  '
                + '<link href="build/print.css" rel="stylesheet" media="print">'
                + '</head><body class="print">'
-               + '<div class="title">' + converter.makeHtml(_this.api.data[_this.api.current].title) + '</div>'
-               + '<div class="body">' + converter.makeHtml(_this.api.data[_this.api.current].body) + '</div>'
+               + '<div class="title">' + converter.makeHtml(self.api.data[self.api.current].title) + '</div>'
+               + '<div class="body">' + converter.makeHtml(self.api.data[self.api.current].body) + '</div>'
                + '</html>';
 
     /* Cordova Air Print */
 
-    if (_this.platform.is('cordova')) {
-      Printer.isAvailable().then(
+    if (self.platform.is('cordova')) {
+      this.printer.isAvailable().then(
         () => {
         let options: PrintOptions = {
-             name: _this.api.data[_this.api.current].title,
+             name: self.api.data[self.api.current].title,
              duplex: true,
              landscape: false,
              grayscale: true
          };
-         Printer.print(_print, options).then(
+         this.printer.print(_print, options).then(
           () => {console.log("Printing succeeded");},
           () => {console.log("No Printer Available");}
          );
