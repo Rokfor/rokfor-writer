@@ -1,5 +1,6 @@
+
 import { Component, ViewChild } from '@angular/core';
-import { Printer, PrintOptions } from 'ionic-native';
+import { Printer, PrintOptions } from '@ionic-native/printer';
 import { Platform, NavController, LoadingController, Slides, Events, AlertController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 import 'codemirror/mode/markdown/markdown.js';
