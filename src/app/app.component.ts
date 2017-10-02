@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform, Events } from 'ionic-angular';
-import { StatusBar, Splashscreen } from 'ionic-native';
+import { StatusBar } from '@ionic-native/status-bar';
+import { SplashScreen } from '@ionic-native/splash-screen';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
 import { Book } from '../pages/book/book';
@@ -13,8 +14,15 @@ declare var electron: any;
 
 @Component({
   templateUrl: 'app.html',
-  providers: [Api]
+  providers: [
+    StatusBar,
+    SplashScreen,
+    Api
+  ]
 })
+
+
+
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
@@ -28,6 +36,8 @@ export class MyApp {
   constructor(
     public platform: Platform,
     private api:Api,
+    private statusBar: StatusBar,
+    private splashScreen: SplashScreen,
     events: Events
   ) {
     this.events = events;
@@ -45,7 +55,7 @@ export class MyApp {
 
   initializeApp() {
 
-    //let _this = this;
+    //let self = this;
 
     if (ipcRenderer) {
       ipcRenderer.on('main:ipc', (event, message) => {
@@ -97,11 +107,11 @@ export class MyApp {
 
       console.log(this.platform)
 
-      StatusBar.styleDefault();
-      Splashscreen.hide();
-      if (this.nav.getActive().name === "Editor") {
-        this.editor = this.nav.getActive().instance;
-      }
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
+      //if (this.nav.getActive().name === "Editor") {
+      //  this.editor = this.nav.getActive().instance;
+      //}
     });
   }
 
@@ -122,13 +132,13 @@ export class MyApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    var _this = this;
+    var self = this;
     this.nav.setRoot(page.component).then(function(e){
-      if (_this.nav.getActive().name === "Editor") {
-        _this.editor = _this.nav.getActive().instance;
+      if (self.nav.getActive().name === "Editor") {
+        self.editor = self.nav.getActive().instance;
       }
       else {
-        _this.editor = false;
+        self.editor = false;
       }
     });
   }
@@ -136,15 +146,15 @@ export class MyApp {
   openEditor(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    var _this = this;
+    var self = this;
     if (this.nav.getActive().name === "Editor") {
       this.events.publish('page:change', page);
     }
     else {
       //this.nav.setRoot(Editor, {page: page});
       this.nav.setRoot(Editor).then(function(e){
-        _this.events.publish('page:change', page);
-        _this.editor = _this.nav.getActive().instance;
+        self.events.publish('page:change', page);
+        self.editor = self.nav.getActive().instance;
       });
     }
   }

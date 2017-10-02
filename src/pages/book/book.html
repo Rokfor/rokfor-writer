@@ -31,27 +31,27 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Name" value="api.Issue.Name"></ion-input>
+       <ion-input placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Name"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Short Title</ion-label>
-       <ion-input placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].ShortTitle" value="api.Issue.Options[0].ShortTitle"></ion-input>
+       <ion-input placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Inside Title</ion-label>
-       <ion-input placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].InsideTitle" value="api.Issue.Options[0].InsideTitle"></ion-input>
+       <ion-input placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[1].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Subtitle</ion-label>
-       <ion-input placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].Subtitle" value="api.Issue.Options[0].Subtitle"></ion-input>
+       <ion-input placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[2].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Author</ion-label>
-       <ion-input placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].Author" value="api.Issue.Options[0].Author"></ion-input>
+       <ion-input placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[3].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Author Short</ion-label>
-       <ion-input placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].AuthorShort" value="api.Issue.Options[0].AuthorShort"></ion-input>
+       <ion-input placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[4].value"></ion-input>
     </ion-item>
   </ion-list>
   <ion-list *ngIf="api.issues && api.current_issue">
@@ -60,16 +60,15 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Imprint Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].ImprintTitle" value="api.Issue.Options[0].ImprintTitle"></ion-input>
+       <ion-input placeholder="Imprint Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[5].value"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Imprint</ion-label>
        <ion-textarea
         autoresize
         placeholder="Enter a imprint"
-        [(ngModel)]="api.Issue.Options[0].Imprint"
+        [(ngModel)]="api.Issue.Options[6].value"
         (ngModelChange)="api.bookStore()"
-        value="api.Issue.Options[0].Imprint"
        ></ion-textarea>
     </ion-item>
   </ion-list>
@@ -79,16 +78,15 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[0].PrefaceTitle" value="api.Issue.Options[0].PrefaceTitle"></ion-input>
+       <ion-input placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.Issue.Options[7].value"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Preface</ion-label>
        <ion-textarea
         autoresize
         placeholder="Enter a preface"
-        [(ngModel)]="api.Issue.Options[0].Preface"
+        [(ngModel)]="api.Issue.Options[8].value"
         (ngModelChange)="api.bookStore()"
-        value="api.Issue.Options[0].Preface"
        ></ion-textarea>
     </ion-item>
   </ion-list>

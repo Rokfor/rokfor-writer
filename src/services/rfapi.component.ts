@@ -1,12 +1,8 @@
-import {Network} from "ionic-native";
 import {Component, Injectable, NgZone, ApplicationRef} from "@angular/core";
 import {Http, Headers, RequestOptions, URLSearchParams} from "@angular/http";
-import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
 import 'rxjs/Rx';
 import { reorderArray, Platform, Events } from 'ionic-angular';
-import {observable, autorun} from "mobx";
-import { Issue } from './issues';
+//import { Issue } from './issues';
 import PouchDB from 'pouchdb';
 
 
@@ -22,12 +18,10 @@ interface dataset {
     syncId:   string;
 };
 
-declare function emit (val: any);
-
 @Injectable()
 
 export class Api {
-    http: any;
+    http: Http;
     storage:  any = {};
     credentialsdb: any;
     current: number = 0;
@@ -41,14 +35,26 @@ export class Api {
     debounceBookStore: any = null;
     initialized: any = false;
     onDevice: boolean;
-    zone: any;
-    events: any;
+    zone: NgZone;
+    events: Events;
     sync: any;
     fullscreen: boolean = false;
     dbsettings: any = {
       size: 50,
       auto_compaction: true
     };
+
+    issueoptions: any = [
+      "ShortTitle",
+      "InsideTitle",
+      "Subtitle",
+      "Author",
+      "AuthorShort",
+      "ImprintTitle",
+      "Imprint",
+      "PrefaceTitle",
+      "Preface"
+    ];
 
 
     data: Array < dataset > = [];
@@ -169,10 +175,12 @@ export class Api {
     this.issues.Issues.forEach((i) => {
       if (i.Id == this.current_issue) {
         this.Issue = i;
-        if (this.Issue.Options[0] == null) {
-          this.Issue.Options[0] = {};
+        this.Issue.Options = this.Issue.Options || [];
+        for (var i = this.issueoptions.length - 1; i >= 0; i--) {
+          if (this.Issue.Options[i] == null) {
+            this.Issue.Options[i] = {key: this.issueoptions[i],value:""};
+          }
         }
-
         console.log(this.Issue);
       }
     })
@@ -198,15 +206,15 @@ export class Api {
   }
 
   syncIssues(): Promise<any> {
-      var __this = this;
+      var self = this;
       return new Promise(resolve => {
         this.sync.issues = this.storage.issues.sync(`${this.credentials.server}/rf-${this.credentials.user}`, {
           live: true,
           retry: true,
           continuous: true,
           auth: {
-            username: __this.credentials.user,
-            password: __this.credentials.rwkey
+            username: self.credentials.user,
+            password: self.credentials.rwkey
           }
         }).on('change', function (info) {
           // handle change
@@ -214,20 +222,20 @@ export class Api {
             console.log('GOT ISSUES SYNC');
             info.change.docs.forEach((d) => {
                 if (d._id === "issues"){
-                  console.log("Sync Issues", d.data, __this);
-                  __this.issues = d.data;
-                  console.log(`Current Issue: ${__this.current_issue}`)
+                  console.log("Sync Issues", d.data, self);
+                  self.issues = d.data;
+                  console.log(`Current Issue: ${self.current_issue}`)
                 }
             });
-            __this.zone.run(() => {});
+            self.zone.run(() => {});
             resolve(true);
           }
         })
-        .on('paused',   function (err)  {__this.jwt = true; console.log("----> paused"); resolve(true);})
-        .on('active',   function ()     {__this.jwt = true; console.log("----> active"); resolve(true);})
-        .on('denied',   function (err)  {__this.jwt = false; console.log("----> denied"); resolve(false);})
+        .on('paused',   function (err)  {self.jwt = true; console.log("----> paused"); resolve(true);})
+        .on('active',   function ()     {self.jwt = true; console.log("----> active"); resolve(true);})
+        .on('denied',   function (err)  {self.jwt = false; console.log("----> denied"); resolve(false);})
         .on('complete', function (info) {console.log("----> complete"); resolve(true);})
-        .on('error',    function (err)  {__this.jwt = false; console.log("----> error");  resolve(false);});
+        .on('error',    function (err)  {self.jwt = false; console.log("----> error");  resolve(false);});
       });
     }
 
@@ -235,7 +243,7 @@ export class Api {
 
       this.sync.contributions = this.sync.contributions || [];
 
-      var __this = this;
+      var self = this;
       return new Promise(resolve => {
         if (this.storage.data[this.current_issue] === undefined || !this.current_issue){
           console.log("Cannot Sync: No Storage Engine")
@@ -254,8 +262,8 @@ export class Api {
           retry: true,
           continuous: true,
           auth: {
-            username: __this.credentials.user,
-            password: __this.credentials.rwkey
+            username: self.credentials.user,
+            password: self.credentials.rwkey
           }
         }).on('change', function (info) {
           // handle change
@@ -266,19 +274,19 @@ export class Api {
             let fullSync = false;
             let reSort = false;
 
-            console.log(info.change.docs, __this.data);
+            console.log(info.change.docs, self.data);
 
             info.change.docs.forEach((d) => {
               let needsUpdate = true;
 
-              for (let k = 0; k < __this.data.length; k++) {
-                let ld = __this.data[k];
+              for (let k = 0; k < self.data.length; k++) {
+                let ld = self.data[k];
                 //console.log(k, d, ld);
                 if (d._id.indexOf(ld.syncId) !== -1) {
                   if (d._deleted === true) {
                     console.log(`add ${k} to delete array`, ld);
-                    __this.data.splice(k, 1);
-                    __this.data.forEach((e,i) => {
+                    self.data.splice(k, 1);
+                    self.data.forEach((e,i) => {
                       if (e.sort != i) {
                         e.sort = i;
                       }
@@ -286,7 +294,7 @@ export class Api {
                   }
                   else {
                     console.log(`GOT DATA SYNC ---> ${ld.syncId}`, d.data);
-                    __this.data[k] = d.data;
+                    self.data[k] = d.data;
                     needsUpdate = false;
                     if (ld.sort != d.data.sort) {
                       reSort = true;
@@ -300,15 +308,15 @@ export class Api {
 
             if (fullSync) {
               console.log(`FULL SYNC NEEDED`);
-              __this.loadData(__this.current_issue);
+              self.loadData(self.current_issue);
             }
             else if (reSort) {
               console.log(`RESORT NEEDED`);
-              __this.data.sort(function (a, b) {
+              self.data.sort(function (a, b) {
                 return a.sort - b.sort;
               });
             }
-            __this.zone.run(() => {});
+            self.zone.run(() => {});
             resolve(true);
           }
         })
@@ -325,11 +333,11 @@ export class Api {
     }
 
     dbIssuesStore(document:string, data:any): Promise<any> {
-      let __this = this;
+      let self = this;
       return new Promise(resolve => {
-        __this.storage.issues.get(document)
+        self.storage.issues.get(document)
         .then(function(doc) {
-          __this.storage.issues.put({
+          self.storage.issues.put({
             _id: document,
             _rev: doc._rev,
             data: data
@@ -340,7 +348,7 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.storage.issues.put({
+          self.storage.issues.put({
             _id: document,
             data: data
           })
@@ -355,12 +363,12 @@ export class Api {
     }
 
     dbIssuesGet(document:string): Promise<any> {
-      var __this = this;
+      var self = this;
       return new Promise(resolve => {
-        __this.storage.issues.get(document).then(function(doc) {
+        self.storage.issues.get(document).then(function(doc) {
           resolve(doc.data);
         }).catch(function (err) {
-          __this.storage.issues.put({
+          self.storage.issues.put({
             _id: document,
             data: false
           }).then(function(doc) {
@@ -377,16 +385,16 @@ export class Api {
     **/
 
     dbStore(issue:number, data:any): Promise<any> {
-      let __this = this;
+      let self = this;
       let document = `contribution-${issue}-${data.syncId}`;
       return new Promise(resolve => {
         if (!this.current_issue) {
           resolve(false);
           return;
         }
-        __this.storage.data[issue].get(document)
+        self.storage.data[issue].get(document)
         .then(function(doc) {
-          __this.storage.data[issue].put({
+          self.storage.data[issue].put({
             _id: document,
             _rev: doc._rev,
             data: data
@@ -397,7 +405,7 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.storage.data[issue].put({
+          self.storage.data[issue].put({
             _id: document,
             data: data
           })
@@ -418,11 +426,11 @@ export class Api {
      **/
 
     dbGet(issue:number): Promise<any> {
-      var __this = this;
+      var self = this;
       return new Promise(resolve => {
         console.log(`ok - here we go. trying to read all contributions starting with: contribution-${issue}`);
 
-        __this.storage.data[issue].allDocs({
+        self.storage.data[issue].allDocs({
           include_docs: true,
           attachments: true,
           startkey: `contribution-${issue}`,
@@ -449,20 +457,20 @@ export class Api {
     }
 
     changeIssue() {
-      var __this = this;
-      __this.resolveIssue();
+      var self = this;
+      self.resolveIssue();
       return new Promise(resolve => {
-        __this.storage.settings.get('current_issue')
+        self.storage.settings.get('current_issue')
         .then(function(doc) {
-          __this.storage.settings.put({
+          self.storage.settings.put({
             _id: 'current_issue',
             _rev: doc._rev,
-            data: __this.current_issue
+            data: self.current_issue
           }).then((response) => {
-            __this.setCurrent(0);
-            __this.loadData(__this.current_issue).then(()=>{
-              console.log("Switched to " + __this.current_issue);
-              __this.syncData().then(()=>{
+            self.setCurrent(0);
+            self.loadData(self.current_issue).then(()=>{
+              console.log("Switched to " + self.current_issue);
+              self.syncData().then(()=>{
                 console.log("Data Synced");
                 resolve(true);
               })
@@ -472,15 +480,15 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.storage.settings.put({
+          self.storage.settings.put({
             _id: 'current_issue',
-            data: __this.current_issue
+            data: self.current_issue
           })
           .then((response) => {
-            __this.setCurrent(0);
-            __this.loadData(__this.current_issue).then(()=>{
-              console.log("Switched to " + __this.current_issue);
-              __this.syncData().then(()=>{
+            self.setCurrent(0);
+            self.loadData(self.current_issue).then(()=>{
+              console.log("Switched to " + self.current_issue);
+              self.syncData().then(()=>{
                 console.log("Data Synced");
                 resolve(true);
               })
@@ -533,24 +541,24 @@ export class Api {
 
       let _delete = this.data.splice(item, 1);
       let _doc = `contribution-${this.current_issue}-${_delete[0].syncId}`;
-      let __this = this;
+      let self = this;
       console.log(`Deleting: ${_doc}`);
 
       this.storage.data[this.current_issue].get(_doc).then(function (doc) {
         console.log(`Deleted ${_delete[0].syncId} from DB`);
-        /*__this.data.forEach((e,i) => {
+        /*self.data.forEach((e,i) => {
           if (e.sort != i) {
             e.sort = i;
-            __this.dbStore(__this.current_issue, e);
+            self.dbStore(self.current_issue, e);
           }
         })*/
-        return __this.storage.data[__this.current_issue].put({
+        return self.storage.data[self.current_issue].put({
           _id: doc._id,
           _rev: doc._rev,
           _deleted: true,
           data: doc.data.id
         })
-        //return __this.storage.data.remove(doc);
+        //return self.storage.data.remove(doc);
       });
     }
 
@@ -566,21 +574,21 @@ export class Api {
         issue: this.current_issue,
         syncId: this.guid(),
       };
-      let __this = this;
+      let self = this;
       return new Promise(resolve => {
         this.dbStore(this.current_issue, _data).then((d) => {
-          __this.data.splice(position, 0, _data);
-          __this.data.forEach((e,i) => {
+          self.data.splice(position, 0, _data);
+          self.data.forEach((e,i) => {
             if (e.sort != i) {
               e.sort = i;
               this.dbStore(this.current_issue, e);
             }
           })
-          __this.setCurrent(position);
+          self.setCurrent(position);
           setTimeout(() => {
             this.applicationRef.tick();
             setTimeout(() => {
-              __this.events.publish('page:change', position);
+              self.events.publish('page:change', position);
             }, 250);
           }, 250);
           resolve(true);
@@ -604,15 +612,15 @@ export class Api {
 
     /* Called if settings changed */
     storeCredentials() {
-      var __this = this;
+      var self = this;
       console.log(this.credentials);
       return new Promise(resolve => {
-        __this.credentialsdb.get('credentials')
+        self.credentialsdb.get('credentials')
         .then(function(doc) {
-          __this.credentialsdb.put({
+          self.credentialsdb.put({
             _id: 'credentials',
             _rev: doc._rev,
-            data: __this.credentials
+            data: self.credentials
           }).then((response) => {
             resolve(true);
           }).catch((err) => {
@@ -620,9 +628,9 @@ export class Api {
           });
         })
         .catch(function (err) {
-          __this.credentialsdb.put({
+          self.credentialsdb.put({
             _id: 'credentials',
-            data: __this.credentials
+            data: self.credentials
           })
           .then((response) => {
             resolve(true);
@@ -635,16 +643,16 @@ export class Api {
     }
 
     logIn() {
-      var _this = this;
+      var self = this;
       if (!this.credentialsdb) {
         this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
       }
       this.storeCredentials().then((response) => {
-        /*_this.syncIssues();
-        _this.syncData();*/
+        /*self.syncIssues();
+        self.syncData();*/
         if (response === true) {
-          if (!_this.initialized) {
-            _this.initialize();
+          if (!self.initialized) {
+            self.initialize();
             setTimeout(function() {
                 window.location.reload();
             }, 2000);

@@ -1,12 +1,14 @@
 export class Issue {
   Hash: string;
+  QueryTime: string;
   Issues: [{
     Id: number;
-    Localization: any;
     Name: string;
-    Options: any;
-    Parent: any;
     ReferencedFrom: any;
+    Localization: any;
+    Status: any;
+    Options: any;
     Type: any;
+    Parent: any;
   }];
 }

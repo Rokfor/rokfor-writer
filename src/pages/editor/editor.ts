@@ -12,7 +12,8 @@ import {Converter} from "showdown/dist/showdown";
 
 @Component({
   selector: 'page-editor',
-  templateUrl: 'editor.html'
+  templateUrl: 'editor.html',
+  providers: [Printer]
 })
 
 export class Editor {
