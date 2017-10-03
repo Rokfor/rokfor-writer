@@ -176,9 +176,9 @@ export class Api {
       if (i.Id == this.current_issue) {
         this.Issue = i;
         this.Issue.Options = this.Issue.Options || [];
-        for (var i = this.issueoptions.length - 1; i >= 0; i--) {
-          if (this.Issue.Options[i] == null) {
-            this.Issue.Options[i] = {key: this.issueoptions[i],value:""};
+        for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
+          if (this.Issue.Options[_i] == null) {
+            this.Issue.Options[_i] = {key: this.issueoptions[_i],value:""};
           }
         }
         console.log(this.Issue);
