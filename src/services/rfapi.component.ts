@@ -140,6 +140,7 @@ export class Api {
         this.syncIssues().then((success) => {
           this.dbIssuesGet('issues').then((issues_offline) => {
             this.issues = issues_offline || false;
+            console.log("--------> current issue:", this.issues);
             this.storage.settings.get('current_issue').then((current_issue) => {
               console.log("--------> current issue:", current_issue);
               this.current_issue = current_issue.data ||
@@ -197,6 +198,10 @@ export class Api {
         //this.dbIssuesGet('current').then((d) => {
         //  console.log("- loading current page");
         //  this.current = d || this.current;
+        this.data.sort(function (a, b) {
+          return a.sort - b.sort;
+        });
+
           this.initialized = true;
           this.events.publish('page:change', this.current);
           resolve(true);
@@ -321,7 +326,7 @@ export class Api {
           }
         })
         .on('paused',   function (err)  {console.log("----> sync data paused"); resolve(true);})
-        .on('active',   function ()     {console.log("----> sync data active"); resolve(true);})
+        .on('active',   function (info) {console.log("----> sync data active", info); resolve(true);})
         .on('denied',   function (err)  {console.log("----> sync data denied", err); resolve(false);})
         .on('complete', function (info) {console.log("----> sync data complete"); resolve(true);})
         .on('error',    function (err)  {console.log("----> sync data error", err); resolve(false);})
@@ -399,8 +404,10 @@ export class Api {
             _rev: doc._rev,
             data: data
           }).then((response) => {
+            console.log(`Stored contribution-${issue}-${data.syncId} NAME: ${data.name}/${data.sort}`);
             resolve(true);
           }).catch((err) => {
+            console.log(`!!! Error storing old contribution --> switching to add mode`);
             resolve(false);
           });
         })
@@ -410,9 +417,11 @@ export class Api {
             data: data
           })
           .then((response) => {
+            console.log(`Stored new contribution`);
             resolve(true);
           })
           .catch((err)=>{
+            console.log(`!!! Error storing new contribution`);
             resolve(false);
           })
         });
@@ -522,6 +531,7 @@ export class Api {
     reorder(indexes){
       if (this.initialized === false) return;
       this.data = reorderArray(this.data, indexes);
+
       this.data.forEach((e,i) => {
         if (e.sort != i) {
           e.sort = i;

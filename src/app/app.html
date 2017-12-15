@@ -22,8 +22,11 @@
       <ion-item-group reorder="true" (ionItemReorder)="reorderPages($event)">
         <ion-item-sliding *ngFor="let d of api.data; let i = index;" >
           <ion-item menuClose (click)="openEditor(i)">
-            <p>{{d.title}}</p>
-            <ion-note item-right>{{d.name}}</ion-note>
+            {{d.title}}
+            <br>
+            <span class="smallfont">
+              Id: <b>{{d.id}}</b>&nbsp;&nbsp;Name: <b>{{d.name}}</b>
+            </span>
           </ion-item>
           <ion-item-options side="left">
             <button ion-button color="danger" (click)="deletePage(i)">

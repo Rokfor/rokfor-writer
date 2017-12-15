@@ -29,7 +29,12 @@ function createWindow () {
   let filename = "";
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({show: false, width: 800, height: 600})
+  mainWindow = new BrowserWindow({
+    show: false, 
+    width: 800, 
+    height: 600,
+    icon: path.join(__dirname, 'assets/electron_icons/256x256.png')
+  })
   mainWindow.once('ready-to-show', function() {
     mainWindow.show();
   })

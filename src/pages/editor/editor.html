@@ -69,9 +69,13 @@
       <button ion-button clear icon-only (click)="addPage()">
         <ion-icon name="add"></ion-icon>
       </button>
-      <button ion-button clear (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.current]">
-        <ion-badge *ngIf="tgInfo" item-right>Id: {{api.data[api.current].id}} Chars: {{api.data[api.current].body.length}} Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
-        <ion-icon *ngIf="!tgInfo" name="information-circle-outline"></ion-icon>
+      <button ion-button clear icon-only (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.current]">
+        <span *ngIf="tgInfo">
+          <ion-badge item-right color="light">Rokfor Id: {{api.data[api.current].id}}</ion-badge>&nbsp;
+          <ion-badge item-right color="light">Characters: {{api.data[api.current].body.length}}</ion-badge>&nbsp;
+          <ion-badge item-right color="light">Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
+        </span>
+        <ion-icon *ngIf="!tgInfo" ios="ios-information-circle-outline" md="md-information-circle"></ion-icon>
       </button>
     </ion-title>
 
