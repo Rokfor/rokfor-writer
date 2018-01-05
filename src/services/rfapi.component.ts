@@ -23,7 +23,7 @@ interface dataset {
 export class Api {
     http: Http;
     storage:  any = {};
-    credentialsdb: any;
+    credentialsdb: any = null;
     current: number = 0;
     jwt: boolean = false;
     getOptions: any;
@@ -77,50 +77,56 @@ export class Api {
       this.events = events;
       this.onDevice = platform.is('cordova');
       this.zone = zone;
-      this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
       this.initialize();
   }
 
-  destroyDB() {
+  async destroyDB() {
 
+    try {
+      await this.storage.issues.destroy();  
+      console.log("issues destroyed");
+    } catch (err) {
+      console.log("issues not found");
+    }
 
-    this.storage.issues.destroy().then(function () {
-      console.log("issues destroyed")
-    }).catch(function (err) {
-      console.log("issues not found")
-    })
-    this.credentialsdb.destroy().then(function () {
-      console.log("credentials destroyed")
-    }).catch(function (err) {
-      console.log("credentials not found")
-    })
-    this.storage.settings.destroy().then(function () {
-      console.log("settings destroyed")
-    }).catch(function (err) {
-      console.log("settings not found")
-    })
-
+    try {
+      await this.credentialsdb.destroy();
+      console.log("credentials destroyed");
+    } catch (err) {
+      console.log("credentials not found");
+    }   
+    
+    try {
+      await this.storage.settings.destroy();
+      console.log("settings destroyed");
+    } catch (err) {
+      console.log("settings not found");
+    }   
+    
     for (let k = 0; k < this.storage.data.length; k++) {
       let d = this.storage.data[k];
       if (d && typeof d.destroy === "function") {
-        d.destroy().then(function () {
-          console.log("data destroyed")
-        }).catch(function (err) {
-          console.log("data not found")
-        })
+        try {
+          await d.destroy();
+          console.log("data destroyed");
+        } catch (err) {
+          console.log("data not found");
+        }   
       }
     }
-
-    this.storage = {};
-    this.data = [];
-    this.credentialsdb = false;
-
-
+   
+    this.storage = null;
+    this.credentialsdb = null;
+    this.issues = null;
+    this.initialized = false;
 
   }
 
   initialize() {
     console.log("Initializing API");
+    if (this.credentialsdb == null) {
+      this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
+    }
     this.current = 0;
     this.sync = {
       contributions: []
@@ -173,6 +179,7 @@ export class Api {
   }
 
   resolveIssue() {
+    if (this.issues.Issues == undefined) return;
     this.issues.Issues.forEach((i) => {
       if (i.Id == this.current_issue) {
         this.Issue = i;
@@ -227,17 +234,19 @@ export class Api {
             console.log('GOT ISSUES SYNC');
             info.change.docs.forEach((d) => {
                 if (d._id === "issues"){
-                  console.log("Sync Issues", d.data, self);
+                  console.log("Sync Issues", d);
                   self.issues = d.data;
                   console.log(`Current Issue: ${self.current_issue}`)
                 }
             });
+            /*
             self.zone.run(() => {});
             resolve(true);
+            */
           }
         })
         .on('paused',   function (err)  {self.jwt = true; console.log("----> paused"); resolve(true);})
-        .on('active',   function ()     {self.jwt = true; console.log("----> active"); resolve(true);})
+        .on('active',   function ()     {self.jwt = true; console.log("----> active"); /*resolve(true);*/})
         .on('denied',   function (err)  {self.jwt = false; console.log("----> denied"); resolve(false);})
         .on('complete', function (info) {console.log("----> complete"); resolve(true);})
         .on('error',    function (err)  {self.jwt = false; console.log("----> error");  resolve(false);});
@@ -321,12 +330,14 @@ export class Api {
                 return a.sort - b.sort;
               });
             }
+            /*
             self.zone.run(() => {});
             resolve(true);
+            */
           }
         })
         .on('paused',   function (err)  {console.log("----> sync data paused"); resolve(true);})
-        .on('active',   function (info) {console.log("----> sync data active", info); resolve(true);})
+        .on('active',   function (info) {console.log("----> sync data active", info); /*resolve(true);*/})
         .on('denied',   function (err)  {console.log("----> sync data denied", err); resolve(false);})
         .on('complete', function (info) {console.log("----> sync data complete"); resolve(true);})
         .on('error',    function (err)  {console.log("----> sync data error", err); resolve(false);})
@@ -623,7 +634,12 @@ export class Api {
     /* Called if settings changed */
     storeCredentials() {
       var self = this;
-      console.log(this.credentials);
+      console.log(this.credentials, this.credentialsdb);
+
+      if (this.credentialsdb == null) {
+        this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
+      }
+
       return new Promise(resolve => {
         self.credentialsdb.get('credentials')
         .then(function(doc) {
@@ -654,19 +670,17 @@ export class Api {
 
     logIn() {
       var self = this;
-      if (!this.credentialsdb) {
-        this.credentialsdb = new PouchDB('rfWriter-credentials', this.dbsettings)
-      }
+      self.initialized = false;
       this.storeCredentials().then((response) => {
         /*self.syncIssues();
         self.syncData();*/
         if (response === true) {
-          if (!self.initialized) {
+          //if (!self.initialized) {
             self.initialize();
-            setTimeout(function() {
-                window.location.reload();
-            }, 2000);
-          }
+            //setTimeout(function() {
+            //    window.location.reload();
+            //}, 2000);
+          //}
         }
       }).catch((err) => {
         console.log(err)
@@ -691,6 +705,7 @@ export class Api {
       this.issues = false;
       this.initialized = false;
       this.credentials = {user: "", rwkey: "", server: ""};
+      this.data = [];
       this.destroyDB();
     }
 
