@@ -4,12 +4,15 @@ import { Directive, HostListener, ElementRef } from "@angular/core";
 selector: "ion-textarea[autoresize]" // Attribute selector
 })
 export class Autoresize {
+
   @HostListener("input", ["$event.target"])
+  
   onInput(textArea: HTMLTextAreaElement): void {
     this.adjust();
   }
 
   constructor(public element: ElementRef) {
+    this.element = element;
   }
 
   ngAfterViewInit(): void {

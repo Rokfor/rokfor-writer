@@ -1,13 +1,13 @@
 
 import { Component, ViewChild } from '@angular/core';
 import { Printer, PrintOptions } from '@ionic-native/printer';
-import { Platform, NavController, LoadingController, Slides, Events, AlertController } from 'ionic-angular';
+import { Platform, NavController, Slides, Events, AlertController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
-import 'codemirror/mode/markdown/markdown.js';
-import 'codemirror/addon/scroll/simplescrollbars.js';
-import 'codemirror/addon/fold/foldcode.js';
-import 'codemirror/addon/fold/foldgutter.js';
-import 'codemirror/addon/fold/markdown-fold.js';
+//import 'codemirror/mode/markdown/markdown.js';
+//import 'codemirror/addon/scroll/simplescrollbars.js';
+//import 'codemirror/addon/fold/foldcode.js';
+//import 'codemirror/addon/fold/foldgutter.js';
+//import 'codemirror/addon/fold/markdown-fold.js';
 import {Converter} from "showdown/dist/showdown";
 
 @Component({
@@ -23,9 +23,8 @@ export class Editor {
   initialSlide: number = 0;
   initialized: boolean = false;
   //ctrl: any;
-  loading: any;
 
-  cm_options: any = {
+  /*cm_options: any = {
     viewportMargin: 10,
     mode: 'markdown',
     lineNumbers: false,
@@ -36,14 +35,13 @@ export class Editor {
     foldGutter: true,
     gutters: ["CodeMirror-foldgutter"]
   };
-
+*/
 
   @ViewChild('mySlider') slider: Slides;
 
   constructor(
     public navCtrl: NavController,
     public api:Api,
-    public loadingCtrl: LoadingController,
     public events: Events,
     public alert: AlertController,
     public platform: Platform,
@@ -51,14 +49,7 @@ export class Editor {
   ) {
     var self = this;
 
-    self.cm_options.cursorBlinkRate = self.platform.is('core') ? "500" : -1;
-
-
-    self.loading = this.loadingCtrl.create({
-      content: "Please wait..."
-    });
-    self.loading.present();
-    //this.ctrl = new FormControl();
+    //self.cm_options.cursorBlinkRate = self.platform.is('core') ? "500" : -1;
 
     events.subscribe('page:change', (page) => {
       console.log("got page change");
@@ -101,7 +92,6 @@ export class Editor {
       preventClicks: false,
       initialSlide: self.api.getCurrent(),
       onInit: (slides: any) => {
-        self.loading.dismiss();
         self.initialized = true;
       }
     };
@@ -119,14 +109,14 @@ export class Editor {
 
     if (mode === "set-title") {
       _title = "Title";
-      _placeholder = this.api.data[this.api.current].title;
+      _placeholder = this.api.data[this.api.getCurrent()].title;
       _value = _placeholder != 'Empty Title' ? _placeholder : false;
       _data = "title";
       _message = "Set Document Title";
     }
     if (mode === "set-identifier") {
       _title = "ID";
-      _placeholder = this.api.data[this.api.current].name;
+      _placeholder = this.api.data[this.api.getCurrent()].name;
       _data = "name";
       _value = _placeholder != 'rf001' ? _placeholder : false;
       _message = "Set Document Identifier";
@@ -153,7 +143,7 @@ export class Editor {
           text: 'Save',
           handler: data => {
             console.log('Saved clicked', data);
-            self.api.data[self.api.current][_data] = data[_title];
+            self.api.data[self.api.getCurrent()][_data] = data[_title];
             self.api.change();
           }
         }
@@ -163,7 +153,6 @@ export class Editor {
   }
 
   ngAfterViewInit() {
-    this.loading.dismiss();
     this.initialized = true;
     this.slider.onlyExternal = true;
     this.slider.paginationType = "fraction";
@@ -201,7 +190,7 @@ export class Editor {
           },
         }],
       });
-      if (this.api.data && this.api.data.length > 0 && this.api.data[this.api.current].modified == 1) {
+      if (this.api.data && this.api.data.length > 0 && this.api.data[this.api.getCurrent()].modified == 1) {
         confirm.present();
       }
       else {
@@ -222,9 +211,8 @@ export class Editor {
   addPage() {
     if (!this.initialized) return false;
     let index = this.api.data.length == 0 ? 0 : this.slider.getActiveIndex() + 1;
-    this.api.add(index).then((d) => {
-      console.log("Page Added")
-    });
+    this.api.add(index);
+    console.log("Page Added")
   }
 
   printPage() {
@@ -234,8 +222,8 @@ export class Editor {
     var _print = '<!DOCTYPE html><html><head>  '
                + '<link href="build/print.css" rel="stylesheet" media="print">'
                + '</head><body class="print">'
-               + '<div class="title">' + converter.makeHtml(self.api.data[self.api.current].title) + '</div>'
-               + '<div class="body">' + converter.makeHtml(self.api.data[self.api.current].body) + '</div>'
+               + '<div class="title">' + converter.makeHtml(self.api.data[self.api.getCurrent()].title) + '</div>'
+               + '<div class="body">' + converter.makeHtml(self.api.data[self.api.getCurrent()].body) + '</div>'
                + '</html>';
 
     /* Cordova Air Print */
@@ -244,7 +232,7 @@ export class Editor {
       this.printer.isAvailable().then(
         () => {
         let options: PrintOptions = {
-             name: self.api.data[self.api.current].title,
+             name: self.api.data[self.api.getCurrent()].title,
              duplex: true,
              landscape: false,
              grayscale: true
@@ -278,6 +266,7 @@ export class Editor {
       } else {
           _doc = false;
       }
+      
 
       if (_doc !== false) {
         _doc.write(_print);

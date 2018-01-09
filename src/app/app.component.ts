@@ -34,17 +34,15 @@ export class MyApp {
   electron: any;
 
   constructor(
-    public platform: Platform,
-    private api:Api,
-    private statusBar: StatusBar,
+    public  platform:     Platform,
+    private api:          Api,
+    private statusBar:    StatusBar,
     private splashScreen: SplashScreen,
-    events: Events
+            events:       Events
   ) {
     this.events = events;
     this.initializeApp();
     this.electron = electron;
-
-
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Settings', component: Settings, icon: 'settings' },
@@ -93,7 +91,7 @@ export class MyApp {
           this.editor.openModal(message);
         }
         if (message === 'export-data') {
-          ipcRenderer.send('master:ipc:export', this.api.data[this.api.current])
+          ipcRenderer.send('master:ipc:export', this.api.data[this.api.current.page])
         }
 
 
@@ -102,27 +100,19 @@ export class MyApp {
 
 
     this.platform.ready().then(() => {
-      // Okay, so the platform is ready and our plugins are available.
-      // Here you can do any higher level native things you might need.
-
-      console.log(this.platform)
-
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      //if (this.nav.getActive().name === "Editor") {
-      //  this.editor = this.nav.getActive().instance;
-      //}
     });
   }
 
   toggleFs(mode) {
 
-    this.api.fullscreen = mode || !this.api.fullscreen;
+    this.api.state.fullscreen = mode || !this.api.state.fullscreen;
 
     /* Electron: Setting the local fullscreen flag after ipc callback in construtor */
     if (electron) {
       var window = electron.remote.getCurrentWindow();
-      window.setFullScreen(this.api.fullscreen);
+      window.setFullScreen(this.api.state.fullscreen);
     }
 
     this.events.publish('page:redraw');

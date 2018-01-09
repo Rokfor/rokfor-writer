@@ -22,7 +22,7 @@
       </ion-item>
        <ion-item>
          <ion-label stacked>Access Key</ion-label>
-         <ion-input clearInput  placeholder="Access Key" [(ngModel)]="api.credentials.rwkey"></ion-input>
+         <ion-input clearInput  placeholder="Access Key" [(ngModel)]="api.credentials.key"></ion-input>
        </ion-item>
 
        <ion-item>
@@ -31,8 +31,8 @@
        </ion-item>
 
        <ion-item>
-         <button ion-button color="danger" block (click)="api.logOut()" *ngIf="api.jwt">Log Out</button>
-         <button ion-button color="secondary" block (click)="api.logIn()" *ngIf="!api.jwt">Log In</button>
+         <button ion-button color="danger" block (click)="api.logOut()" *ngIf="api.state.logged_in">Log Out</button>
+         <button ion-button color="secondary" block (click)="api.logIn()" *ngIf="!api.state.logged_in">Log In</button>
        </ion-item>
     </ion-list>
 

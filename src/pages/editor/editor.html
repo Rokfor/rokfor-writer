@@ -1,22 +1,27 @@
-<ion-header *ngIf="!api.fullscreen">
+<ion-header *ngIf="!api.state.fullscreen">
   <ion-toolbar>
 
       <button ion-button menuToggle>
         <ion-icon name="menu"></ion-icon>
       </button>
 
-    <ion-title *ngIf="api.data.length > 0 && api.data[api.current]">
+    <ion-title *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
       <ion-input
         (ngModelChange)="api.changeDebounce()"
-        [(ngModel)]='api.data[api.current].name'
-        placeholder="{{api.data[api.current].name}}">
+        [(ngModel)]='api.data[api.getCurrent()].name'
+        placeholder="{{api.data[api.getCurrent()].name}}">
       </ion-input>
     </ion-title>
 
 
-    <ion-buttons end *ngIf="initialized">
+    <ion-buttons end *ngIf="api.state.initialized">
 
-      <button *ngIf="api.data.length > 0 && api.data[api.current]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.current].modified == 0">
+      <button ion-button small  icon-only [disabled]="api.state.busy == 0">
+        <ion-icon name="sync"></ion-icon>
+      </button>
+
+
+      <button *ngIf="api.data.length > 0 && api.data[api.getCurrent()]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.getCurrent()].modified == 0">
         <ion-icon name="send"></ion-icon>
       </button>
 
@@ -30,7 +35,7 @@
  </ion-fab>-->
 
 
-<ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.fullscreen}">
+<ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
   <ion-slides #mySlider
   [direction] = "vertical"
   [slidesPerView] = "1"
@@ -40,7 +45,7 @@
   [parallax] = "true"
   (ionSlideDidChange)="slideDidChange()" (ionSlideWillChange)="slideWillChange()">
     <ion-slide *ngFor="let e of api.data; trackBy: trackByFn">
-      <ion-item [hidden]="!initialized">
+      <ion-item [hidden]="!api.state.initialized">
         <ion-label stacked>Titel</ion-label>
         <ion-input [(ngModel)]="e.title" (ngModelChange)="api.changeDebounce()" placeholder="{{e.title}}"></ion-input>
       </ion-item>
@@ -56,7 +61,7 @@
 
 </ion-content>
 
-<ion-footer *ngIf="!api.fullscreen">
+<ion-footer *ngIf="!api.state.fullscreen">
   <ion-toolbar>
 
     <ion-buttons start>
@@ -69,11 +74,11 @@
       <button ion-button clear icon-only (click)="addPage()">
         <ion-icon name="add"></ion-icon>
       </button>
-      <button ion-button clear icon-only (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.current]">
+      <button ion-button clear icon-only (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
         <span *ngIf="tgInfo">
-          <ion-badge item-right color="light">Rokfor Id: {{api.data[api.current].id}}</ion-badge>&nbsp;
-          <ion-badge item-right color="light">Characters: {{api.data[api.current].body.length}}</ion-badge>&nbsp;
-          <ion-badge item-right color="light">Words: {{wordcount(api.data[api.current].body)}}</ion-badge>
+          <ion-badge item-right color="light">Rokfor Id: {{api.data[api.getCurrent()].id}}</ion-badge>&nbsp;
+          <ion-badge item-right color="light">Characters: {{api.data[api.getCurrent()].body.length}}</ion-badge>&nbsp;
+          <ion-badge item-right color="light">Words: {{wordcount(api.data[api.getCurrent()].body)}}</ion-badge>
         </span>
         <ion-icon *ngIf="!tgInfo" ios="ios-information-circle-outline" md="md-information-circle"></ion-icon>
       </button>
