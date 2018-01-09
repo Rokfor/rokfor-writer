@@ -267,8 +267,8 @@ export class Api {
       }
     })
     .on('active',   function ()     {console.log('----> sync issue active'); self.state.logged_in = true;})
-    .on('denied',   function (err)  {console.log('----> sync issue denied'); self.state.logged_in = false;})
-    .on('error',    function (err)  {console.log('----> sync issue error'); self.state.logged_in = false;})
+    .on('denied',   function (err)  {console.log('----> sync issue denied'); self.state.logged_in = false; self.hideLoadingCtrl();})
+    .on('error',    function (err)  {console.log('----> sync issue error'); self.state.logged_in = false; self.hideLoadingCtrl();})
     .on('complete', function (info) {console.log("----> sync issue complete/destroyed");})
 
 
@@ -439,9 +439,9 @@ export class Api {
         console.log("----> sync data active", info);
         self.state.busy = 1;
       })
-      .on('denied',   function (err)  {console.log("----> sync data denied", err);})
+      .on('denied',   function (err)  {console.log("----> sync data denied", err); self.hideLoadingCtrl();})
       .on('complete', function (info) {console.log("----> sync data complete/destroyed");})
-      .on('error',    function (err)  {console.log("----> sync data error", err);});
+      .on('error',    function (err)  {console.log("----> sync data error", err); self.hideLoadingCtrl();});
     } catch (err){
       console.log(err);
     }
