@@ -94,9 +94,9 @@ export class Api {
       "Subtitle",
       "Author",
       "AuthorShort",
-      "ImprintTitle",
+      "ISBN",
       "Imprint",
-      "PrefaceTitle",
+      "Blurb",
       "Preface"
     ];
     data: Array < _dataset > = [];
@@ -319,6 +319,7 @@ export class Api {
       _found = true;
       this.current.issue_options = {
         Name: i.Name,
+        Id: i.Id,
         Options: []
       }
       for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
@@ -385,9 +386,19 @@ export class Api {
         _result.rows.forEach((d) => {
           if (d.doc.data) {
             if (d.doc._id === `contribution-${_this.current.issue}-options`) {
-              _this.current.issue_options = d.doc.data;
+              
+              _this.current.issue_options.Id = d.doc.data.Id || _this.current.issue_options.Id;
+              _this.current.issue_options.Name = d.doc.data.Name || _this.current.issue_options.Name;
+              _this.current.issue_options.Options = d.doc.data.Options || _this.current.issue_options.Options;
+
+
               if (_this.issues.Issues.length && _this.current.issue) {
-                _this.issues.Issues.forEach((i) => {if (i.Id == _this.current.issue) {i.Name = _this.current.issue_options.Name;}})
+                _this.issues.Issues.forEach((i) => {
+                  if (i.Id == _this.current.issue) {
+                    i.Name    = _this.current.issue_options.Name;
+                    i.Options = _this.current.issue_options.Options;
+                  }
+                })
               }
             }
             else {

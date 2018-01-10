@@ -59,8 +59,8 @@
       Imprint
     </ion-list-header>
     <ion-item>
-       <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Imprint Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
+       <ion-label stacked>ISBN</ion-label>
+       <ion-input placeholder="ISBN" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Imprint</ion-label>
@@ -77,8 +77,13 @@
       Preface
     </ion-list-header>
     <ion-item>
-       <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[7].value"></ion-input>
+       <ion-label stacked>Blurb / Greeter</ion-label>
+        <ion-textarea
+        autoresize
+        placeholder="Enter a Blurb / Greeter"
+        [(ngModel)]="api.current.issue_options.Options[7].value"
+        (ngModelChange)="api.bookStore()"
+       ></ion-textarea>
     </ion-item>
     <ion-item>
       <ion-label stacked>Preface</ion-label>
