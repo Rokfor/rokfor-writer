@@ -63,7 +63,6 @@ export class Api {
     }
 
     state: _state = {
-      firstrun    : false,
       busy        : 0,
       initialized : false,
       message     : "",
@@ -108,7 +107,8 @@ export class Api {
     };
     dbsettings: any = {
       size: 50,
-      auto_compaction: true
+      auto_compaction: true,
+      adapter: 'websql'
     };
     helpers: any = {
 
@@ -260,10 +260,44 @@ export class Api {
 
 
     /* Create Databases and Copy Configuration into issue_options */
+    let syncIssueWithDataOption = async function(_issue) {
+      try {
+        let _options = await self.pouch.data[_issue.Id].get(`contribution-${_issue.Id}-options`);
+        console.log(_options);
+        _issue.Name = _options.data.Name;
+        _issue.Options = _options.data.Options;
+      } catch (err) {
+        console.log('could not load options...')
+      }
 
+
+      if (_issue.Id == self.current.issue) {
+        self.current.issue_options = {
+          Name: _issue.Name,
+          Id: _issue.Id,
+          Options: _issue.Options || []
+        }
+        for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
+          self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
+        }
+      }
+    }
+
+    let syncIssue = function(_issue) {
+      return new Promise(async (resolve, reject) => {
+        self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
+        .on('complete', function(info) { 
+          syncIssueWithDataOption(_issue);
+          resolve(true);
+        })
+        .on('error', function(err){
+          syncIssueWithDataOption(_issue);
+          reject(false);
+        });
+      });
+    }
 
     let configureissues = async function() {
-      console.log('-----------------------')
       return new Promise(async (resolve, reject) => {
         try {
           let _i = await self.pouch.issues.get('issues');
@@ -273,25 +307,14 @@ export class Api {
           reject(false);
         }
 
-        /*let onetimedatasync = function(_issue) {
-          return new Promise(async (resolve, reject) => {
-            self.pouch.data[_issue].replicate.from(`${self.credentials.server}/issue-${_issue}`, self.helpers._replicatesettings(self))
-            .on('complete', function(info) { 
-              resolve(true);
-            })
-            .on('error', function(err){
-              reject(false);
-            });
-          });
-        }*/
-
+        let _counter = 0;
 
         for (let i of self.issues.Issues) {
 
           // Create pouch db if no db is existing
 
           if (self.pouch.data[i.Id] === undefined) {
-            self.showLoadingCtrl(`<p>Create new database</p><h4>Issue ${i.Id}</h4>`);
+            self.showLoadingCtrl(`<p>Create database</p><h4>${++_counter} of ${self.issues.Issues.length}</h4>`);
             try {
               self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`);  
             } catch (err) {
@@ -300,31 +323,10 @@ export class Api {
             }
           }
 
-          /*try {
-            await onetimedatasync(i.Id);
+          try {
+            syncIssue(i);
           } catch (err) {
             console.log(err);
-          }*/
-
-          try {
-            let _options = await self.pouch.data[i.Id].get(`contribution-${i.Id}-options`);
-            console.log(_options);
-            i.Name = _options.data.Name;
-            i.Options = _options.data.Options;
-          } catch (err) {
-            console.log('could not load options...')
-          }
-
-
-          if (i.Id == self.current.issue) {
-            self.current.issue_options = {
-              Name: i.Name,
-              Id: i.Id,
-              Options: i.Options || []
-            }
-            for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
-              self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
-            }
           }
         }
         resolve(true);
@@ -396,12 +398,12 @@ export class Api {
         this.hideLoadingCtrl();
         reject("Issues undefined");
       }
-      if (this.activationinprogress == true) {
-        this.hideLoadingCtrl();        
-        resolve("Activation in Progress..");
-      }
+      //if (this.activationinprogress == true) {
+      //  this.hideLoadingCtrl();        
+      // resolve("Activation in Progress..");
+      //}
       
-      this.activationinprogress = true;
+      //this.activationinprogress = true;
       
       console.log('Activate Issue Start', this.current.issue, this.issues);
 
@@ -432,8 +434,8 @@ export class Api {
       } catch (err) {
         console.log('activateData', err);
       }
-      console.log("there")
-      this.activationinprogress = false;
+      //console.log("there")
+      //this.activationinprogress = false;
       this.hideLoadingCtrl();
       resolve(true);
 
@@ -456,18 +458,18 @@ export class Api {
       this.showLoadingCtrl("Initial Data Sync");
       let self = this;
 
-      let _localload = function(t) {
-        let _this = t;
+      let _localload = function() {
+        
 
         return new Promise(async (resolve, reject) => {
 
           try {
-            _this.data = [];
-            let _result = await _this.pouch.data[_this.current.issue].allDocs({
+            self.data = [];
+            let _result = await self.pouch.data[self.current.issue].allDocs({
               include_docs: true,
               attachments: true,
-              startkey: `contribution-${_this.current.issue}`,
-              endkey: `contribution-${_this.current.issue}\uffff`
+              startkey: `contribution-${self.current.issue}`,
+              endkey: `contribution-${self.current.issue}\uffff`
             });
             _result.rows.sort(function (a, b) {
                if (a.doc.data != null && b.doc.data != null && a.doc.data.sort && b.doc.data.sort)
@@ -477,32 +479,32 @@ export class Api {
             });
             _result.rows.forEach((d) => {
               if (d.doc.data) {
-                if (d.doc._id === `contribution-${_this.current.issue}-options`) {
+                if (d.doc._id === `contribution-${self.current.issue}-options`) {
                   
-                  _this.current.issue_options.Id = d.doc.data.Id || _this.current.issue_options.Id;
-                  _this.current.issue_options.Name = d.doc.data.Name || _this.current.issue_options.Name;
-                  _this.current.issue_options.Options = d.doc.data.Options || _this.current.issue_options.Options;
+                  self.current.issue_options.Id = d.doc.data.Id || self.current.issue_options.Id;
+                  self.current.issue_options.Name = d.doc.data.Name || self.current.issue_options.Name;
+                  self.current.issue_options.Options = d.doc.data.Options || self.current.issue_options.Options;
 
 
-                  if (_this.issues.Issues.length && _this.current.issue) {
-                    _this.issues.Issues.forEach((i) => {
-                      if (i.Id == _this.current.issue) {
-                        i.Name    = _this.current.issue_options.Name;
-                        i.Options = _this.current.issue_options.Options;
+                  if (self.issues.Issues.length && self.current.issue) {
+                    self.issues.Issues.forEach((i) => {
+                      if (i.Id == self.current.issue) {
+                        i.Name    = self.current.issue_options.Name;
+                        i.Options = self.current.issue_options.Options;
                       }
                     })
                   }
                 }
                 else {
-                  _this.data.push(d.doc.data);
+                  self.data.push(d.doc.data);
                 }
               }
             });
-            _this.data.sort(function (a, b) {
+            self.data.sort(function (a, b) {
               return a.sort - b.sort;
             });
-            _this.state.initialized = true;
-            _this.events.publish('page:change', _this.current.page);
+            self.state.initialized = true;
+            self.events.publish('page:change', self.current.page);
             resolve(true);
           } catch(err) {
             console.log("ERROR SYNCING DATA", err);
@@ -513,10 +515,12 @@ export class Api {
 
       // detach syncing
 
-      try {
+      
+      
+       try {
         this.pouch.data_sync.cancel();
       } catch (err) {
-        console.log("nothing to cancel!", err)
+        console.log("nothing to cancel!")
       }
 
       // attach syncing
@@ -524,14 +528,14 @@ export class Api {
       this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
       .on('complete', async function(info) { 
         try {
-          await _localload(self)
+          await _localload()
         } catch(err) {
           console.log(err)
         }
       })
       .on('error', async function(err){
         try {
-          await _localload(self)
+          await _localload()
         } catch(err) {
           console.log(err)
         }
@@ -543,7 +547,7 @@ export class Api {
           self.state.busy = 1;
           if (info.direction === "pull" ) {
             try {
-              await _localload(self);    
+              await _localload();    
             } catch (err) {
               console.log(err)
             }
@@ -622,11 +626,11 @@ export class Api {
     try {
       await this.helpers._pouchsave(this.pouch.data[this.current.issue], `contribution-${this.current.issue}-options`, this.current.issue_options);  
       this.issues.Issues.forEach((i) => {if (i.Id == this.current.issue) {i.Name = this.current.issue_options.Name;}})
-      try {
+      /*try {
         await this.helpers._pouchsave(this.pouch.issues, `issues`, this.issues);
       } catch (err) {
         console.log(err);
-      }
+      }*/
     } catch (err) {
       console.log(err);
     }
