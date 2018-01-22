@@ -1,6 +1,5 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
-import { CodemirrorModule } from 'ng2-codemirror';
 import { ProsemirrorModule } from 'ng2-prosemirror';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule} from '@angular/http';
@@ -23,7 +22,6 @@ import { Autoresize } from '../directives/shrink';
     HttpModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    CodemirrorModule,
     ProsemirrorModule
   ],
   bootstrap: [IonicApp],

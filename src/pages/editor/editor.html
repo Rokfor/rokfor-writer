@@ -7,7 +7,7 @@
 
     <ion-title *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
       <ion-input
-        (ngModelChange)="api.changeDebounce()"
+        (ngModelChange)="changeDebounce()"
         [(ngModel)]='api.data[api.getCurrent()].name'
         placeholder="{{api.data[api.getCurrent()].name}}">
       </ion-input>
@@ -47,13 +47,13 @@
     <ion-slide *ngFor="let e of api.data; trackBy: trackByFn">
       <ion-item [hidden]="!api.state.initialized">
         <ion-label stacked>Titel</ion-label>
-        <ion-input [(ngModel)]="e.title" (ngModelChange)="api.changeDebounce()" placeholder="{{e.title}}"></ion-input>
+        <ion-input [(ngModel)]="e.title" (ngModelChange)="changeDebounce()" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
         <!--<codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
         </codemirror>-->
 
-        <prosemirror [(data)]="e.body" (blur)="api.change()" (change)="e.modified = 1;">
+        <prosemirror [(data)]="e.body" (blur)="change()" (change)="e.modified = 1;">
         </prosemirror>
       </div>
     </ion-slide>
@@ -65,7 +65,7 @@
   <ion-toolbar>
 
     <ion-buttons start>
-      <button ion-button clear icon-only (click)="slider.slidePrev()" [disabled]="slider.isBeginning()">
+      <button ion-button clear icon-only (click)="prev()" [disabled]="slider.isBeginning()">
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
@@ -85,7 +85,7 @@
     </ion-title>
 
     <ion-buttons end *ngIf="initialized">
-      <button ion-button clear icon-only (click)="slider.slideNext()" [disabled]="slider.isEnd()">
+      <button ion-button clear icon-only (click)="next()" [disabled]="slider.isEnd()">
         <ion-icon name="arrow-forward"></ion-icon>
       </button>
     </ion-buttons>

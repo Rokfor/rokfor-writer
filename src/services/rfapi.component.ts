@@ -47,7 +47,6 @@ interface _credentials {
 }
 
 interface _debouncers {
-  change      : any;
   book        : any;
 }
 
@@ -58,7 +57,6 @@ export class Api {
     events: Events;
 
     timeout: _debouncers = {
-      change: false,
       book: false
     }
 
@@ -513,22 +511,43 @@ export class Api {
         });
       }
 
-      // detach syncing
-
-      
-      
-       try {
-        this.pouch.data_sync.cancel();
-      } catch (err) {
-        console.log("nothing to cancel!")
+      // live syncer - attach after one time syncer
+      let _syncer = function() {
+        console.log("_START SYNCER_");
+        try {
+          self.pouch.data_sync.cancel();
+        } catch (err) {
+          console.log("nothing to cancel!")
+        }
+        try {
+          self.pouch.data_sync = self.pouch.data[self.current.issue].sync(`${self.credentials.server}/issue-${self.current.issue}`, self.helpers._syncsettings(self))
+          .on('change', async function (info) {
+            self.state.busy = 1;
+            if (info.direction === "pull" ) {
+              try {
+                await _localload();    
+              } catch (err) {
+                console.log(err)
+              }
+            }
+          })
+          .on('paused',   async function (err)  {
+            self.state.busy = 0;
+          });
+        } catch (err){
+          console.log(err);
+        }
       }
+      
+      
 
       // attach syncing
       
       this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
       .on('complete', async function(info) { 
         try {
-          await _localload()
+          await _localload();
+          _syncer();
         } catch(err) {
           console.log(err)
         }
@@ -536,29 +555,12 @@ export class Api {
       .on('error', async function(err){
         try {
           await _localload()
+          _syncer();
         } catch(err) {
           console.log(err)
         }
       });
-      
-      try {
-        this.pouch.data_sync = this.pouch.data[this.current.issue].sync(`${this.credentials.server}/issue-${this.current.issue}`, this.helpers._syncsettings(this))
-        .on('change', async function (info) {
-          self.state.busy = 1;
-          if (info.direction === "pull" ) {
-            try {
-              await _localload();    
-            } catch (err) {
-              console.log(err)
-            }
-          }
-        })
-        .on('paused',   async function (err)  {
-          self.state.busy = 0;
-        });
-      } catch (err){
-        reject(err);
-      }
+
       resolve(true);
 
     });
@@ -648,29 +650,19 @@ export class Api {
       return;
     }
     try {
-      console.log("saving...", document, data)
+      //console.log("saving...", document, data)
       await this.helpers._pouchsave(this.pouch.data[this.current.issue], document, data);  
     } catch (err) {
       console.log(err)
     }
   }
 
-  changeDebounce() {
-    if (this.timeout.change !== null) {
-      clearTimeout(this.timeout.change);
-    }
-    this.timeout.change = setTimeout(() => {
-      this.change();
-    }, 1000);
-  }
-
-
   change() {
     if (this.state.initialized === false) return;
     if (this.data[this.current.page] === undefined) return;
     this.data[this.current.page].modified = 0;
     this.dbStore(this.data[this.current.page]);
-    console.log('Local Store Doc Complete', this.current.page, this.data[this.current.page]);
+    //console.log('Local Store Doc Complete', this.current.page, this.data[this.current.page]);
   }
 
   reorder(indexes){

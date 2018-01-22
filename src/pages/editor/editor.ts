@@ -1,7 +1,7 @@
 
 import { Component, ViewChild } from '@angular/core';
 import { Printer, PrintOptions } from '@ionic-native/printer';
-import { Platform, NavController, Slides, Events, AlertController } from 'ionic-angular';
+import { Platform, NavController, Slides, Events, AlertController, LoadingController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 //import 'codemirror/mode/markdown/markdown.js';
 //import 'codemirror/addon/scroll/simplescrollbars.js';
@@ -22,6 +22,11 @@ export class Editor {
   mySlideOptions: any;
   initialSlide: number = 0;
   initialized: boolean = false;
+
+  afterSaveCallback: any;
+  confirm: any;
+  timeout_change: any;
+  
   //ctrl: any;
 
   /*cm_options: any = {
@@ -44,6 +49,7 @@ export class Editor {
     public api:Api,
     public events: Events,
     public alert: AlertController,
+    public loadingCtrl: LoadingController,
     public platform: Platform,
     public printer: Printer
   ) {
@@ -76,8 +82,6 @@ export class Editor {
         }, 250);
       }*/
     });
-
-
 
     //console.log("Initialize Slide ", self.initialSlide);
     //if (self.initialized && self.slider) {
@@ -122,7 +126,7 @@ export class Editor {
       _message = "Set Document Identifier";
     }
 
-    let confirm = this.alert.create({
+    let _confirm = this.alert.create({
       title: _title,
       message: _message,
       inputs: [
@@ -149,7 +153,7 @@ export class Editor {
         }
       ]
     });
-    confirm.present();
+    _confirm.present();
   }
 
   ngAfterViewInit() {
@@ -180,7 +184,7 @@ export class Editor {
       this.api.change();
     }
     return new Promise((resolve, reject) => {
-      let confirm = this.alert.create({
+      let _confirm = this.alert.create({
         title: 'Unsafed Changes',
         message: 'Leaving the editor might cause data loss.',
         buttons: [{
@@ -191,7 +195,7 @@ export class Editor {
         }],
       });
       if (this.api.data && this.api.data.length > 0 && this.api.data[this.api.getCurrent()].modified == 1) {
-        confirm.present();
+        _confirm.present();
       }
       else {
         resolve(true);
@@ -202,6 +206,50 @@ export class Editor {
   slideWillChange() {
     if (!this.initialized) return false;
     this.api.setCurrent(this.slider.getActiveIndex());
+  }
+
+  _checkunsafed(cb) {
+    try {
+      if (this.api.data[this.api.getCurrent()].modified == 1) {
+        this.afterSaveCallback = cb;
+        this.confirm = this.loadingCtrl.create({content: 'Saving Changes'})
+        this.confirm.present();
+      }
+      else {
+        this.afterSaveCallback = null;
+        cb(this);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  next() {
+    this._checkunsafed(function(t){t.slider.slideNext();});
+  }
+
+  prev() {
+    this._checkunsafed(function(t){t.slider.slidePrev();});
+  }
+
+
+  change() {
+    this.api.change();
+    if (this.afterSaveCallback) {
+      this.afterSaveCallback(this);
+      this.afterSaveCallback = null;
+      this.confirm.dismiss();
+    }
+  }
+
+  changeDebounce() {
+    if (this.timeout_change !== null) {
+      clearTimeout(this.timeout_change);
+    }
+    this.api.data[this.api.getCurrent()].modified = 1;
+    this.timeout_change = setTimeout(() => {
+      this.change();
+    }, 1000);
   }
 
   slideDidChange() {

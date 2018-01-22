@@ -245,7 +245,7 @@ function createWindow () {
        {
          label: 'Reload',
          accelerator: 'Command+R',
-         click: function() { BrowserWindow.getFocusedWindow().reloadIgnoringCache(); }
+         click: function() { BrowserWindow.getFocusedWindow().reload(); }
        },
        {
          label: 'Toggle DevTools',
