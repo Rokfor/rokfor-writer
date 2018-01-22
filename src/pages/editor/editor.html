@@ -29,12 +29,6 @@
 
   </ion-toolbar>
 </ion-header>
-
-<!--<ion-fab top left edge *ngIf="api.fullscreen">
-   <button ion-fab mini menuToggle><ion-icon name="menu"></ion-icon></button>
- </ion-fab>-->
-
-
 <ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
   <ion-slides #mySlider
   [direction] = "vertical"
@@ -50,9 +44,6 @@
         <ion-input [(ngModel)]="e.title" (ngModelChange)="changeDebounce()" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
-        <!--<codemirror [(ngModel)]="e.body" (blur)="api.change()" (change)="e.modified = 1;" [ngModelOptions]="{standalone: true}" [config]="cm_options">
-        </codemirror>-->
-
         <prosemirror [(data)]="e.body" (blur)="change()" (change)="e.modified = 1;">
         </prosemirror>
       </div>
