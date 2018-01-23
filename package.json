@@ -54,7 +54,7 @@
     },
     "devDependencies": {
         "@types/showdown": "^1.7.2",
-        "electron": "^1.8.1",
+        "electron": "^1.8.2-beta.4",
         "electron-updater": "^1.11.1",
         "typescript": "2.3.4"
     },
