@@ -1,6 +1,7 @@
 import {Injectable} from "@angular/core";
 import 'rxjs/Rx';
-import { reorderArray, Platform, Events, LoadingController } from 'ionic-angular';
+import { reorderArray, Platform, Events, LoadingController, AlertController } from 'ionic-angular';
+import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 
 
@@ -177,13 +178,17 @@ export class Api {
       }
     }
 
+    min_server: Array < number > = [1,0,1];
+
 
     constructor (
       platform: Platform,
       events: Events,
       public loadingCtrl: LoadingController,
-
+      public alert: AlertController,
+      private http: Http
     ) {
+      this.http = http;
       this.events = events;
       this.state.on_device = platform.is('cordova');
       this.pouch.credentials = new PouchDB('rfWriter-credentials', this.dbsettings);
@@ -206,6 +211,22 @@ export class Api {
       this.loading.dismiss();
       this.loading = null;
     }
+  }
+
+
+  showAlert(title, message, cb) {
+    cb = cb || function(){};
+    let _confirm = this.alert.create({
+      title: title,
+      message: message,
+      buttons: [{
+        text: 'OK',
+        handler: () => {
+          cb;
+        },
+      }],
+    });
+    _confirm.present();
   }
 
   /*
@@ -283,7 +304,7 @@ export class Api {
 
     let syncIssue = function(_issue) {
       return new Promise(async (resolve, reject) => {
-        self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
+        self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/db/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
         .on('complete', function(info) { 
           syncIssueWithDataOption(_issue);
           resolve(true);
@@ -327,6 +348,7 @@ export class Api {
             console.log(err);
           }
         }
+        self.hideLoadingCtrl();
         resolve(true);
       })
     }
@@ -337,7 +359,7 @@ export class Api {
 
     let syncing = async function() {
       
-      self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
+      self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/db/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
       .on('change',   function (info)  {
         if (info.direction === "pull" ) {
           configureissues();
@@ -366,7 +388,7 @@ export class Api {
 
     /* Start Replication: One-time/One-off for starters */
 
-    this.pouch.issues.replicate.from(`${this.credentials.server}/rf-${this.credentials.user}`, this.helpers._replicatesettings(this))
+    this.pouch.issues.replicate.from(`${this.credentials.server}/db/rf-${this.credentials.user}`, this.helpers._replicatesettings(this))
     .on('complete', function(info) { 
       self.state.logged_in = true;
       syncing();
@@ -414,7 +436,11 @@ export class Api {
           this.current.issue = _c.data * 1;
           console.log(`Default: ${this.current.issue}`);
         } catch(err) {
-          this.current.issue = this.issues.Issues[0].Id;
+          try {
+            this.current.issue = this.issues.Issues[0].Id;  
+          } catch (err) {
+            reject("Issues undefined");
+          }
           console.log(`Fallback: ${this.current.issue}`);
         }
       }
@@ -479,10 +505,19 @@ export class Api {
               if (d.doc.data) {
                 if (d.doc._id === `contribution-${self.current.issue}-options`) {
                   
+                  /* Set Current Issue */
+
                   self.current.issue_options.Id = d.doc.data.Id || self.current.issue_options.Id;
                   self.current.issue_options.Name = d.doc.data.Name || self.current.issue_options.Name;
                   self.current.issue_options.Options = d.doc.data.Options || self.current.issue_options.Options;
 
+                  /* Parse Options for completeness */
+
+                  for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
+                    self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
+                  }
+
+                  /* Copy into issues Database */
 
                   if (self.issues.Issues.length && self.current.issue) {
                     self.issues.Issues.forEach((i) => {
@@ -520,7 +555,7 @@ export class Api {
           console.log("nothing to cancel!")
         }
         try {
-          self.pouch.data_sync = self.pouch.data[self.current.issue].sync(`${self.credentials.server}/issue-${self.current.issue}`, self.helpers._syncsettings(self))
+          self.pouch.data_sync = self.pouch.data[self.current.issue].sync(`${self.credentials.server}/db/issue-${self.current.issue}`, self.helpers._syncsettings(self))
           .on('change', async function (info) {
             self.state.busy = 1;
             if (info.direction === "pull" ) {
@@ -542,26 +577,30 @@ export class Api {
       
 
       // attach syncing
-      
-      this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
-      .on('complete', async function(info) { 
-        try {
-          await _localload();
-          _syncer();
-        } catch(err) {
-          console.log(err)
-        }
-      })
-      .on('error', async function(err){
-        try {
-          await _localload()
-          _syncer();
-        } catch(err) {
-          console.log(err)
-        }
-      });
+      try {
+        this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/db/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
+        .on('complete', async function(info) { 
+          try {
+            await _localload();
+            _syncer();
+          } catch(err) {
+            console.log(err)
+          }
+        })
+        .on('error', async function(err){
+          try {
+            await _localload()
+            _syncer();
+          } catch(err) {
+            console.log(err)
+          }
+        });
 
-      resolve(true);
+        resolve(true);  
+      }
+      catch (err) {
+        reject(false);
+      }
 
     });
   }
@@ -735,9 +774,40 @@ export class Api {
     return this.current.page;
   }
 
+  async checkUrl() {
+    let self = this;
+    return new Promise(async (resolve, reject) => {
+      try {
+        let _res = await self.http.get(self.credentials.server).toPromise();
+        if (_res.ok === true && _res.json().application === "Rokfor Writer Server") {
+          let _v = _res.json().version.split(".");
+          if (parseInt(_v[0]) >= this.min_server[0] && parseInt(_v[1]) >= this.min_server[1] && parseInt(_v[0]) >= this.min_server[2])
+            resolve(true);
+          else  
+            reject(`Server Version mismatch: ${this.min_server[0]}.${this.min_server[1]}.${this.min_server[2]} required.`);
+        }
+        else {
+          reject("Server connection failed. Server probably down.");
+        }
+      } catch (err) {
+        reject("Server connection failed. Connection required for initial login.")
+      }
+      
+      
+
+    });
+  }
+
   async logIn() {
     this.state.initialized = false;
     this.showLoadingCtrl("Logging in. Network connection required.");
+    try {
+      await this.checkUrl();
+    } catch (err) {
+      this.showAlert("Server Connection Failed", err, null);
+      this.hideLoadingCtrl();
+      return;
+    }
     if (this.pouch.credentials == null) {
       this.pouch.credentials = await this.helpers._pouchcreate('rfWriter-credentials');
     }

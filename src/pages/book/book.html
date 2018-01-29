@@ -11,7 +11,7 @@
 <ion-content>
   <ion-list  *ngIf="api.issues">
     <ion-list-header color="primary">
-      Active Book
+      Available Books
     </ion-list-header>
     <ion-item-sliding *ngFor="let i of api.issues.Issues" radio-group [(ngModel)]="api.current.issue">
       <ion-item>
@@ -22,10 +22,18 @@
         <button ion-button color="danger" (click)="deleteIssue(i.Id)">
           <ion-icon name="trash"></ion-icon>
         </button>
+        <button ion-button color="secondary" (click)="shareIssue(i.Id)">
+          <ion-icon name="share"></ion-icon>
+        </button>
       </ion-item-options>
     </ion-item-sliding>
+    
+    <div padding>
+      <button ion-button color="light" block (click)="addIssue()">Add Book</button>
+    </div>
+
   </ion-list>
-  <ion-list *ngIf="api.current.issue">
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Name && api.current.issue_options.Options">
     <ion-list-header color="secondary">
       Book Settings
     </ion-list-header>
@@ -54,7 +62,7 @@
        <ion-input placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[4].value"></ion-input>
     </ion-item>
   </ion-list>
-  <ion-list *ngIf="api.current.issue">
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
     <ion-list-header color="secondary">
       Imprint
     </ion-list-header>
@@ -72,7 +80,7 @@
        ></ion-textarea>
     </ion-item>
   </ion-list>
-  <ion-list *ngIf="api.current.issue">
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
     <ion-list-header color="secondary">
       Preface
     </ion-list-header>

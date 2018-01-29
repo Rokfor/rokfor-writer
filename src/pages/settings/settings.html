@@ -11,30 +11,59 @@
 
 <ion-content>
 
-
     <ion-list>
-      <ion-list-header color="primary">
-        Server Settings
+      <ion-list-header color="dark">
+        Server
       </ion-list-header>
-      <ion-item>
-         <ion-label stacked>Username</ion-label>
-         <ion-input clearInput placeholder="Username" [(ngModel)]="api.credentials.user"></ion-input>
-      </ion-item>
-       <ion-item>
-         <ion-label stacked>Access Key</ion-label>
-         <ion-input clearInput  placeholder="Access Key" [(ngModel)]="api.credentials.key"></ion-input>
-       </ion-item>
 
        <ion-item>
-          <ion-label stacked>Server Url</ion-label>
-          <ion-input clearInput placeholder="https://writerdb.rokfor.ch:443" [(ngModel)]="api.credentials.server"></ion-input>
+        <ion-label floating>Server URL: https://sync.rokfor.ch</ion-label>
+        <ion-input clearInput  [(ngModel)]="api.credentials.server"></ion-input>
        </ion-item>
 
-       <ion-item>
-         <button ion-button color="danger" block (click)="api.logOut()" *ngIf="api.state.logged_in">Log Out</button>
-         <button ion-button color="secondary" block (click)="api.logIn()" *ngIf="!api.state.logged_in">Log In</button>
-       </ion-item>
+      <div padding>
+      </div>
+
     </ion-list>
 
+    <ion-list>
+      <ion-list-header color="dark">
+        Log In
+      </ion-list-header>
+      <ion-item>
+         <ion-label floating>Access Key</ion-label>
+         <ion-input clearInput [(ngModel)]="api.credentials.user"></ion-input>
+      </ion-item>
+      <ion-item>
+         <ion-label floating>Password</ion-label>
+         <ion-input clearInput  [(ngModel)]="api.credentials.key"></ion-input>
+      </ion-item>
 
+      <div padding>
+         <button ion-button color="danger" block (click)="api.logOut()" *ngIf="api.state.logged_in">Log Out</button>
+         <button ion-button color="light" block (click)="api.logIn()" *ngIf="!api.state.logged_in">Log In</button>
+      </div>
+    </ion-list>
+
+    <ion-list *ngIf="!api.state.logged_in">
+      <ion-list-header color="dark">
+        Sign Up
+      </ion-list-header>
+
+      <ion-item *ngIf="!signup.sent">
+         <ion-label floating *ngIf="signup.error">{{signup.message}}</ion-label>
+         <ion-label floating *ngIf="!signup.error">E-Mail</ion-label>
+         <ion-input clearInput [(ngModel)]="signup.email"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="signup.sent">
+         {{signup.message}}
+      </ion-item>      
+
+      <div padding>
+         <button ion-button color="light" block (click)="signup.emit()" [disabled]="signup.sent || !api.credentials.server">Submit E-Mail</button>
+       </div>
+      
+       
+    </ion-list>
 </ion-content>
