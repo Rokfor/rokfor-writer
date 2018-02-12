@@ -5,6 +5,8 @@ import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 
 
+
+
 interface _dataset {
     name:     string;
     title:    string;
@@ -39,6 +41,7 @@ interface _active {
   page        : number;
   issue       : number;
   issue_options: any;
+  exports     : any;    
 }
 
 interface _credentials {
@@ -73,7 +76,8 @@ export class Api {
     current: _active  = {
       page          : 0,
       issue         : null,
-      issue_options : {}
+      issue_options : {},
+      exports       : {}
     };
     
     pouch: _pouch = {
@@ -289,6 +293,13 @@ export class Api {
         console.log('could not load options...')
       }
 
+      try {
+        let _options = await self.pouch.data[_issue.Id].get(`contribution-${_issue.Id}-exports`);
+        _issue.Exports = _options.data;
+      } catch (err) {
+        console.log('could not load exports...')
+      }
+
 
       if (_issue.Id == self.current.issue) {
         self.current.issue_options = {
@@ -304,15 +315,19 @@ export class Api {
 
     let syncIssue = function(_issue) {
       return new Promise(async (resolve, reject) => {
-        self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/db/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
-        .on('complete', function(info) { 
-          syncIssueWithDataOption(_issue);
-          resolve(true);
-        })
-        .on('error', function(err){
-          syncIssueWithDataOption(_issue);
-          reject(false);
-        });
+        try {
+          self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/db/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
+          .on('complete', function(info) { 
+            syncIssueWithDataOption(_issue);
+            resolve(true);
+          })
+          .on('error', function(err){
+            syncIssueWithDataOption(_issue);
+            reject(false);
+          });
+        } catch (err) {
+          console.log(err);
+        }
       });
     }
 
@@ -327,26 +342,31 @@ export class Api {
         }
 
         let _counter = 0;
+        try {
+          for (let i of self.issues.Issues) {
 
-        for (let i of self.issues.Issues) {
+            // Create pouch db if no db is existing
 
-          // Create pouch db if no db is existing
+            if (self.pouch.data[i.Id] === undefined) {
+              self.showLoadingCtrl(`<p>Create database</p><h4>${++_counter} of ${self.issues.Issues.length}</h4>`);
+              try {
+                self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`);  
+              } catch (err) {
+                self.hideLoadingCtrl();
+                reject(false);
+              }
+            }
 
-          if (self.pouch.data[i.Id] === undefined) {
-            self.showLoadingCtrl(`<p>Create database</p><h4>${++_counter} of ${self.issues.Issues.length}</h4>`);
             try {
-              self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`);  
+              syncIssue(i);
             } catch (err) {
-              self.hideLoadingCtrl();
-              reject(false);
+              console.log(err);
             }
           }
-
-          try {
-            syncIssue(i);
-          } catch (err) {
-            console.log(err);
-          }
+        } catch (err) {
+          console.log(err);
+          self.hideLoadingCtrl();
+          reject(false);
         }
         self.hideLoadingCtrl();
         resolve(true);
@@ -388,15 +408,19 @@ export class Api {
 
     /* Start Replication: One-time/One-off for starters */
 
-    this.pouch.issues.replicate.from(`${this.credentials.server}/db/rf-${this.credentials.user}`, this.helpers._replicatesettings(this))
-    .on('complete', function(info) { 
-      self.state.logged_in = true;
-      syncing();
-    })
-    .on('error', function(err){
-      self.state.logged_in = false;
-      syncing();
-    });
+    try {
+      this.pouch.issues.replicate.from(`${this.credentials.server}/db/rf-${this.credentials.user}`, this.helpers._replicatesettings(this))
+      .on('complete', function(info) { 
+        self.state.logged_in = true;
+        syncing();
+      })
+      .on('error', function(err){
+        self.state.logged_in = false;
+        syncing();
+      });
+    } catch (err) {
+      console.log(err);
+    }
 
   }
 
@@ -482,8 +506,12 @@ export class Api {
       this.showLoadingCtrl("Initial Data Sync");
       let self = this;
 
-      let _localload = function() {
+      // Loading Data from Local Database
+      // Init: set to true for initial load, false on feed changes
+
+      let _localload = function(init) {
         
+        init = init || false;
 
         return new Promise(async (resolve, reject) => {
 
@@ -502,34 +530,59 @@ export class Api {
                   return 0;
             });
             _result.rows.forEach((d) => {
-              if (d.doc.data) {
-                if (d.doc._id === `contribution-${self.current.issue}-options`) {
-                  
-                  /* Set Current Issue */
 
-                  self.current.issue_options.Id = d.doc.data.Id || self.current.issue_options.Id;
-                  self.current.issue_options.Name = d.doc.data.Name || self.current.issue_options.Name;
-                  self.current.issue_options.Options = d.doc.data.Options || self.current.issue_options.Options;
+              if (d.doc._id === `contribution-${self.current.issue}-exports`) {
 
-                  /* Parse Options for completeness */
+                console.log(d);
+                
+                /* Set Current Issue */
 
-                  for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
-                    self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
-                  }
+                self.current.exports = d.doc || self.current.exports;
 
-                  /* Copy into issues Database */
-
-                  if (self.issues.Issues.length && self.current.issue) {
-                    self.issues.Issues.forEach((i) => {
-                      if (i.Id == self.current.issue) {
-                        i.Name    = self.current.issue_options.Name;
-                        i.Options = self.current.issue_options.Options;
-                      }
-                    })
-                  }
+                self.current.exports.FilesArray = [];
+                for (let _file in d.doc.File) {
+                  console.log(d.doc._attachments[_file + '.pdf']);
+                  self.current.exports.FilesArray.push({
+                    "Name": _file,
+                    "Url" : d.doc.File[_file],
+                    "Stats" : d.doc.Pages[_file],
+                    "Data": `data:${d.doc._attachments[_file + '.pdf'].content_type};base64,${d.doc._attachments[_file + '.pdf'].data}`
+                  })
                 }
-                else {
-                  self.data.push(d.doc.data);
+                if (init === false) {
+                  self.events.publish('export:ready', self.current.exports);  
+                }
+              } 
+              else {
+                if (d.doc.data) {
+                  if (d.doc._id === `contribution-${self.current.issue}-options`) {
+                    
+                    /* Set Current Issue */
+
+                    self.current.issue_options.Id = d.doc.data.Id || self.current.issue_options.Id;
+                    self.current.issue_options.Name = d.doc.data.Name || self.current.issue_options.Name;
+                    self.current.issue_options.Options = d.doc.data.Options || self.current.issue_options.Options;
+
+                    /* Parse Options for completeness */
+
+                    for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
+                      self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
+                    }
+
+                    /* Copy into issues Database */
+
+                    if (self.issues.Issues.length && self.current.issue) {
+                      self.issues.Issues.forEach((i) => {
+                        if (i.Id == self.current.issue) {
+                          i.Name    = self.current.issue_options.Name;
+                          i.Options = self.current.issue_options.Options;
+                        }
+                      })
+                    }
+                  }
+                  else {
+                    self.data.push(d.doc.data);
+                  }
                 }
               }
             });
@@ -560,7 +613,7 @@ export class Api {
             self.state.busy = 1;
             if (info.direction === "pull" ) {
               try {
-                await _localload();    
+                await _localload(false);    
               } catch (err) {
                 console.log(err)
               }
@@ -568,6 +621,9 @@ export class Api {
           })
           .on('paused',   async function (err)  {
             self.state.busy = 0;
+          })
+          .on('error', function (err) {
+            console.log(err)
           });
         } catch (err){
           console.log(err);
@@ -581,7 +637,7 @@ export class Api {
         this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/db/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
         .on('complete', async function(info) { 
           try {
-            await _localload();
+            await _localload(true);
             _syncer();
           } catch(err) {
             console.log(err)
@@ -589,7 +645,7 @@ export class Api {
         })
         .on('error', async function(err){
           try {
-            await _localload()
+            await _localload(true)
             _syncer();
           } catch(err) {
             console.log(err)
@@ -823,7 +879,8 @@ export class Api {
     this.current = {
       page          : 0,
       issue         : null,
-      issue_options : {}
+      issue_options : {},
+      exports       : {}
     }
     this.state.initialized = false;
     this.state.logged_in = false;
@@ -852,4 +909,38 @@ export class Api {
 
 
     }
+
+  async _call(url, message, postdata, returnResult) {
+    postdata = postdata || {};
+    returnResult = returnResult || false;
+    try {
+      let _headers = new Headers({'Content-Type': 'application/json'});
+      let _res = await this.http.post(
+        this.credentials.server + url, 
+        JSON.stringify({
+          credentials: this.credentials,
+          data: postdata}),
+          {headers: _headers}).toPromise();
+      if (returnResult===true) {
+        return _res.json();
+      }
+      else {
+        if (_res.ok === true && _res.json().state === "ok") {
+          this.showAlert("OK", message, null);
+        }
+        if (_res.json().state === "error") {
+          this.showAlert("Error", _res.json().message, null);
+        }        
+      }
+    } catch (err) {
+      if (returnResult===true) {
+        return false;
+      }
+      else {
+        console.log(err);
+        this.showAlert(`Error ${err.status||""}`, `${err.statusText||""}<br>${err.url||""}`, null);        
+      }
+    }
+  }
+
   }

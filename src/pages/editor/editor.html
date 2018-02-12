@@ -16,14 +16,20 @@
 
     <ion-buttons end *ngIf="api.state.initialized">
 
-      <button ion-button small  icon-only [disabled]="api.state.busy == 0">
+
+        <button ion-button clear icon-only (click)="showInfo()" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+          <ion-icon name="ios-information-circle-outline"></ion-icon>
+        </button>   
+
+      <button class="desktop-wrapper" ion-button clear  icon-only [disabled]="api.state.busy == 0">
         <ion-icon name="sync"></ion-icon>
       </button>
 
-
-      <button *ngIf="api.data.length > 0 && api.data[api.getCurrent()]" ion-button small  icon-only (click)="api.change()" [disabled]="api.data[api.getCurrent()].modified == 0">
-        <ion-icon name="send"></ion-icon>
+      <button class="mobile-wrapper" ion-button clear  icon-only  (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
+        <ion-icon name="cloud-upload"></ion-icon>
       </button>
+
+
 
     </ion-buttons>
 
@@ -49,37 +55,52 @@
       </div>
     </ion-slide>
   </ion-slides>
-
 </ion-content>
 
 <ion-footer *ngIf="!api.state.fullscreen">
   <ion-toolbar>
-
     <ion-buttons start>
-      <button ion-button clear icon-only (click)="prev()" [disabled]="slider.isBeginning()">
+      <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="slider.isBeginning()">
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
-
+  
     <ion-title>
-      <button ion-button clear icon-only (click)="addPage()">
-        <ion-icon name="add"></ion-icon>
-      </button>
-      <button ion-button clear icon-only (click)="tgInfo = !tgInfo" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
-        <span *ngIf="tgInfo">
-          <ion-badge item-right color="light">Rokfor Id: {{api.data[api.getCurrent()].id}}</ion-badge>&nbsp;
-          <ion-badge item-right color="light">Characters: {{api.data[api.getCurrent()].body.length}}</ion-badge>&nbsp;
-          <ion-badge item-right color="light">Words: {{wordcount(api.data[api.getCurrent()].body)}}</ion-badge>
-        </span>
-        <ion-icon *ngIf="!tgInfo" ios="ios-information-circle-outline" md="md-information-circle"></ion-icon>
-      </button>
+      <ion-buttons class="desktop-wrapper">
+        <button solid ion-button padding color="primary" icon-start (click)="addPage()">
+          <ion-icon name="add"></ion-icon>
+          &nbsp;New
+        </button>
+        <button solid ion-button padding color="secondary" icon-start (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
+          <ion-icon name="cloud-upload"></ion-icon>
+          &nbsp;Save
+        </button>
+        <button solid ion-button padding color="solid" icon-start  (click)="printPage()">
+          <ion-icon name="print"></ion-icon>
+          &nbsp;Print
+        </button>
+        <button solid ion-button padding color="danger" icon-start  (click)="deletePage(i)">
+          <ion-icon name="trash"></ion-icon>
+          &nbsp;Delete
+        </button>
+      </ion-buttons>
+
+      <ion-buttons class="mobile-wrapper">
+        <button  ion-button  color="primary" clear icon-only icon-start (click)="addPage()">
+          <ion-icon name="add"></ion-icon>
+        </button>
+      </ion-buttons>
+
+
+
     </ion-title>
+      
+    
 
     <ion-buttons end *ngIf="initialized">
-      <button ion-button clear icon-only (click)="next()" [disabled]="slider.isEnd()">
+      <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="slider.isEnd()">
         <ion-icon name="arrow-forward"></ion-icon>
       </button>
     </ion-buttons>
-
   </ion-toolbar>
 </ion-footer>

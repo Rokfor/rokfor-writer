@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title>
+      {{this.api.current.issue_options.Name}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-list-header color="primary">
+      Available Export Formats
+    </ion-list-header>    
+      <ion-item  *ngFor="let i of exporters" radio-group [(ngModel)]="activeExporter">
+        <ion-label>{{i.Name}}</ion-label>
+        <ion-radio value="{{i.Id}}"></ion-radio>
+      </ion-item>
+    <div padding>
+      <button ion-button color="light" [disabled]="activeExporter===false" block (click)="export()">Generate</button>
+    </div>
+  </ion-list>
+
+  <ion-list>
+    <ion-list-header color="primary">
+      Exports
+    </ion-list-header>    
+    <a ion-item *ngFor="let i of this.api.current.exports.FilesArray" (click)="openModal(i)">
+      {{i.Name}}
+      <br>
+      <span class="smallfont">
+        {{i.Stats.creationdate}} / {{i.Stats.pages}} Pages / Page Size: {{i.Stats.page_size}}
+      </span>
+    </a>
+  </ion-list>
+
+</ion-content>

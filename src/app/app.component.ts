@@ -5,6 +5,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
 import { Book } from '../pages/book/book';
+import { Exports } from '../pages/exports/exports';
+import { PopoverPage } from '../pages/exports/exports-popover';
 import { Api } from '../services/rfapi.component';
 
 
@@ -46,8 +48,9 @@ export class MyApp {
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Settings', component: Settings, icon: 'settings' },
-      { title: 'Book',   component: Book, icon: 'book' },
-      { title: 'Editor',   component: Editor, icon: 'document' }
+      { title: 'Books',   component: Book, icon: 'book' },
+      { title: 'Editor',   component: Editor, icon: 'document' },
+      { title: 'Export',   component: Exports, icon: 'download' }    
     ];
   }
 
@@ -98,6 +101,9 @@ export class MyApp {
       })
     }
 
+    this.events.subscribe('export:ready', (data) => {
+      this.api.showAlert("Export", `Export ${data.Id} is ready!`, function(){});
+    });
 
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();

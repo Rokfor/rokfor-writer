@@ -6,6 +6,8 @@ import { HttpModule} from '@angular/http';
 import { MyApp } from './app.component';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
+import { Exports } from '../pages/exports/exports';
+import { PopoverPage } from '../pages/exports/exports-popover';
 import { Book } from '../pages/book/book';
 import { Autoresize } from '../directives/shrink';
 
@@ -16,6 +18,8 @@ import { Autoresize } from '../directives/shrink';
     Settings,
     Editor,
     Book,
+    Exports,
+    PopoverPage,
     Autoresize
   ],
   imports: [
@@ -29,7 +33,9 @@ import { Autoresize } from '../directives/shrink';
     MyApp,
     Settings,
     Editor,
-    Book
+    Book,
+    PopoverPage,    
+    Exports
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })

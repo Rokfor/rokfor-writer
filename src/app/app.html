@@ -7,18 +7,18 @@
 
   <ion-content>
 
-    <ion-item-group>
-      <ion-item-divider color="light">Settings</ion-item-divider>
-      <button menuClose (click)="openPage(p)" ion-item *ngFor="let p of pages">
-        <ion-icon name="{{p.icon}}" item-left></ion-icon>
-        {{p.title}}
-      </button>
-    </ion-item-group>
-
     <ion-list>
-      <ion-list-header>
+      <ion-item-group>
+        <button menuClose (click)="openPage(p)" ion-item *ngFor="let p of pages">
+          <ion-icon name="{{p.icon}}" item-left></ion-icon>
+          {{p.title}}
+        </button>
+      </ion-item-group>
+      
+      <ion-item-divider color="light">
         Table of Contents
-      </ion-list-header>
+      </ion-item-divider>
+
       <ion-item-group reorder="true" (ionItemReorder)="reorderPages($event)">
         <ion-item-sliding *ngFor="let d of api.data; let i = index;" >
           <ion-item menuClose (click)="openEditor(i)">
@@ -37,20 +37,6 @@
       </ion-item-group>
     </ion-list>
   </ion-content>
-
-  <ion-footer>
-    <ion-toolbar>
-      <ion-buttons>
-        <button ion-button small  *ngIf="electron" icon-only (click)="toggleFs()">
-          <ion-icon name="resize"></ion-icon>
-        </button>
-        <button ion-button small  icon-only [disabled]="!editor" (click)="editor.printPage()">
-          <ion-icon name="print"></ion-icon>
-        </button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-footer>
-
 </ion-menu>
 
 <!-- Disable swipe-to-go-back because it's poor UX to combine STGB with side menus -->

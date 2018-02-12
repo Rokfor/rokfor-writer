@@ -334,10 +334,30 @@ export class Editor {
     event.target.select();
   }
 
-
-
   wordcount(str) {
     return str.split(/[^\s]+/).length;
   }
+
+  showInfo() {
+    let _message = `Rokfor Id: ${this.api.data[this.api.getCurrent()].id}<br>Characters: ${this.api.data[this.api.getCurrent()].body.length}<br>Words: ${this.wordcount(this.api.data[this.api.getCurrent()].body)}`;
+    let _confirm = this.alert.create({
+      title: "Document Statistics",
+      message: _message,
+      buttons: [
+        {
+          text: 'Ok',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    _confirm.present();
+  }
+
+  deletePage() {
+    this.api.delete(this.api.getCurrent());
+  }
+
 
 }

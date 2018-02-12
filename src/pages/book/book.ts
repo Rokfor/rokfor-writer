@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
-import { Http, Headers } from '@angular/http';
 import { Api } from '../../services/rfapi.component';
 
 /*
@@ -18,40 +17,18 @@ export class Book {
   constructor(
     public api:Api,
     public navCtrl: NavController,
-    private http: Http
   ) {
-    this.http = http;
   }
 
   ionViewDidLoad() {
     console.log(this.api.issues, this.api.current.issue);
   }
 
-  async _call(url, message, postdata) {
-    postdata = postdata || {};
-    try {
-      let _headers = new Headers({'Content-Type': 'application/json'});
-      let _res = await this.http.post(
-        this.api.credentials.server + url, 
-        JSON.stringify({
-          credentials: this.api.credentials,
-          data: postdata}),
-          {headers: _headers}).toPromise();
-      if (_res.ok === true && _res.json().state === "ok") {
-        this.api.showAlert("OK", message, null);
-      }
-      if (_res.json().state === "error") {
-        this.api.showAlert("Error", _res.json().message, null);
-      }
-    } catch (err) {
-      console.log(err);
-      this.api.showAlert(`Error ${err.status||""}`, `${err.statusText||""}<br>${err.url||""}`, null);
-    }
-  }
+
 
 
   deleteIssue(issueId) {
-    this._call("/delete", `Deleted Book ${issueId}`, {issue: issueId});
+    this.api._call("/delete", `Deleted Book ${issueId}`, {issue: issueId}, false);
   }
 
 
@@ -74,7 +51,7 @@ export class Book {
           text: 'Save',
           handler: data => {
             console.log(data.invite);
-            this._call("/share", "You just shared a book.", {issue: issueId, invite: data.invite});
+            this.api._call("/share", "You just shared a book.", {issue: issueId, invite: data.invite}, false);
           }
         }
       ]
@@ -83,7 +60,7 @@ export class Book {
   }
 
   addIssue() {
-    this._call("/add", "There is a new issue in your booklist", {});
+    this.api._call("/add", "There is a new issue in your booklist", {}, false);
   }
 
 }

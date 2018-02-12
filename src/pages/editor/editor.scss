@@ -107,6 +107,22 @@ page-editor {
       overflow: hidden !important;
     }
   }
+
+  .mobile-wrapper{
+    display:none;
+  }
+  .desktop-wrapper{
+    display:inline-block;
+  }  
+  @media screen and (max-width: 640px) {
+    .mobile-wrapper{
+      display:inline-block;
+    }
+    .desktop-wrapper{
+      display:none;
+    }  
+  }
+
 }
 
 @import "codemirror.scss";
