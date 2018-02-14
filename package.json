@@ -3,7 +3,7 @@
     "author": "Rokfor & Urs Hofer",
     "homepage": "http://www.rokfor.ch/",
     "private": true,
-    "version": "1.0.0-beta.7",
+    "version": "1.0.1",
     "main": "./www/index.js",
     "scripts": {
         "ionic:build": "ionic-app-scripts build",
@@ -54,7 +54,7 @@
     },
     "devDependencies": {
         "@types/showdown": "^1.7.2",
-        "electron": "^1.8.2-beta.4",
+        "electron": "1.8.2",
         "electron-updater": "^1.11.1",
         "typescript": "2.3.4"
     },

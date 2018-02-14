@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.rokfor.writer" version="1.0.0-beta.7" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.rokfor.writer" version="1.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>rokfor-writer</name>
     <description>Writer Application for the Rokfor Ecosystem.</description>
     <author email="inquiries@rokfor.ch" href="http://rokfor.ch/">Rokfor Team</author>
@@ -84,9 +84,9 @@
     <plugin name="cordova-plugin-device" spec="^1.1.7" />
     <plugin name="cordova-plugin-printer" spec="^0.7.3" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.1.0" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.3.0" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.4.1" />
     <plugin name="cordova-plugin-whitelist" spec="^1.3.3" />
-    <plugin name="cordova-sqlite-storage" spec="^2.1.2" />
+    <plugin name="cordova-sqlite-storage" spec="^2.2.0" />
     <plugin name="de.appplant.cordova.plugin.printer" spec="^0.7.3" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
 </widget>

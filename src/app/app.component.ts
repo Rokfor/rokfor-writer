@@ -34,6 +34,7 @@ export class MyApp {
   editor: any = false;
   pages: Array<{title: string, component: any, icon: string}>;
   electron: any;
+  exportRunning: any;
 
   constructor(
     public  platform:     Platform,
@@ -45,6 +46,7 @@ export class MyApp {
     this.events = events;
     this.initializeApp();
     this.electron = electron;
+    this.exportRunning = false;
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Settings', component: Settings, icon: 'settings' },
@@ -56,7 +58,7 @@ export class MyApp {
 
   initializeApp() {
 
-    //let self = this;
+    // let self = this;
 
     if (ipcRenderer) {
       ipcRenderer.on('main:ipc', (event, message) => {
@@ -66,7 +68,6 @@ export class MyApp {
         if (message === 'enter-full-screen') {
           this.toggleFs(true);
         }
-
         if (message === 'next-document') {
           if (!this.editor) return;
           if (this.editor.slider.isEnd()) return;
@@ -85,6 +86,10 @@ export class MyApp {
           if (!this.editor) return;
           this.editor.addPage();
         }
+        if (message === 'delete-document') {
+          if (!this.editor) return;
+          this.editor.deletePage();
+        }        
         if (message === 'print-document') {
           if (!this.editor) return;
           this.editor.printPage();
@@ -96,13 +101,21 @@ export class MyApp {
         if (message === 'export-data') {
           ipcRenderer.send('master:ipc:export', this.api.data[this.api.current.page])
         }
-
-
+      })
+      this.events.subscribe('export:saveattachment', (data) => {
+        ipcRenderer.send('master:ipc:saveattachment', data)
       })
     }
 
+
+    this.events.subscribe('export:started', (data) => {
+      this.exportRunning = true;
+    });
     this.events.subscribe('export:ready', (data) => {
-      this.api.showAlert("Export", `Export ${data.Id} is ready!`, function(){});
+      let self = this;
+      if (this.exportRunning === true) {
+        this.api.showAlert("Export", `Export ${data.Id} is ready!`, function(){self.exportRunning = false});
+      }
     });
 
     this.platform.ready().then(() => {

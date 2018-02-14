@@ -520,6 +520,7 @@ export class Api {
             let _result = await self.pouch.data[self.current.issue].allDocs({
               include_docs: true,
               attachments: true,
+              //binary: true, // Returns Files as Blobs, without as base64 string
               startkey: `contribution-${self.current.issue}`,
               endkey: `contribution-${self.current.issue}\uffff`
             });
@@ -546,6 +547,7 @@ export class Api {
                     "Name": _file,
                     "Url" : d.doc.File[_file],
                     "Stats" : d.doc.Pages[_file],
+                    "Raw": d.doc._attachments[_file + '.pdf'].data,
                     "Data": `data:${d.doc._attachments[_file + '.pdf'].content_type};base64,${d.doc._attachments[_file + '.pdf'].data}`
                   })
                 }

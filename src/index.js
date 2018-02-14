@@ -33,7 +33,10 @@ function createWindow () {
     show: false, 
     width: 800, 
     height: 600,
-    icon: path.join(__dirname, 'assets/electron_icons/256x256.png')
+    icon: path.join(__dirname, 'assets/electron_icons/256x256.png'),
+    webPreferences: {
+      plugins: true
+    }
   })
   mainWindow.once('ready-to-show', function() {
     mainWindow.show();
@@ -66,12 +69,25 @@ function createWindow () {
   })
 
 
-   ipcMain.on('master:ipc:export', (event, message) => {
+  ipcMain.on('master:ipc:export', (event, message) => {
      if (filename !== "") {
        fs.writeFile(filename, `Identifier: ${message.name}\n\nTitle: ${message.title}\n\n${message.body}`, function (err) {});
        filename = "";
      }
-   });
+  });
+
+  ipcMain.on('master:ipc:saveattachment', (event, message) => {
+    dialog.showSaveDialog({
+       title: "Save Document",
+       filters: [
+        { name: 'export', extensions: ['pdf'] }
+       ]
+    }, function(_fileName){
+      if (_fileName === undefined) return;
+        fs.writeFile(_fileName, message, 'base64', function (err) {});
+        _fileName = "";
+    })
+  });
 
   // Create the Application's main menu
    var template = [{
@@ -133,6 +149,16 @@ function createWindow () {
          }
        },
        {
+         label: 'Delete',
+         accelerator: 'Command+D',
+         click: function() {
+           mainWindow.webContents.send('main:ipc', 'delete-document');
+         }
+       },       
+       {
+         type: 'separator'
+       },
+       {
          label: 'Export',
          accelerator: 'Command+E',
          click: function() {
@@ -147,9 +173,6 @@ function createWindow () {
              let _data = mainWindow.webContents.send('main:ipc', 'export-data');
            })
          }
-       },
-       {
-         type: 'separator'
        },
        {
          label: 'Print',
