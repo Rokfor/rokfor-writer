@@ -100,6 +100,7 @@ export class Api {
       "Blurb",
       "Preface"
     ];
+
     data: Array < _dataset > = [];
     issues: any;
     loading: any = null;
@@ -183,6 +184,7 @@ export class Api {
     }
 
     min_server: Array < number > = [1,0,1];
+    exportRunning: any;
 
 
     constructor (
@@ -197,6 +199,7 @@ export class Api {
       this.state.on_device = platform.is('cordova');
       this.pouch.credentials = new PouchDB('rfWriter-credentials', this.dbsettings);
       this.pouch.data = [];
+      this.exportRunning = false;
       this.initialize();
   }
 
@@ -308,7 +311,12 @@ export class Api {
           Options: _issue.Options || []
         }
         for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
-          self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
+          self.current.issue_options.Options[_i] = {
+            key: self.issueoptions[_i],
+            value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value 
+                        ? self.current.issue_options.Options[_i].value
+                        : ""
+          };
         }
       }
     }
@@ -539,17 +547,31 @@ export class Api {
                 /* Set Current Issue */
 
                 self.current.exports = d.doc || self.current.exports;
-
                 self.current.exports.FilesArray = [];
-                for (let _file in d.doc.File) {
-                  console.log(d.doc._attachments[_file + '.pdf']);
-                  self.current.exports.FilesArray.push({
-                    "Name": _file,
-                    "Url" : d.doc.File[_file],
-                    "Stats" : d.doc.Pages[_file],
-                    "Raw": d.doc._attachments[_file + '.pdf'].data,
-                    "Data": `data:${d.doc._attachments[_file + '.pdf'].content_type};base64,${d.doc._attachments[_file + '.pdf'].data}`
-                  })
+
+                if (d.doc.Status == 'Complete') {
+                  for (let _file in d.doc.File) {
+                    //console.log(d.doc._attachments[_file + '.pdf']);
+                    
+                    let _data = "";
+                    let _mime = "";
+                    try {
+                      _data = d.doc._attachments[_file + '.pdf'].data;
+                      _mime = d.doc._attachments[_file + '.pdf'].content_type;
+                    } catch (err) {
+                      console.log("no attachement/mime");
+                    }
+
+                    self.current.exports.FilesArray.push({
+                      "Name": _file,
+                      "Status": d.doc.Status || 'Error',
+                      "Id": d.doc.Id,
+                      "Url" : d.doc.File[_file] || "",
+                      "Stats" : d.doc.Pages[_file] || [],
+                      "Raw": _data,
+                      "Data": `data:${_mime};base64,${_data}`
+                    })
+                  }
                 }
                 if (init === false) {
                   self.events.publish('export:ready', self.current.exports);  
@@ -568,7 +590,12 @@ export class Api {
                     /* Parse Options for completeness */
 
                     for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
-                      self.current.issue_options.Options[_i] = self.current.issue_options.Options[_i] || {key: self.issueoptions[_i],value:""};
+                      self.current.issue_options.Options[_i] = {
+                        key: self.issueoptions[_i],
+                        value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value 
+                          ? self.current.issue_options.Options[_i].value
+                          : ""
+                      };
                     }
 
                     /* Copy into issues Database */

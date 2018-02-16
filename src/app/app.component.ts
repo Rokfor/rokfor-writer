@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, Events } from 'ionic-angular';
+import { Nav, Platform, Events, ToastController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Settings } from '../pages/settings/settings';
@@ -34,19 +34,18 @@ export class MyApp {
   editor: any = false;
   pages: Array<{title: string, component: any, icon: string}>;
   electron: any;
-  exportRunning: any;
 
   constructor(
     public  platform:     Platform,
     private api:          Api,
     private statusBar:    StatusBar,
     private splashScreen: SplashScreen,
-            events:       Events
+            events:       Events,
+    public  toastCtrl:    ToastController
   ) {
     this.events = events;
     this.initializeApp();
     this.electron = electron;
-    this.exportRunning = false;
     // used for an example of ngFor and navigation
     this.pages = [
       { title: 'Settings', component: Settings, icon: 'settings' },
@@ -109,12 +108,27 @@ export class MyApp {
 
 
     this.events.subscribe('export:started', (data) => {
-      this.exportRunning = true;
+      this.api.exportRunning = true;
+      let toast = this.toastCtrl.create({
+          message: `Started export for «${this.api.current.issue_options.Name}»`,
+          duration: 3000,
+          position: 'top',
+          showCloseButton: true
+      });
+      toast.present();
     });
+    
     this.events.subscribe('export:ready', (data) => {
       let self = this;
-      if (this.exportRunning === true) {
-        this.api.showAlert("Export", `Export ${data.Id} is ready!`, function(){self.exportRunning = false});
+      if (this.api.exportRunning === true) {
+        let toast = this.toastCtrl.create({
+          message: `Document ${data.Id} is generated and ready in the exports section.`,
+          duration: 3000,
+          position: 'top',
+          showCloseButton: true
+        });
+        toast.present();
+        self.api.exportRunning = false
       }
     });
 

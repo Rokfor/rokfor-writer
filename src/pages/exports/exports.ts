@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController, NavParams, Events } from 'ionic-angular';
+import { NavController, ModalController, NavParams, Events, LoadingController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 import { PopoverPage } from './exports-popover';
 
@@ -23,7 +23,8 @@ export class Exports {
     public api:Api,
     public navCtrl: NavController,
     private modalCtrl: ModalController,
-    public event: Events
+    public event: Events,
+    public loadingCtrl: LoadingController
   ) {
     this.exporters = [];
     this.activeExporter = false;
@@ -42,8 +43,11 @@ export class Exports {
       exporterId: this.activeExporter, 
       issueId: this.api.current.issue
     };
-    let _data = await this.api._call("/export", `Started export for «${this.api.current.issue_options.Name}»`, _payload, false);
+    let loader = this.loadingCtrl.create({content: "Please wait..."});
+    loader.present();
+    let _data = await this.api._call("/export", "", _payload, true);
     this.events.publish('export:started');    
+    loader.dismiss();
   }
 
 

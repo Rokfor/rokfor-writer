@@ -11,6 +11,7 @@
       <ion-item-group>
         <button menuClose (click)="openPage(p)" ion-item *ngFor="let p of pages">
           <ion-icon name="{{p.icon}}" item-left></ion-icon>
+          <ion-spinner *ngIf="api.exportRunning && p.title=='Export'" color="secondary" item-right name="dots"></ion-spinner>
           {{p.title}}
         </button>
       </ion-item-group>
