@@ -56,7 +56,7 @@
   font-size: 80%;
 }
 
-.ProseMirror li {
+.ProseMirror ul > li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */
   margin: 0;
@@ -68,6 +68,14 @@
     margin-left: -1em;
   }
 }
+
+.ProseMirror ol > li {
+  position: relative;
+  pointer-events: none; /* Don't do weird stuff with marker clicks */
+  margin-left: 0.75em;
+  padding: 0;
+}
+
 .ProseMirror li > * {
   pointer-events: auto;
 }
