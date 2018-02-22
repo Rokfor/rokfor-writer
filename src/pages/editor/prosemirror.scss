@@ -36,13 +36,24 @@
 }
 
 .ProseMirror blockquote {
-  padding-left: 1em;
-  border-left: 3px solid #eee;
   margin-left: 0; margin-right: 0;
+  font-style: italic;
+  background-color: rgba(0,0,0,0.05);
+  & > p {
+    padding: 0.1em 0.5em;
+  }
 }
 
 .ProseMirror pre {
   white-space: pre-wrap;
+  margin-left: 5vw;
+  margin-right: 5vw;
+  padding: 0.25em 0.5em;
+  background-color: rgba(0,0,0,0.05);
+}
+
+.ProseMirror code {
+  font-size: 80%;
 }
 
 .ProseMirror li {
