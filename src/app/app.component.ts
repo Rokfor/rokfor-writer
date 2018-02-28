@@ -31,7 +31,6 @@ export class MyApp {
 
   rootPage: any = Editor;
   events: any;
-  editor: any = false;
   pages: Array<{title: string, component: any, icon: string}>;
   electron: any;
 
@@ -67,35 +66,30 @@ export class MyApp {
         if (message === 'enter-full-screen') {
           this.toggleFs(true);
         }
-        if (message === 'next-document') {
-          if (!this.editor) return;
-          if (this.editor.slider.isEnd()) return;
-          this.editor.slider.slideNext();
-        }
-        if (message === 'previous-document') {
-          if (!this.editor) return;
-          if (this.editor.slider.isBeginning()) return;
-          this.editor.slider.slidePrev();
-        }
-        if (message === 'save-document') {
-          if (!this.editor) return;
-          this.editor.api.change();
-        }
-        if (message === 'new-document') {
-          if (!this.editor) return;
-          this.editor.addPage();
-        }
-        if (message === 'delete-document') {
-          if (!this.editor) return;
-          this.editor.deletePage();
-        }        
-        if (message === 'print-document') {
-          if (!this.editor) return;
-          this.editor.printPage();
-        }
-        if (message === 'set-title' || message === 'set-identifier') {
-          if (!this.editor) return;
-          this.editor.openModal(message);
+        if (this.nav.getActive().name === "Editor") {
+          if (message === 'next-document') {
+            if (this.nav.getActive().instance.slider.isEnd()) return;
+            this.nav.getActive().instance.slider.slideNext();
+          }
+          if (message === 'previous-document') {
+            if (this.nav.getActive().instance.slider.isBeginning()) return;
+            this.nav.getActive().instance.slider.slidePrev();
+          }
+          if (message === 'save-document') {
+            this.nav.getActive().instance.api.change();
+          }
+          if (message === 'new-document') {
+            this.nav.getActive().instance.addPage();
+          }
+          if (message === 'delete-document') {
+            this.nav.getActive().instance.deletePage();
+          }        
+          if (message === 'print-document') {
+            this.nav.getActive().instance.printPage();
+          }
+          if (message === 'set-title' || message === 'set-identifier') {
+            this.nav.getActive().instance.openModal(message);
+          }
         }
         if (message === 'export-data') {
           ipcRenderer.send('master:ipc:export', this.api.data[this.api.current.page])
@@ -155,31 +149,19 @@ export class MyApp {
   openPage(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    var self = this;
-    this.nav.setRoot(page.component).then(function(e){
-      if (self.nav.getActive().name === "Editor") {
-        self.editor = self.nav.getActive().instance;
-      }
-      else {
-        self.editor = false;
-      }
-    });
+    this.nav.setRoot(page.component);
   }
 
-  openEditor(page) {
+  async openEditor(page) {
     // Reset the content nav to have just this page
     // we wouldn't want the back button to show in this scenario
-    var self = this;
-    if (this.nav.getActive().name === "Editor") {
-      this.events.publish('page:change', page);
+    
+    if (this.nav.getActive().name !== "Editor") {
+      await this.nav.setRoot(Editor);
     }
-    else {
-      //this.nav.setRoot(Editor, {page: page});
-      this.nav.setRoot(Editor).then(function(e){
-        self.events.publish('page:change', page);
-        self.editor = self.nav.getActive().instance;
-      });
-    }
+     
+    this.events.publish('page:change', page);
+    
   }
 
   reorderPages(indexes) {

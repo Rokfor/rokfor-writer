@@ -224,14 +224,14 @@ function createWindow () {
        },
        {
          label: 'Previous Document',
-         accelerator: 'Alt+Command+Up',
+         accelerator: 'Alt+Command+Left',
          click: function() {
            mainWindow.webContents.send('main:ipc', 'previous-document');
          }
        },
        {
          label: 'Next Document',
-         accelerator: 'Alt+Command+Down',
+         accelerator: 'Alt+Command+Right',
          click: function() {
            mainWindow.webContents.send('main:ipc', 'next-document');
          }

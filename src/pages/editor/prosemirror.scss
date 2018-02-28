@@ -309,25 +309,30 @@ li.ProseMirror-selectednode:after {
 
 .ProseMirror-prompt {
   background: white;
-  padding: 5px 10px 5px 15px;
+  padding: 1em;
   border: 1px solid silver;
   position: fixed;
   border-radius: 3px;
   z-index: 11;
   box-shadow: -.5px 2px 5px rgba(0, 0, 0, .2);
+  font-size: 18px;
+  font-family: ic, Courier, monospace;
+
 }
 
 .ProseMirror-prompt h5 {
   margin: 0;
   font-weight: normal;
-  font-size: 100%;
-  color: #444;
+  margin-bottom: 0.5em;
+  
 }
 
 .ProseMirror-prompt input[type="text"],
 .ProseMirror-prompt textarea {
-  background: #eee;
+  background: white;
   border: none;
+  border-bottom: 1px solid gray;
+  margin-top: 0.2em;
   outline: none;
 }
 
