@@ -50,7 +50,7 @@
         <ion-input [(ngModel)]="e.title" (ngModelChange)="changeDebounce()" placeholder="{{e.title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
-        <prosemirror *ngIf="this.api.getCurrent() == i" [(data)]="e.body" (blur)="change()" (change)="e.modified = 1;">
+        <prosemirror *ngIf="this.api.getCurrent() == i" [(data)]="e.body" [(searchString)]="findString" (search)="search()" (blur)="change()" (change)="e.modified = 1;">
         </prosemirror>
       </div>
     </ion-slide>

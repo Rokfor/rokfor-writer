@@ -98,7 +98,12 @@ export class Api {
       "ISBN",
       "Imprint",
       "Blurb",
-      "Preface"
+      "Preface",
+      "Postface",
+      "Thanks",
+      "PrefaceTitle",
+      "PostfaceTitle",
+      "Copyright"      
     ];
 
     data: Array < _dataset > = [];

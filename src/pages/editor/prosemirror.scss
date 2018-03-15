@@ -56,6 +56,20 @@
   font-size: 80%;
 }
 
+.ProseMirror .problem {
+  background: #FF0;
+}
+
+.ProseMirror .hard_break {
+  &:after {
+    content: "↩︎";
+    position: absolute;
+    color: blue;
+    margin-top: 0.2em;
+    font-size: 80%;
+  }
+}
+
 .ProseMirror ul > li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */

@@ -9,7 +9,7 @@ import { Api } from '../../services/rfapi.component';
 //import 'codemirror/addon/fold/foldgutter.js';
 //import 'codemirror/addon/fold/markdown-fold.js';
 import {Converter} from "showdown/dist/showdown";
-
+ 
 @Component({
   selector: 'page-editor',
   templateUrl: 'editor.html',
@@ -26,8 +26,7 @@ export class Editor {
   afterSaveCallback: any;
   confirm: any;
   timeout_change: any;
-  
-  //ctrl: any;
+  findString: any;  
 
   /*cm_options: any = {
     viewportMargin: 10,
@@ -348,6 +347,37 @@ export class Editor {
           text: 'Ok',
           handler: data => {
             console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    _confirm.present();
+  }
+
+  search(a) {
+    console.log(a);
+    let _confirm = this.alert.create({
+      title: "Search",
+      message: "Search Term",
+      inputs: [
+        {
+          name: "SearchTerm",
+          value: this.findString ? this.findString : ""
+        },
+      ],
+      buttons: [
+        {
+          text: 'Clear',
+          handler: data => {
+            console.log('Cancel clicked');
+            this.findString = false;
+          }
+        },
+        {
+          text: 'Search',
+          handler: data => {
+            console.log('Saved clicked', data);
+            this.findString = data.SearchTerm;
           }
         }
       ]
