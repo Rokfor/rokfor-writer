@@ -1,5 +1,8 @@
 const electron = require('electron')
 const fs = require('fs')
+const log = require('electron-log');
+const {autoUpdater} = require("electron-updater");
+
 // Module to control application life.
 const app = electron.app
 const dialog = electron.dialog
@@ -11,7 +14,6 @@ const BrowserWindow = electron.BrowserWindow
 // Menu Stuff
 const Menu = electron.Menu
 const MenuItem = electron.MenuItem
-
 
 // Report crashes to our server.
 //const CrashReporter = electron.CrashReporter;
@@ -123,6 +125,10 @@ function createWindow () {
        },
        {
          type: 'separator'
+       },
+       {
+        label: 'Check for Updates',
+        click: function() { autoUpdater.checkForUpdates(); }
        },
        {
          label: 'Quit',
@@ -330,7 +336,6 @@ app.on('window-all-closed', function () {
   }
 })
 
-
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -339,5 +344,11 @@ app.on('activate', function () {
   }
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+//-------------------------------------------------------------------
+// Auto Update
+//-------------------------------------------------------------------
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+app.on('ready', function()  {
+  autoUpdater.checkForUpdatesAndNotify();
+});
