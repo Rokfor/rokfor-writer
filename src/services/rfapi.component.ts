@@ -3,8 +3,7 @@ import 'rxjs/Rx';
 import { reorderArray, Platform, Events, LoadingController, AlertController } from 'ionic-angular';
 import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
-
-
+import { DomSanitizer } from '@angular/platform-browser';
 
 
 interface _dataset {
@@ -58,150 +57,164 @@ interface _debouncers {
 @Injectable()
 
 export class Api {
-    events: Events;
+  events: Events;
 
-    timeout: _debouncers = {
-      book: false
-    }
+  timeout: _debouncers = {
+    book: false
+  }
 
-    state: _state = {
-      busy        : 0,
-      initialized : false,
-      message     : "",
-      logged_in   : false,
-      on_device   : false,
-      fullscreen  : false
-    };
-    
-    current: _active  = {
-      page          : 0,
-      issue         : null,
-      issue_options : {},
-      exports       : {}
-    };
-    
-    pouch: _pouch = {
-      credentials : null,
-      settings    : null,
-      data        : null,
-      issues      : null,
-      data_sync   : null,
-      issues_sync : null
-    };
+  state: _state = {
+    busy        : 0,
+    initialized : false,
+    message     : "",
+    logged_in   : false,
+    on_device   : false,
+    fullscreen  : false
+  };
+  
+  current: _active  = {
+    page          : 0,
+    issue         : null,
+    issue_options : {},
+    exports       : {}
+  };
+  
+  pouch: _pouch = {
+    credentials : null,
+    settings    : null,
+    data        : null,
+    issues      : null,
+    data_sync   : null,
+    issues_sync : null
+  };
 
-    issueoptions: any = [
-      "ShortTitle",
-      "InsideTitle",
-      "Subtitle",
-      "Author",
-      "AuthorShort",
-      "ISBN",
-      "Imprint",
-      "Blurb",
-      "Preface",
-      "Postface",
-      "Thanks",
-      "PrefaceTitle",
-      "PostfaceTitle",
-      "Copyright"      
-    ];
+  issueoptions: any = [
+    "ShortTitle",
+    "InsideTitle",
+    "Subtitle",
+    "Author",
+    "AuthorShort",
+    "ISBN",
+    "Imprint",
+    "Blurb",
+    "Preface",
+    "Postface",
+    "Thanks",
+    "PrefaceTitle",
+    "PostfaceTitle",
+    "Copyright",
+    "CoverURL",
+    "SeriesNumber",
+    "CoverColor",
+    "TextColor",
+    "Language"
+  ];
 
-    data: Array < _dataset > = [];
-    issues: any;
-    loading: any = null;
-    credentials: _credentials = {
-      user:   "",
-      key:  "",
-      server: ""
-    };
-    dbsettings: any = {
-      size: 50,
-      auto_compaction: true,
-      adapter: 'websql'
-    };
-    helpers: any = {
+  data: Array < _dataset > = [];
+  issues: any;
+  loading: any = null;
+  credentials: _credentials = {
+    user:   "",
+    key:  "",
+    server: ""
+  };
+  dbsettings: any = {
+    size: 250,
+    auto_compaction: true,
+    adapter: 'idb'
+  };
+  helpers: any = {
 
-      /* 
-       * Overwrites a document, if not existing, creates a new one 
-       */
+    /* 
+      * Overwrites a document, if not existing, creates a new one 
+      */
 
-      _pouchsave: function(db, document, data) {
-        return new Promise((resolve, reject) => {
-          db.get(document)
-          .then(function(doc) {
-            db.put({
-              _id: document,
-              _rev: doc._rev,
-              data: data
-            }).then((response) => {
-              resolve(true);
-            }).catch((err) => {
-              reject(err);
-            });
-          })
-          .catch(function (err) {
-            db.put({
-              _id: document,
-              data: data
-            })
-            .then((response) => {
-              resolve(true);
-            })
-            .catch((err)=>{
-              reject(err);
-            })
+    _pouchsave: function(db, document, data) {
+      return new Promise((resolve, reject) => {
+        db.get(document)
+        .then(function(doc) {
+          db.put({
+            _id: document,
+            _rev: doc._rev,
+            data: data
+          }).then((response) => {
+            resolve(true);
+          }).catch((err) => {
+            reject(err);
           });
-        });
-      },
-      _pouchcreate: function(db) {
-        return new Promise((resolve, reject) => {
-          let _dbsettings: any = {
-            size: 50,
-            auto_compaction: true
-          };
-          let _db = new PouchDB(db, _dbsettings);
-          setTimeout(() => {
-            if (_db)
-              resolve(_db);
-            else
-              reject(false);
-          }, 100);
         })
-      },
-      _syncsettings: function(_this) {
-        return {
-          live: true,
-          retry: true,
-          auth: {
-            username: _this.credentials.user,
-            password: _this.credentials.key
-          }
+        .catch(function (err) {
+          db.put({
+            _id: document,
+            data: data
+          })
+          .then((response) => {
+            resolve(true);
+          })
+          .catch((err)=>{
+            reject(err);
+          })
+        });
+      });
+    },
+    _pouchcreate: function(db, _adapter) {
+      _adapter = _adapter || 'idb';
+      return new Promise((resolve, reject) => {
+        let _dbsettings: any = {
+          size: 250,
+          auto_compaction: true,
+          adapter: _adapter
         };
-      },
-      _replicatesettings: function(_this) {
-        return {
-          auth: {
-            username: _this.credentials.user,
-            password: _this.credentials.key
-          }
-        };
-      }
+        let _db = new PouchDB(db, _dbsettings);
+        setTimeout(() => {
+          if (_db)
+            resolve(_db);
+          else
+            reject(false);
+        }, 100);
+      })
+    },
+    _syncsettings: function(_this) {
+      return {
+        live: true,
+        retry: true,
+        auth: {
+          username: _this.credentials.user,
+          password: _this.credentials.key
+        }
+      };
+    },
+    _replicatesettings: function(_this) {
+      return {
+        auth: {
+          username: _this.credentials.user,
+          password: _this.credentials.key
+        }
+      };
     }
+  }
 
-    min_server: Array < number > = [1,0,1];
-    exportRunning: any;
+  min_server: Array < number > = [1,0,1];
+  exportRunning: any;
 
 
-    constructor (
+  constructor (
       platform: Platform,
       events: Events,
       public loadingCtrl: LoadingController,
       public alert: AlertController,
-      private http: Http
-    ) {
+      private http: Http,
+      private sanitizer : DomSanitizer,
+  ) {
       this.http = http;
       this.events = events;
       this.state.on_device = platform.is('cordova');
+      this.sanitizer = sanitizer;
+
+      if (this.state.on_device) {
+        this.dbsettings.adapter = null;
+      }
+      
       this.pouch.credentials = new PouchDB('rfWriter-credentials', this.dbsettings);
       this.pouch.data = [];
       this.exportRunning = false;
@@ -269,8 +282,9 @@ export class Api {
 
     this.showLoadingCtrl("Initializing Settings Database");
     try {
-      this.pouch.settings = await this.helpers._pouchcreate(`rfWriter-settings-${this.credentials.user}`);
+      this.pouch.settings = await this.helpers._pouchcreate(`rfWriter-settings-${this.credentials.user}`, self.dbsettings.adapter);
     } catch (err) {
+      console.log(err);
       this.hideLoadingCtrl();
       return;
     }
@@ -283,7 +297,7 @@ export class Api {
 
     this.showLoadingCtrl("Initializing Issues Database");
     try {
-      this.pouch.issues = await this.helpers._pouchcreate(`rfWriter-issues-${this.credentials.user}`);  
+      this.pouch.issues = await this.helpers._pouchcreate(`rfWriter-issues-${this.credentials.user}`, self.dbsettings.adapter);  
     } catch (err) {
       this.hideLoadingCtrl();
       return;      
@@ -294,7 +308,6 @@ export class Api {
     let syncIssueWithDataOption = async function(_issue) {
       try {
         let _options = await self.pouch.data[_issue.Id].get(`contribution-${_issue.Id}-options`);
-        console.log(_options);
         _issue.Name = _options.data.Name;
         _issue.Options = _options.data.Options;
       } catch (err) {
@@ -331,15 +344,26 @@ export class Api {
         try {
           self.pouch.data[_issue.Id].replicate.from(`${self.credentials.server}/db/issue-${_issue.Id}`, self.helpers._replicatesettings(self))
           .on('complete', function(info) { 
-            syncIssueWithDataOption(_issue);
+            try {
+              syncIssueWithDataOption(_issue);
+              console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
+            } catch (err) {
+              console.log(err);
+            }
             resolve(true);
           })
           .on('error', function(err){
-            syncIssueWithDataOption(_issue);
+            try {
+              syncIssueWithDataOption(_issue);
+              console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
+            } catch (err) {
+              console.log(err);
+            }
             reject(false);
           });
         } catch (err) {
           console.log(err);
+          reject(false);
         }
       });
     }
@@ -349,7 +373,6 @@ export class Api {
         try {
           let _i = await self.pouch.issues.get('issues');
           self.issues = _i.data;
-          console.log(self.issues);
         } catch (err) {
           reject(false);
         }
@@ -359,20 +382,30 @@ export class Api {
           for (let i of self.issues.Issues) {
 
             // Create pouch db if no db is existing
+            let _html = `<p>Initial Data Sync</p>
+            <h4>
+              <div style="width: 100%; height: 0.5em; position: relative; padding: 0px; background: rgba(0,0,0,0.1);">
+                <div style="width: ${100/self.issues.Issues.length*++_counter}%; height: 1em; position: absolute; left: 0px; top: 0px; height: 0.5em; background: rgba(0,0,0,0.1);"></div>
+              </div>
+            </h4>`;
+
+            self.showLoadingCtrl(self.sanitizer.bypassSecurityTrustHtml(_html));
 
             if (self.pouch.data[i.Id] === undefined) {
-              self.showLoadingCtrl(`<p>Create database</p><h4>${++_counter} of ${self.issues.Issues.length}</h4>`);
               try {
-                self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`);  
+                self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`, self.dbsettings.adapter);  
               } catch (err) {
                 self.hideLoadingCtrl();
                 reject(false);
               }
             }
 
+
+
             try {
-              syncIssue(i);
+              await syncIssue(i);
             } catch (err) {
+              self.hideLoadingCtrl();
               console.log(err);
             }
           }
@@ -391,11 +424,16 @@ export class Api {
     /* Live Syncing */
 
     let syncing = async function() {
-      
+      console.log("syncing…")
       self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/db/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
       .on('change',   function (info)  {
         if (info.direction === "pull" ) {
-          configureissues();
+          try {
+            configureissues();
+          } catch (err) {
+            console.log(err);
+          }
+
         }
       })
       .on('active',   function ()     {console.log('----> sync issue active'); self.state.logged_in = true;})
@@ -436,9 +474,6 @@ export class Api {
     }
 
   }
-
-
-
 
   /*
    * Sets current issue based on settings
@@ -516,7 +551,7 @@ export class Api {
       if (this.current.issue == undefined || !this.current.issue)
         reject(false);
 
-      this.showLoadingCtrl("Initial Data Sync");
+      this.showLoadingCtrl("Syncing active Issue");
       let self = this;
 
       // Loading Data from Local Database
@@ -532,7 +567,7 @@ export class Api {
             self.data = [];
             let _result = await self.pouch.data[self.current.issue].allDocs({
               include_docs: true,
-              attachments: true,
+              attachments: false,
               //binary: true, // Returns Files as Blobs, without as base64 string
               startkey: `contribution-${self.current.issue}`,
               endkey: `contribution-${self.current.issue}\uffff`
@@ -558,14 +593,14 @@ export class Api {
                   for (let _file in d.doc.File) {
                     //console.log(d.doc._attachments[_file + '.pdf']);
                     
-                    let _data = "";
-                    let _mime = "";
-                    try {
-                      _data = d.doc._attachments[_file + '.pdf'].data;
-                      _mime = d.doc._attachments[_file + '.pdf'].content_type;
-                    } catch (err) {
-                      console.log("no attachement/mime");
-                    }
+                    //let _data = "";
+                    //let _mime = "";
+                    //try {
+                    //  _data = d.doc._attachments[_file + '.pdf'].data;
+                    //  _mime = d.doc._attachments[_file + '.pdf'].content_type;
+                    //} catch (err) {
+                    //  console.log("no attachement/mime");
+                    //}
 
                     self.current.exports.FilesArray.push({
                       "Name": _file,
@@ -573,8 +608,8 @@ export class Api {
                       "Id": d.doc.Id,
                       "Url" : d.doc.File[_file] || "",
                       "Stats" : d.doc.Pages[_file] || [],
-                      "Raw": _data,
-                      "Data": `data:${_mime};base64,${_data}`
+                      //"Raw": _data,
+                      //"Data": `data:${_mime};base64,${_data}`
                     })
                   }
                 }
@@ -694,11 +729,6 @@ export class Api {
 
     });
   }
-
-
-
-
-
 
   async destroyDB() {
     if (this.pouch.issues_sync && typeof this.pouch.issues_sync.cancel === "function") {
@@ -899,7 +929,7 @@ export class Api {
       return;
     }
     if (this.pouch.credentials == null) {
-      this.pouch.credentials = await this.helpers._pouchcreate('rfWriter-credentials');
+      this.pouch.credentials = await this.helpers._pouchcreate('rfWriter-credentials', this.dbsettings.adapter);
     }
     await this.helpers._pouchsave(this.pouch.credentials, 'credentials', this.credentials);
     this.initialize();
@@ -920,29 +950,29 @@ export class Api {
     this.state.logged_in = false;
     this.data = [];
     this.destroyDB();
+  }
+
+  guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
     }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+      s4() + '-' + s4() + s4() + s4();
+  }
 
-    guid() {
-      function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-          .toString(16)
-          .substring(1);
-      }
-      return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
+  bookStore() {
+    if (this.timeout.book !== null) {
+      clearTimeout(this.timeout.book);
     }
-
-    bookStore() {
-      if (this.timeout.book !== null) {
-        clearTimeout(this.timeout.book);
-      }
-      this.timeout.book = setTimeout(() => {
-        this.dbIssuesStore();
-        console.log(`Issues Stored`);
-      }, 1000);
+    this.timeout.book = setTimeout(() => {
+      this.dbIssuesStore();
+      console.log(`Issues Stored`);
+    }, 1000);
 
 
-    }
+  }
 
   async _call(url, message, postdata, returnResult) {
     postdata = postdata || {};
@@ -977,4 +1007,4 @@ export class Api {
     }
   }
 
-  }
+}
