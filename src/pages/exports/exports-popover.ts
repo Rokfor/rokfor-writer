@@ -15,13 +15,16 @@ declare var electron: any;
     </ion-navbar>
   </ion-header>
   <ion-content class="reader">
-    <iframe id="pdfviewer"></iframe>
+  <object type="text/html" [data]='i.secureUrl' width="100%" height="100%"></object>
+  <!--  <iframe id="pdfviewer" [src]='i.secureUrl'>
+      This browser does not support PDFs. Please download the PDF to view it: <a [href]='i.secureUrl'>Download PDF</a>
+    </iframe>-->
   </ion-content>
   <ion-footer>
     <ion-toolbar>
       <ion-buttons start>
         <a *ngIf="!electron" ion-button primary [href]="cleanURL(i.Url)" target="_blank">Download</a>
-        <button *ngIf="electron" ion-button  color="primary" clear icon-start (click)="export(i.Raw)">
+        <button *ngIf="electron" ion-button  color="primary" clear icon-start (click)="export(i.secureUrl)">
           <ion-icon name="folder"></ion-icon>
           Save
         </button>
@@ -46,7 +49,8 @@ export class PopoverPage {
   }
   ngOnInit() {
     this.i = this.navParams.data;
-    (<HTMLImageElement>document.getElementById("pdfviewer")).src = this.i.Data;
+    this.i.secureUrl = this.cleanURL(this.i.Url);
+    //(<HTMLImageElement>document.getElementById("pdfviewer")).src = this.i.Data;
     console.log(this.i);
   }
   cleanURL(oldURL : string){

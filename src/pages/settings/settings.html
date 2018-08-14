@@ -18,7 +18,7 @@
 
        <ion-item>
         <ion-label floating>Server URL: https://sync.rokfor.ch</ion-label>
-        <ion-input clearInput  [(ngModel)]="api.credentials.server"></ion-input>
+        <ion-input autocapitalize=off clearInput  [(ngModel)]="api.credentials.server"></ion-input>
        </ion-item>
 
       <div padding>
@@ -32,11 +32,11 @@
       </ion-list-header>
       <ion-item>
          <ion-label floating>Access Key</ion-label>
-         <ion-input clearInput [(ngModel)]="api.credentials.user"></ion-input>
+         <ion-input autocapitalize=off clearInput [(ngModel)]="api.credentials.user"></ion-input>
       </ion-item>
       <ion-item>
          <ion-label floating>Password</ion-label>
-         <ion-input clearInput  [(ngModel)]="api.credentials.key"></ion-input>
+         <ion-input autocapitalize=off clearInput  [(ngModel)]="api.credentials.key"></ion-input>
       </ion-item>
 
       <div padding>
@@ -53,7 +53,7 @@
       <ion-item *ngIf="!signup.sent">
          <ion-label floating *ngIf="signup.error">{{signup.message}}</ion-label>
          <ion-label floating *ngIf="!signup.error">E-Mail</ion-label>
-         <ion-input clearInput [(ngModel)]="signup.email"></ion-input>
+         <ion-input autocapitalize=off clearInput [(ngModel)]="signup.email"></ion-input>
       </ion-item>
 
       <ion-item *ngIf="signup.sent">

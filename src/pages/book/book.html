@@ -38,19 +38,19 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Name"></ion-input>
+       <ion-input autocapitalize=off placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Name"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Bastard Title</ion-label>
-       <ion-input placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[1].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[1].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Subtitle</ion-label>
-       <ion-input placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[2].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[2].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Spine: Title Short Form</ion-label>
-       <ion-input placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[0].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[0].value"></ion-input>
     </ion-item>
   </ion-list>
 
@@ -60,11 +60,11 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Author</ion-label>
-       <ion-input placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[3].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[3].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Spine: Author Short Form</ion-label>
-       <ion-input placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[4].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[4].value"></ion-input>
     </ion-item>
   </ion-list>
 
@@ -103,7 +103,7 @@
     </ion-item>
     <ion-item>
        <ion-label stacked>Preface Title</ion-label>
-       <ion-input placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[11].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[11].value"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Preface</ion-label>
@@ -123,7 +123,7 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Postface Title</ion-label>
-       <ion-input placeholder="Postface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[12].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="Postface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[12].value"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label stacked>Postface</ion-label>
@@ -152,7 +152,27 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>ISBN (optional)</ion-label>
-       <ion-input placeholder="xxx-x-xx-xxxxxx-x" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="xxx-x-xx-xxxxxx-x" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
     </ion-item>
+    <ion-item>
+       <ion-label stacked>Cover Image</ion-label>
+       <ion-input autocapitalize=off placeholder="URL" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[14].value"></ion-input>
+    </ion-item>    
+    <ion-item>
+       <ion-label stacked>Series Number</ion-label>
+       <ion-input autocapitalize=off placeholder="1 or No. 1" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[15].value"></ion-input>
+    </ion-item>  
+    <ion-item>
+       <ion-label stacked>Special Color: Cover</ion-label>
+       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[16].value"></ion-input>
+    </ion-item>
+    <ion-item>
+       <ion-label stacked>Special Color: Text</ion-label>
+       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[17].value"></ion-input>
+    </ion-item>
+    <ion-item>
+       <ion-label stacked>Language</ion-label>
+       <ion-input autocapitalize=off placeholder="german, french, english" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value"></ion-input>
+    </ion-item>            
   </ion-list>
 </ion-content>
