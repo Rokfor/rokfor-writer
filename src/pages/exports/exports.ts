@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, ModalController, NavParams, Events, LoadingController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 import { PopoverPage } from './exports-popover';
+import { DocumentViewer, DocumentViewerOptions } from '@ionic-native/document-viewer';
 
 /*
   Generated class for the Book page.
@@ -12,8 +13,12 @@ import { PopoverPage } from './exports-popover';
 
 @Component({
   selector: 'page-exports',
-  templateUrl: 'exports.html'
+  templateUrl: 'exports.html',
+  providers: [
+    DocumentViewer
+  ]
 })
+
 export class Exports {
   exporters: any;
   activeExporter: any;
@@ -24,7 +29,8 @@ export class Exports {
     public navCtrl: NavController,
     private modalCtrl: ModalController,
     public event: Events,
-    public loadingCtrl: LoadingController
+    public loadingCtrl: LoadingController,
+    private document: DocumentViewer
   ) {
     this.exporters = [];
     this.activeExporter = false;
@@ -53,7 +59,16 @@ export class Exports {
 
 
   openModal(data) {
-   let modal = this.modalCtrl.create(PopoverPage, data, {showBackdrop: true});
-   modal.present();
+    if (this.api.state.on_device) {
+      console.log(data);
+      const options: DocumentViewerOptions = {
+        title: 'My PDF'
+      }
+      this.document.viewDocument(data.Url, 'application/pdf', options)
+    }
+    else {
+      let modal = this.modalCtrl.create(PopoverPage, data, {showBackdrop: true});
+      modal.present();
+    }
   }
 }

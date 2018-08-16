@@ -70,6 +70,10 @@
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/core/-/core-4.11.0.tgz#9397ff47c35b23c9541eb40c4936857caf5f6322"
 
+"@ionic-native/document-viewer@^4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/document-viewer/-/document-viewer-4.11.0.tgz#053a5ec9b52dfc762f79eff242a538d1c17134fc"
+
 "@ionic-native/printer@^4.11.0":
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/printer/-/printer-4.11.0.tgz#7f3785b6fd823f9def86ee675da0a70a337dba2a"
@@ -1277,6 +1281,10 @@ cordova-plugin-console@^1.1.0:
 cordova-plugin-device@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/cordova-plugin-device/-/cordova-plugin-device-2.0.2.tgz#fc08f3722e67eef7b6c67bfc99a83df6add0baba"
+
+cordova-plugin-document-viewer@^0.9.10:
+  version "0.9.10"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-document-viewer/-/cordova-plugin-document-viewer-0.9.10.tgz#bd9705a2a0a419fb34e1e8564e7f356a5d7473c6"
 
 cordova-plugin-ionic-keyboard@^2.1.2:
   version "2.1.2"

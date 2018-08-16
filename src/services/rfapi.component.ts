@@ -25,6 +25,7 @@ interface _pouch {
   issues      : any;
   data_sync   : any;
   issues_sync : any;
+  issues_rep  : any;
 };
 
 interface _state {
@@ -85,7 +86,8 @@ export class Api {
     data        : null,
     issues      : null,
     data_sync   : null,
-    issues_sync : null
+    issues_sync : null,
+    issues_rep  : null
   };
 
   issueoptions: any = [
@@ -427,6 +429,7 @@ export class Api {
       console.log("syncing…")
       self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/db/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
       .on('change',   function (info)  {
+        console.log('----> sync issue change');
         if (info.direction === "pull" ) {
           try {
             configureissues();
@@ -548,8 +551,11 @@ export class Api {
     return new Promise(async (resolve, reject) => {
       // Return if no issue is active
     
-      if (this.current.issue == undefined || !this.current.issue)
+      if (this.current.issue == undefined || !this.current.issue) {
+        console.log(`current issue failed: ${this.current.issue}`)
         reject(false);
+      }
+        
 
       this.showLoadingCtrl("Syncing active Issue");
       let self = this;
@@ -558,7 +564,7 @@ export class Api {
       // Init: set to true for initial load, false on feed changes
 
       let _localload = function(init) {
-        
+        console.log("Localload");
         init = init || false;
 
         return new Promise(async (resolve, reject) => {
@@ -659,7 +665,14 @@ export class Api {
               return a.sort - b.sort;
             });
             self.state.initialized = true;
-            self.events.publish('page:change', self.current.page);
+            try {
+              if (self.current.page !== undefined) {
+                self.events.publish('page:change', self.current.page);
+              }
+            } catch (err) {
+              console.log('self.current.page not defined');
+            }
+            
             resolve(true);
           } catch(err) {
             console.log("ERROR SYNCING DATA", err);
@@ -700,32 +713,41 @@ export class Api {
       }
       
       
+      console.log("attach syncing");
+
+      try {
+        await _localload(true);
+        _syncer();
+        resolve(true);  
+      } catch(err) {
+        console.log(err)
+        reject(false);
+      }
 
       // attach syncing
-      try {
-        this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/db/issue-${this.current.issue}`, this.helpers._replicatesettings(this))
-        .on('complete', async function(info) { 
+      /*try {
+        try {
+          if (this.pouch.issues_rep !== null) this.pouch.issues_rep.cancel();
+        } catch (err) {
+          console.log("nothing to cancel!")
+        }
+        this.pouch.issues_rep =  this.pouch.data[this.current.issue].replicate.from(`${this.credentials.server}/db/issue-${this.current.issue}`, this.helpers._replicatesettings(this)).then(async function (result) {
           try {
             await _localload(true);
             _syncer();
           } catch(err) {
             console.log(err)
           }
-        })
-        .on('error', async function(err){
-          try {
-            await _localload(true)
-            _syncer();
-          } catch(err) {
-            console.log(err)
-          }
+          resolve(true);  
+        }).catch(function (err) {
+          console.log(err);
+          reject(false);
         });
-
-        resolve(true);  
       }
       catch (err) {
+        console.log(err);
         reject(false);
-      }
+      }*/
 
     });
   }
@@ -787,11 +809,11 @@ export class Api {
     try {
       await this.helpers._pouchsave(this.pouch.data[this.current.issue], `contribution-${this.current.issue}-options`, this.current.issue_options);  
       this.issues.Issues.forEach((i) => {if (i.Id == this.current.issue) {i.Name = this.current.issue_options.Name;}})
-      /*try {
+      try {
         await this.helpers._pouchsave(this.pouch.issues, `issues`, this.issues);
       } catch (err) {
         console.log(err);
-      }*/
+      }
     } catch (err) {
       console.log(err);
     }
