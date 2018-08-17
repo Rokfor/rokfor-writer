@@ -3,7 +3,7 @@
     "author": "Rokfor & Urs Hofer",
     "homepage": "http://www.rokfor.ch/",
     "private": false,
-    "version": "2.0.17",
+    "version": "2.0.18",
     "license": "mit",
     "main": "./www/index.js",
     "scripts": {
@@ -45,6 +45,8 @@
         "@angular/platform-browser-dynamic": "^6.1.2",
         "@ionic-native/core": "^4.11.0",
         "@ionic-native/document-viewer": "^4.11.0",
+        "@ionic-native/file": "^4.11.0",
+        "@ionic-native/file-transfer": "^4.11.0",
         "@ionic-native/printer": "^4.11.0",
         "@ionic-native/splash-screen": "^4.11.0",
         "@ionic-native/status-bar": "^4.11.0",
@@ -57,6 +59,8 @@
         "cordova-plugin-console": "^1.1.0",
         "cordova-plugin-device": "^2.0.2",
         "cordova-plugin-document-viewer": "^0.9.10",
+        "cordova-plugin-file": "^6.0.1",
+        "cordova-plugin-file-transfer": "^1.7.1",
         "cordova-plugin-ionic-keyboard": "^2.1.2",
         "cordova-plugin-ionic-webview": "^2.0.2",
         "cordova-plugin-printer": "^0.7.3",
@@ -119,7 +123,8 @@
             "cordova-plugin-ionic-webview": {},
             "cordova-plugin-ionic-keyboard": {},
             "cordova-plugin-sqlite-2": {},
-            "cordova-plugin-document-viewer": {}
+            "cordova-plugin-document-viewer": {},
+            "cordova-plugin-file-transfer": {}
         },
         "platforms": [
             "ios"

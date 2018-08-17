@@ -4,6 +4,9 @@ import { Api } from '../../services/rfapi.component';
 import { PopoverPage } from './exports-popover';
 import { DocumentViewer, DocumentViewerOptions } from '@ionic-native/document-viewer';
 
+import { FileTransfer, FileTransferObject } from '@ionic-native/file-transfer';
+import { File } from '@ionic-native/file';
+
 /*
   Generated class for the Book page.
 
@@ -15,7 +18,10 @@ import { DocumentViewer, DocumentViewerOptions } from '@ionic-native/document-vi
   selector: 'page-exports',
   templateUrl: 'exports.html',
   providers: [
-    DocumentViewer
+    DocumentViewer,
+    FileTransfer,
+    File,
+    FileTransferObject
   ]
 })
 
@@ -30,7 +36,9 @@ export class Exports {
     private modalCtrl: ModalController,
     public event: Events,
     public loadingCtrl: LoadingController,
-    private document: DocumentViewer
+    private document: DocumentViewer,
+    private transfer: FileTransfer, 
+    private file: File
   ) {
     this.exporters = [];
     this.activeExporter = false;
@@ -61,10 +69,20 @@ export class Exports {
   openModal(data) {
     if (this.api.state.on_device) {
       console.log(data);
+      const fileTransfer: FileTransferObject = this.transfer.create();
+      this.api.showLoadingCtrl('Downloading PDF...');
+      fileTransfer.download(data.Url, this.file.dataDirectory + 'file.pdf').then((entry) => {
+        console.log('download complete: ' + entry.toURL());
+        this.api.hideLoadingCtrl();
+        this.document.viewDocument(entry.toURL(), 'application/pdf', options)
+      }, (error) => {
+        this.api.hideLoadingCtrl();
+        console.log('download error');
+      });
       const options: DocumentViewerOptions = {
         title: 'My PDF'
       }
-      this.document.viewDocument(data.Url, 'application/pdf', options)
+      
     }
     else {
       let modal = this.modalCtrl.create(PopoverPage, data, {showBackdrop: true});

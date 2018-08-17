@@ -74,6 +74,14 @@
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/document-viewer/-/document-viewer-4.11.0.tgz#053a5ec9b52dfc762f79eff242a538d1c17134fc"
 
+"@ionic-native/file-transfer@^4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file-transfer/-/file-transfer-4.11.0.tgz#861731ddfc4bba609a40f9a4e44d7f5a13fefd87"
+
+"@ionic-native/file@^4.11.0":
+  version "4.11.0"
+  resolved "https://registry.yarnpkg.com/@ionic-native/file/-/file-4.11.0.tgz#b4f39f74972d04e2bb72f05dcd6e0a4b18cec361"
+
 "@ionic-native/printer@^4.11.0":
   version "4.11.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/printer/-/printer-4.11.0.tgz#7f3785b6fd823f9def86ee675da0a70a337dba2a"
@@ -1285,6 +1293,14 @@ cordova-plugin-device@^2.0.2:
 cordova-plugin-document-viewer@^0.9.10:
   version "0.9.10"
   resolved "https://registry.yarnpkg.com/cordova-plugin-document-viewer/-/cordova-plugin-document-viewer-0.9.10.tgz#bd9705a2a0a419fb34e1e8564e7f356a5d7473c6"
+
+cordova-plugin-file-transfer@^1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-file-transfer/-/cordova-plugin-file-transfer-1.7.1.tgz#a75d8be2ebc3bb9b23c5b1bbd199214ec267586b"
+
+cordova-plugin-file@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/cordova-plugin-file/-/cordova-plugin-file-6.0.1.tgz#49606b8c15a5688d4728f92e4a7325a061de07f5"
 
 cordova-plugin-ionic-keyboard@^2.1.2:
   version "2.1.2"
