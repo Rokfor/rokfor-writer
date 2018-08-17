@@ -1,0 +1,77 @@
+<ion-header>
+  <ion-toolbar>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title>
+      {{this.api.current.issue_options.Name}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-list-header color="primary">
+      Available Export Formats
+    </ion-list-header>    
+      <ion-item  *ngFor="let i of exporters" radio-group [(ngModel)]="activeExporter">
+        <ion-label>{{i.Name}}</ion-label>
+        <ion-radio value="{{i.Id}}"></ion-radio>
+      </ion-item>
+    <div padding>
+      <button ion-button color="light" [disabled]="activeExporter===false || api.exportRunning===true" block (click)="export()">
+        <ion-spinner *ngIf="api.exportRunning" item-right name="dots"></ion-spinner>
+        <span *ngIf="!api.exportRunning">Generate</span>
+      </button>
+    </div>
+  </ion-list>
+
+  <ion-list *ngIf="this.api.current.exports.Status == 'Complete'">
+    <ion-list-header color="primary">
+      Exports
+    </ion-list-header>    
+    <a ion-item *ngFor="let i of this.api.current.exports.FilesArray" (click)="openModal(i)">
+      {{i.Name}}
+      <ion-badge item-end color="secondary" *ngIf="i.Status == 'Complete'">Version {{i.Id}}</ion-badge>
+      <br>
+      <span class="smallfont" *ngIf="i.Status == 'Complete'">
+        {{i.Stats.creationdate}} / {{i.Stats.pages}} Pages / Page Size: {{i.Stats.page_size}}
+      </span>
+    </a>
+  </ion-list>
+
+  <ion-list *ngIf="this.api.current.exports.Status == 'Error'">
+    <ion-list-header color="danger">
+      Export failed
+    </ion-list-header>
+    <ion-card>
+      <ion-card-header>
+        Error
+      </ion-card-header>
+      <ion-card-content>
+        {{this.api.current.exports.Pages.Error}}
+      </ion-card-content>
+      <ion-row>
+        <ion-col>
+          <button ion-button icon-left clear small>
+            <ion-icon name="book"></ion-icon>
+            <div>Issue {{this.api.current.exports.Issue}}</div>
+          </button>
+        </ion-col>
+        <ion-col>
+          <button ion-button icon-left clear small>
+            <ion-icon name="bug"></ion-icon>
+            <div>Job {{this.api.current.exports.Id}}</div>
+          </button>
+        </ion-col>        
+        <ion-col center text-center>
+          <ion-note>
+            {{this.api.current.exports.Date * 1000 | date}}
+          </ion-note>
+        </ion-col>        
+      </ion-row>
+
+    </ion-card>
+  </ion-list>
+
+
+</ion-content>

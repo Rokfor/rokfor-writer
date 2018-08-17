@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    <ion-title>
+      Settings
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-list>
+      <ion-list-header color="dark">
+        Server
+      </ion-list-header>
+
+       <ion-item>
+        <ion-label floating>Server URL:</ion-label>
+        <ion-input autocapitalize=off clearInput  [(ngModel)]="api.credentials.server"></ion-input>
+       </ion-item>
+
+      <div padding>
+      </div>
+
+    </ion-list>
+
+    <ion-list>
+      <ion-list-header color="dark">
+        Log In
+      </ion-list-header>
+      <ion-item>
+         <ion-label floating>Access Key</ion-label>
+         <ion-input autocapitalize=off clearInput [(ngModel)]="api.credentials.user"></ion-input>
+      </ion-item>
+      <ion-item>
+         <ion-label floating>Password</ion-label>
+         <ion-input autocapitalize=off clearInput  [(ngModel)]="api.credentials.key"></ion-input>
+      </ion-item>
+
+      <div padding>
+         <button ion-button color="danger" block (click)="api.logOut()" *ngIf="api.state.logged_in">Log Out</button>
+         <button ion-button color="light" block (click)="api.logIn()" *ngIf="!api.state.logged_in">Log In</button>
+      </div>
+    </ion-list>
+
+    <ion-list *ngIf="!api.state.logged_in">
+      <ion-list-header color="dark">
+        Sign Up
+      </ion-list-header>
+
+      <ion-item *ngIf="!signup.sent">
+         <ion-label floating *ngIf="signup.error">{{signup.message}}</ion-label>
+         <ion-label floating *ngIf="!signup.error">E-Mail</ion-label>
+         <ion-input autocapitalize=off clearInput [(ngModel)]="signup.email"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="signup.sent">
+         {{signup.message}}
+      </ion-item>      
+
+      <div padding>
+         <button ion-button color="light" block (click)="signup.emit()" [disabled]="signup.sent || !api.credentials.server">Submit E-Mail</button>
+       </div>
+      
+       
+    </ion-list>
+</ion-content>

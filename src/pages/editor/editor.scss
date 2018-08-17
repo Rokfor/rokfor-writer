@@ -1,0 +1,129 @@
+@mixin gradient {
+  background: rgb(238,238,238);
+  background: -moz-linear-gradient(left, rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%);
+  background: -webkit-linear-gradient(left, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
+  background: linear-gradient(to right, rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=1 );
+}
+
+page-editor {
+
+  .fullscreen {
+    & .fixed-content, & .scroll-content {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    & ion-item {
+      visibility: hidden;
+    }
+    &.paper {
+      background: #FFF !important;
+    }
+    & .editorWrapper {
+      top: 1em;
+    }
+    & .CodeMirror-sizer {
+      max-width: 850px !important;
+      padding: 0.2em;
+      margin: auto !important;
+    }
+
+    ion-slide {
+      max-width: 100% !important;
+    }
+    .swiper-pagination {
+      top: 1em !important;
+    }
+
+    .ProseMirror-menubar {
+      display: none !important;
+    }
+    .ProseMirror {
+      top: 0 !important;
+    }
+  }
+
+  .swiper-pagination {
+    position: absolute !important;
+    right: 1em !important;
+    top: 2.5em !important;
+    text-align: right;
+    width: auto;
+    height: 2em;
+  }
+
+  ion-slide {
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    padding: 0em;
+    background: transparent;
+    margin: 0 auto;
+    z-index: 1;
+  }
+
+  ion-item {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    padding: 0 !important;
+    z-index: 10;
+    background: transparent !important;
+    .item-inner {
+      padding-left: 0.5em;
+      max-width: 850px !important;
+      margin: auto !important;
+      background: white;
+    }
+  }
+
+  .editorWrapper {
+    text-align: left !important;
+    display: block;
+    position: absolute;
+    top: 3.5em;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    overflow: hidden;
+    z-index: 9;
+    max-width: 850px !important;
+    margin: auto !important;
+    background: white;
+  }
+
+  .paper {
+    @include gradient();
+  }
+
+  .no-scroll {
+    .scroll-content {
+      overflow: hidden !important;
+    }
+  }
+
+  .mobile-wrapper{
+    display:none;
+  }
+  .desktop-wrapper{
+    display:inline-block;
+  }  
+  @media screen and (max-width: 640px) {
+    .mobile-wrapper{
+      display:inline-block;
+    }
+    .desktop-wrapper{
+      display:none;
+    }  
+  }
+
+}
+
+@import "codemirror.scss";
+@import "prosemirror.scss";

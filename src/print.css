@@ -1,0 +1,14 @@
+
+@page {
+  margin-top: 2cm;
+  margin-bottom: 2cm;
+  border: 1px solid;
+}
+
+body.print {
+  font: "Times New Roman"
+}
+
+div.title {
+  font-size: 2em;
+}
