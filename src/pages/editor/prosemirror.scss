@@ -70,6 +70,14 @@
   }
 }
 
+.ProseMirror .soft_hyphen {
+  &:after {
+    content: "|";
+    position: relative;
+    color: blue;
+  }
+}
+
 .ProseMirror ul > li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */

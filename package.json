@@ -3,7 +3,7 @@
     "author": "Rokfor & Urs Hofer",
     "homepage": "http://www.rokfor.ch/",
     "private": false,
-    "version": "2.0.18",
+    "version": "2.0.19",
     "license": "mit",
     "main": "./www/index.js",
     "scripts": {
@@ -76,7 +76,7 @@
         "ionicons": "^4.3.0",
         "libstl": "^0.1.22",
         "mobx": "^5.0.3",
-        "ng2-prosemirror": "^1.1.5",
+        "ng2-prosemirror": "^1.1.7",
         "pouchdb": "^7.0.0",
         "pouchdb-adapter-idb": "^7.0.0",
         "rxjs": "^6.2.2",
