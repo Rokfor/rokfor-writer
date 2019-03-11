@@ -1,10 +1,8 @@
 <ion-header *ngIf="!api.state.fullscreen">
   <ion-toolbar>
-
-      <button ion-button menuToggle>
-        <ion-icon name="menu"></ion-icon>
-      </button>
-
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
     <ion-title *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
       <ion-input
         (ngModelChange)="changeDebounce()"
@@ -12,27 +10,17 @@
         placeholder="{{api.data[api.getCurrent()].name}}">
       </ion-input>
     </ion-title>
-
-
     <ion-buttons end *ngIf="api.state.initialized">
-
-
-        <button ion-button clear icon-only (click)="showInfo()" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
-          <ion-icon name="ios-information-circle-outline"></ion-icon>
-        </button>   
-
+      <button ion-button clear icon-only (click)="showInfo()" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+        <ion-icon name="ios-information-circle-outline"></ion-icon>
+      </button> 
       <button class="desktop-wrapper" ion-button clear  icon-only [disabled]="api.state.busy == 0">
         <ion-icon name="sync"></ion-icon>
       </button>
-
       <button class="mobile-wrapper" ion-button clear  icon-only  (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
         <ion-icon name="cloud-upload"></ion-icon>
       </button>
-
-
-
     </ion-buttons>
-
   </ion-toolbar>
 </ion-header>
 <ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
@@ -56,47 +44,47 @@
     </ion-slide>
   </ion-slides>
 </ion-content>
-
 <ion-footer *ngIf="!api.state.fullscreen">
-  <ion-toolbar>
-    <ion-buttons start>
+  <ion-toolbar class="btn-wrapper">
+    <ion-buttons float-start>
       <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="slider.isBeginning()">
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
-  
     <ion-title>
       <ion-buttons class="desktop-wrapper">
-        <button solid ion-button padding color="primary" icon-start (click)="addPage()">
+        <button  ion-button padding icon-start (click)="addPage()">
           <ion-icon name="add"></ion-icon>
-          &nbsp;New
+          New
         </button>
-        <button solid ion-button padding color="secondary" icon-start (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
+        <button  ion-button padding icon-start (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
           <ion-icon name="cloud-upload"></ion-icon>
-          &nbsp;Save
+          Save
         </button>
-        <button solid ion-button padding color="solid" icon-start  (click)="printPage()">
+        <button  ion-button padding icon-start  (click)="printPage()">
           <ion-icon name="print"></ion-icon>
-          &nbsp;Print
+          Print
         </button>
-        <button solid ion-button padding color="danger" icon-start  (click)="deletePage()">
+        <button  ion-button padding color="danger" icon-start (click)="deletePage()">
           <ion-icon name="trash"></ion-icon>
-          &nbsp;Delete
+          Trash
         </button>
+        <span ion-button icon-start color="success" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+          <ion-toggle (click)="api.change()" [(ngModel)]='api.getCurrentData().status'></ion-toggle>
+          Publish
+        </span>
       </ion-buttons>
-
       <ion-buttons class="mobile-wrapper">
         <button  ion-button  color="primary" clear icon-only icon-start (click)="addPage()">
           <ion-icon name="add"></ion-icon>
+          New
         </button>
+        <span ion-button icon-start color="primary" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+          <ion-toggle (click)="api.change()" [(ngModel)]='api.getCurrentData().status'></ion-toggle>
+          Publish
+        </span>
       </ion-buttons>
-
-
-
     </ion-title>
-      
-    
-
     <ion-buttons end *ngIf="initialized">
       <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="slider.isEnd()">
         <ion-icon name="arrow-forward"></ion-icon>

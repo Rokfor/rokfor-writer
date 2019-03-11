@@ -15,6 +15,7 @@ interface _dataset {
     moddate:  number;
     modified: number;
     issue:    number;
+    status:   boolean;
     syncId:   string;
 };
 
@@ -887,6 +888,7 @@ export class Api {
       sort: 0,
       moddate: 0,
       modified: 0,
+      status: false,
       issue: this.current.issue,
       syncId: this.guid(),
     };

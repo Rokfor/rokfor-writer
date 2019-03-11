@@ -241,6 +241,10 @@ export class Editor {
     }
   }
 
+  changeStatus(e) {
+    console.log(e);
+  }
+
   changeDebounce() {
     if (this.timeout_change !== null) {
       clearTimeout(this.timeout_change);

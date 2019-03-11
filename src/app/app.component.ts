@@ -59,6 +59,15 @@ export class MyApp {
     // let self = this;
 
     if (ipcRenderer) {
+      ipcRenderer.on('update:ipc', (event, message) => {
+        let toast = this.toastCtrl.create({
+          message: message,
+          duration: 3000,
+          position: 'top',
+          showCloseButton: true
+        });
+        toast.present();
+      });
       ipcRenderer.on('main:ipc', (event, message) => {
         if (message === 'leave-full-screen') {
           this.toggleFs(false);
