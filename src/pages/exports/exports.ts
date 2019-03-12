@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController, NavParams, Events, LoadingController } from 'ionic-angular';
+import { NavController, ModalController, Events, LoadingController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
 import { PopoverPage } from './exports-popover';
 import { DocumentViewer, DocumentViewerOptions } from '@ionic-native/document-viewer';
@@ -59,7 +59,7 @@ export class Exports {
     };
     let loader = this.loadingCtrl.create({content: "Please wait..."});
     loader.present();
-    let _data = await this.api._call("/export", "", _payload, true);
+    await this.api._call("/export", "", _payload, true);
     this.events.publish('export:started');    
     loader.dismiss();
   }

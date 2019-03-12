@@ -6,7 +6,6 @@ import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
 import { Book } from '../pages/book/book';
 import { Exports } from '../pages/exports/exports';
-import { PopoverPage } from '../pages/exports/exports-popover';
 import { Api } from '../services/rfapi.component';
 
 
@@ -40,7 +39,7 @@ export class MyApp {
     private statusBar:    StatusBar,
     private splashScreen: SplashScreen,
             events:       Events,
-    public  toastCtrl:    ToastController
+    public  toastCtrl:    ToastController,
   ) {
     this.events = events;
     this.initializeApp();

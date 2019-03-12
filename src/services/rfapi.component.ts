@@ -5,7 +5,6 @@ import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 import { DomSanitizer } from '@angular/platform-browser';
 
-
 interface _dataset {
     name:     string;
     title:    string;
@@ -54,7 +53,6 @@ interface _credentials {
 interface _debouncers {
   book        : any;
 }
-
 
 @Injectable()
 
@@ -199,7 +197,7 @@ export class Api {
 
   min_server: Array < number > = [1,0,1];
   exportRunning: any;
-
+  online: boolean;
 
   constructor (
       platform: Platform,
@@ -222,6 +220,21 @@ export class Api {
       this.pouch.data = [];
       this.exportRunning = false;
       this.initialize();
+      this.events.subscribe('sync:contribution', function(e){
+        console.log(e);
+        if (e === 'change') {
+          this.hideLoadingCtrl();
+        }
+      }.bind(this))
+      this.online = navigator.onLine;
+      window.addEventListener('offline', () => {
+       this.online = false; 
+       console.log("offline")
+      });
+      window.addEventListener('online', () => {
+        this.online = true;
+        console.log("online")
+      });
   }
 
   showLoadingCtrl(msg) {
@@ -375,6 +388,7 @@ export class Api {
       return new Promise(async (resolve, reject) => {
         try {
           let _i = await self.pouch.issues.get('issues');
+          console.log(_i.data);
           self.issues = _i.data;
         } catch (err) {
           reject(false);
@@ -382,8 +396,9 @@ export class Api {
 
         let _counter = 0;
         try {
-          for (let i of self.issues.Issues) {
-
+          let _i = self.issues.Issues.length
+          while (_i--) {
+            let i = self.issues.Issues[_i];
             // Create pouch db if no db is existing
             let _html = `<p>Initial Data Sync</p>
             <h4>
@@ -397,19 +412,14 @@ export class Api {
             if (self.pouch.data[i.Id] === undefined) {
               try {
                 self.pouch.data[i.Id] = await self.helpers._pouchcreate(`rfWriter-data-${i.Id}`, self.dbsettings.adapter);  
+                await syncIssue(i);
               } catch (err) {
                 self.hideLoadingCtrl();
                 reject(false);
               }
-            }
-
-
-
-            try {
-              await syncIssue(i);
-            } catch (err) {
-              self.hideLoadingCtrl();
-              console.log(err);
+            } else {
+              console.log(`${i.Id} is a duplicate.`);
+              self.issues.Issues.splice(_i, 1);
             }
           }
         } catch (err) {
@@ -697,19 +707,27 @@ export class Api {
             if (info.direction === "pull" ) {
               try {
                 await _localload(false);    
+                self.events.publish('sync:contribution', 'change');
               } catch (err) {
                 console.log(err)
+                self.events.publish('sync:contribution', 'change');
               }
             }
           })
           .on('paused',   async function (err)  {
             self.state.busy = 0;
+            self.events.publish('sync:contribution', 'paused');
           })
           .on('error', function (err) {
             console.log(err)
-          });
+            self.events.publish('sync:contribution', 'error');
+          })
+          .on('active',   function ()     {self.events.publish('sync:contribution', 'active');})
+          .on('denied',   function ()     {self.events.publish('sync:contribution', 'denied');})
+          .on('complete', function ()     {self.events.publish('sync:contribution', 'complete');});
         } catch (err){
           console.log(err);
+          self.events.publish('sync:contribution', 'noconnection');
         }
       }
       
@@ -892,6 +910,9 @@ export class Api {
       issue: this.current.issue,
       syncId: this.guid(),
     };
+    if (this.online) {
+      this.showLoadingCtrl("Adding new Entry");
+    }
     this.dbStore(_data);
     this.data.splice(position, 0, _data);
     this.data.forEach((e,i) => {

@@ -11,7 +11,6 @@ import { PopoverPage } from '../pages/exports/exports-popover';
 import { Book } from '../pages/book/book';
 import { Autoresize } from '../directives/shrink';
 
-
 @NgModule({
   declarations: [
     MyApp,
@@ -37,6 +36,8 @@ import { Autoresize } from '../directives/shrink';
     PopoverPage,    
     Exports
   ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+  providers: [
+    {provide: ErrorHandler, useClass: IonicErrorHandler}
+  ]
 })
 export class AppModule {}
