@@ -13,8 +13,17 @@
     <ion-list-header color="primary">
       Available Books
     </ion-list-header>
-    
-      <ion-item  *ngFor="let i of api.issues.Issues" radio-group [(ngModel)]="api.current.issue">
+      <ion-item>
+        <ion-label>
+          <ion-icon name="ios-search"></ion-icon>
+        </ion-label>
+        <ion-input type="search" autocapitalize=off placeholder="Filter" [(ngModel)]="filterBook"></ion-input>
+      </ion-item>    
+      <ion-item 
+        *ngFor="let i of api.issues.Issues  | myfilter:filterBook" 
+        radio-group 
+        [(ngModel)]="api.current.issue"
+      >
         <button style="z-index: 10000;" ion-button icon-only clear item-start icon-left color="danger" (click)="deleteIssue(i.Id)">
           <ion-icon name="trash"></ion-icon>
         </button>

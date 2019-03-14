@@ -1,5 +1,5 @@
-import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform, Events, ToastController } from 'ionic-angular';
+import { Component, ViewChild, NgZone } from '@angular/core';
+import { Nav, Platform, Events, ToastController, LoadingController } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { Settings } from '../pages/settings/settings';
@@ -7,6 +7,8 @@ import { Editor } from '../pages/editor/editor';
 import { Book } from '../pages/book/book';
 import { Exports } from '../pages/exports/exports';
 import { Api } from '../services/rfapi.component';
+import { DomSanitizer } from '@angular/platform-browser';
+//import { NullInjector } from '@angular/core/src/di/injector';
 
 
 declare var ipcRenderer: any;
@@ -40,6 +42,10 @@ export class MyApp {
     private splashScreen: SplashScreen,
             events:       Events,
     public  toastCtrl:    ToastController,
+    public  loadingCtrl:  LoadingController,
+    private zone:         NgZone,
+    private sanitizer:    DomSanitizer,
+
   ) {
     this.events = events;
     this.initializeApp();
@@ -58,6 +64,40 @@ export class MyApp {
     // let self = this;
 
     if (ipcRenderer) {
+      
+      let loading = null;
+
+      ipcRenderer.on('progress:ipc', (event, message) => {
+        message = message * 1 > 100 ? 100 : message * 1;
+        let _html = this.sanitizer.bypassSecurityTrustHtml(`
+          <p>Download update</p>
+          <h4>
+          <div style="width: 100%; height: 0.5em; position: relative; padding: 0px; background: rgba(0,0,0,0.1);">
+            <div style="width: ${message}%; height: 1em; position: absolute; left: 0px; top: 0px; height: 0.5em; background: rgba(0,0,0,0.1);"></div>
+          </div>
+          </h4>
+        `);
+        if (loading === null) {
+          loading = this.loadingCtrl.create({
+            content: <string>_html,
+            spinner: "crescent"
+          });
+          loading.present();
+        }
+        else {
+          // Update Conent in the next cycle - seems a bug in ionic3:
+          // occuring if another item (alert/toast etc.) is dismissed
+          // content will not be updated automatically
+          this.zone.run(() => {
+            loading.setContent(_html);
+          });
+        }        
+        if (message * 1 > 99 && loading !== null) {
+          loading.dismiss();
+          loading = null;
+        }
+      });
+
       ipcRenderer.on('update:ipc', (event, message) => {
         let toast = this.toastCtrl.create({
           message: message,
@@ -105,7 +145,21 @@ export class MyApp {
       })
       this.events.subscribe('export:saveattachment', (data) => {
         ipcRenderer.send('master:ipc:saveattachment', data)
+        let toast = this.toastCtrl.create({
+          message: `Download started: ${data.Url}`,
+          duration: 3000,
+          position: 'top'
+        });
+        toast.present();
       })
+      ipcRenderer.on('store:ipc:downloadfinished', (event, message) => {
+        let toast = this.toastCtrl.create({
+            message: `File stored: ${message}`,
+            duration: 3000,
+            position: 'top'
+        });
+        toast.present();
+      });  
     }
 
 
@@ -121,7 +175,6 @@ export class MyApp {
     });
     
     this.events.subscribe('export:ready', (data) => {
-      let self = this;
       if (this.api.exportRunning === true) {
         let toast = this.toastCtrl.create({
           message: `Document ${data.Id} is generated and ready in the exports section.`,
@@ -130,7 +183,7 @@ export class MyApp {
           showCloseButton: true
         });
         toast.present();
-        self.api.exportRunning = false
+        this.api.exportRunning = false
       }
     });
 

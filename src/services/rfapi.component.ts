@@ -630,9 +630,7 @@ export class Api {
                     })
                   }
                 }
-                if (init === false) {
-                  self.events.publish('export:ready', self.current.exports);  
-                }
+                self.events.publish('export:ready', self.current.exports);
               } 
               else {
                 if (d.doc.data) {
@@ -925,10 +923,24 @@ export class Api {
     this.events.publish('page:change', position);
   }
 
+  dataMigration(id?: number) {
+    let _check = false;
+    id = id || this.current.page;
+    if (this.data[this.current.page].status === undefined) {
+      this.data[this.current.page].status = false;
+      _check = true;
+    }
+    if (_check === true) {
+      console.log(`data migration needed: ${id}`);
+      this.change();
+    }
+  }
+
   setCurrent(id:number) {
     if (this.state.initialized === false) return;
     console.log("Updating Current Set ", id);
     this.current.page = id;
+    this.dataMigration();
   }
 
   getCurrentData() {

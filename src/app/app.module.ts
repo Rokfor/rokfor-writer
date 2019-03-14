@@ -10,6 +10,8 @@ import { Exports } from '../pages/exports/exports';
 import { PopoverPage } from '../pages/exports/exports-popover';
 import { Book } from '../pages/book/book';
 import { Autoresize } from '../directives/shrink';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { MyFilterPipe } from '../pipes/myfilter.pipe';
 
 @NgModule({
   declarations: [
@@ -19,13 +21,15 @@ import { Autoresize } from '../directives/shrink';
     Book,
     Exports,
     PopoverPage,
-    Autoresize
+    Autoresize,
+    MyFilterPipe
   ],
   imports: [
     HttpModule,
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    ProsemirrorModule
+    ProsemirrorModule,
+    PdfViewerModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

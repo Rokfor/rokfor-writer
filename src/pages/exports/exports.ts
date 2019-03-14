@@ -47,7 +47,6 @@ export class Exports {
   async ionViewDidLoad() {
     let _data = await this.api._call("/exporters", "", {}, true);
     this.exporters = _data.exporters;
-    console.log(this.exporters);
     if (this.exporters == null) {
       this.api.showAlert("No Connection", "Exporting a book requires a internet connection", null);
     }
@@ -59,16 +58,22 @@ export class Exports {
     };
     let loader = this.loadingCtrl.create({content: "Please wait..."});
     loader.present();
-    await this.api._call("/export", "", _payload, true);
-    this.events.publish('export:started');    
-    loader.dismiss();
+    let _d = await this.api._call("/export", "", _payload, true);
+    if (_d.state === 'ok' && _d.exporters.Success === "ok") {
+      this.events.publish('export:started');
+      loader.dismiss();
+    } else {
+      loader.dismiss();
+      this.api.showAlert("Exporter Error", "Exporter Error is currently not available.", null);
+    }
+    
   }
 
 
 
   openModal(data) {
     if (this.api.state.on_device) {
-      console.log(data);
+      console.log(this.file);
       const fileTransfer: FileTransferObject = this.transfer.create();
       this.api.showLoadingCtrl('Downloading PDF...');
       fileTransfer.download(data.Url, this.file.dataDirectory + 'file.pdf').then((entry) => {

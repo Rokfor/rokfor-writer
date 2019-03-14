@@ -2,6 +2,7 @@ const electron = require('electron')
 const fs = require('fs')
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
+const {download} = require("electron-dl");
 
 // Module to control application life.
 const app = electron.app
@@ -37,7 +38,8 @@ function createWindow () {
     height: 600,
     icon: path.join(__dirname, 'assets/electron_icons/256x256.png'),
     webPreferences: {
-      plugins: true
+      plugins: true,
+      //webSecurity: false
     }
   })
   mainWindow.once('ready-to-show', function() {
@@ -79,16 +81,8 @@ function createWindow () {
   });
 
   ipcMain.on('master:ipc:saveattachment', (event, message) => {
-    dialog.showSaveDialog({
-       title: "Save Document",
-       filters: [
-        { name: 'export', extensions: ['pdf'] }
-       ]
-    }, function(_fileName){
-      if (_fileName === undefined) return;
-        fs.writeFile(_fileName, message, 'base64', function (err) {});
-        _fileName = "";
-    })
+    download(mainWindow, message.Url)
+    .then(dl => mainWindow.webContents.send('store:ipc:downloadfinished', dl.getSavePath()));
   });
 
   // Create the Application's main menu
@@ -275,7 +269,14 @@ function createWindow () {
          label: 'Reload',
          accelerator: 'Command+R',
          click: function() { BrowserWindow.getFocusedWindow().reload(); }
-       }
+       },
+       {
+        label: 'Toggle Dev Tools',
+        click: function() {
+          BrowserWindow.getFocusedWindow().toggleDevTools();
+        }
+      }
+       
      ]
    },
    {
@@ -346,8 +347,9 @@ autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
 
 
-function sendStatusToWindow(text) {
-  mainWindow.webContents.send('update:ipc', text);
+function sendStatusToWindow(text, state) {
+  state = state || 'update:ipc';
+  mainWindow.webContents.send(state, text);
 }
 
 autoUpdater.on('checking-for-update', () => {
@@ -356,19 +358,12 @@ autoUpdater.on('checking-for-update', () => {
 autoUpdater.on('update-available', (info) => {
   sendStatusToWindow('Update available.');
 })
-autoUpdater.on('update-not-available', (info) => {
-  sendStatusToWindow('Update not available.');
-})
 autoUpdater.on('error', (err) => {
   sendStatusToWindow('Error in auto-updater. ' + err);
 })
 autoUpdater.on('download-progress', (progressObj) => {
-  let log_message = "Download speed: " + progressObj.bytesPerSecond;
-  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
-  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
-  sendStatusToWindow(log_message);
+  sendStatusToWindow(Math.round(progressObj.percent), 'progress:ipc');
 })
-
 autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
   const dialogOpts = {
     type: 'info',

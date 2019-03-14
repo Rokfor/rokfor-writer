@@ -4,13 +4,12 @@ page-exports {
 
 .reader {
 	.scroll-content {
-		overflow: hidden !important;
-	}
-	webview,
-	iframe {
-		width: 100%;
-		border: none;
-		height: 100%;
-		position: absolute;
+		overflow-x: hidden !important;
+		overflow-y: auto !important;
 	}
 }
+
+.btn-wrapper {
+    text-align: center;
+}
+
