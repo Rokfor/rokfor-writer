@@ -22,7 +22,7 @@ export class Book {
   }
 
   ionViewDidLoad() {
-    console.log(this.api.issues, this.api.current.issue);
+    //console.log(this.api.issues, this.api.current.issue);
   }
 
 

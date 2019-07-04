@@ -327,14 +327,14 @@ export class Api {
         _issue.Name = _options.data.Name;
         _issue.Options = _options.data.Options;
       } catch (err) {
-        console.log('could not load options...')
+        //console.log('could not load options...')
       }
 
       try {
         let _options = await self.pouch.data[_issue.Id].get(`contribution-${_issue.Id}-exports`);
         _issue.Exports = _options.data;
       } catch (err) {
-        console.log('could not load exports...')
+        //console.log('could not load exports...')
       }
 
 
@@ -362,7 +362,7 @@ export class Api {
           .on('complete', function(info) { 
             try {
               syncIssueWithDataOption(_issue);
-              console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
+              //console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
             } catch (err) {
               console.log(err);
             }
@@ -371,7 +371,7 @@ export class Api {
           .on('error', function(err){
             try {
               syncIssueWithDataOption(_issue);
-              console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
+              //console.log(`Replicated: ${self.credentials.server}/db/issue-${_issue.Id}`)
             } catch (err) {
               console.log(err);
             }
@@ -384,11 +384,15 @@ export class Api {
       });
     }
 
-    let configureissues = async function() {
+    let configureissues = async function(removedupes) {
+      removedupes = removedupes || false;
+      if (removedupes === true) {
+        console.log('check for duplicates');
+      }
       return new Promise(async (resolve, reject) => {
         try {
           let _i = await self.pouch.issues.get('issues');
-          console.log(_i.data);
+          //console.log(_i.data);
           self.issues = _i.data;
         } catch (err) {
           reject(false);
@@ -418,12 +422,14 @@ export class Api {
                 reject(false);
               }
             } else {
-              console.log(`${i.Id} is a duplicate.`);
-              self.issues.Issues.splice(_i, 1);
+              if (removedupes === true) {
+                console.log(`${i.Id} is a duplicate.`);
+                self.issues.Issues.splice(_i, 1);
+              }
             }
           }
         } catch (err) {
-          console.log(err);
+          //console.log(err);
           self.hideLoadingCtrl();
           reject(false);
         }
@@ -437,13 +443,13 @@ export class Api {
     /* Live Syncing */
 
     let syncing = async function() {
-      console.log("syncing…")
+      //console.log("syncing…")
       self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/db/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
       .on('change',   function (info)  {
-        console.log('----> sync issue change');
+        //console.log('----> sync issue change');
         if (info.direction === "pull" ) {
           try {
-            configureissues();
+            configureissues(false);
           } catch (err) {
             console.log(err);
           }
@@ -457,7 +463,7 @@ export class Api {
       
       
       try {
-        await configureissues();
+        await configureissues(true);
       } catch (err) {
         console.log(err);
       }
@@ -511,7 +517,7 @@ export class Api {
       
       //this.activationinprogress = true;
       
-      console.log('Activate Issue Start', this.current.issue, this.issues);
+      //console.log('Activate Issue Start', this.current.issue, this.issues);
 
       // Create Local Data Entry and return first issue if no default and no id
 
@@ -520,14 +526,14 @@ export class Api {
         try {
           let _c = await this.pouch.settings.get('current_issue');  
           this.current.issue = _c.data * 1;
-          console.log(`Default: ${this.current.issue}`);
+          //console.log(`Default: ${this.current.issue}`);
         } catch(err) {
           try {
             this.current.issue = this.issues.Issues[0].Id;  
           } catch (err) {
             reject("Issues undefined");
           }
-          console.log(`Fallback: ${this.current.issue}`);
+          //console.log(`Fallback: ${this.current.issue}`);
         }
       }
 
@@ -536,7 +542,7 @@ export class Api {
       try {
         await this.helpers._pouchsave(this.pouch.settings, 'current_issue', this.current.issue);  
       } catch (err) {
-        console.log('_pouchsave', err, this.pouch.settings, 'current_issue', this.current.issue);
+        //console.log('_pouchsave', err, this.pouch.settings, 'current_issue', this.current.issue);
       }
 
       try {
