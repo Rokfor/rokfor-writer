@@ -31,7 +31,7 @@
 }
 
 .ProseMirror ul, .ProseMirror ol {
-  padding-left: 1em;
+  padding-left: 0.25em;
   cursor: default;
 }
 
@@ -84,6 +84,7 @@
   margin: 0;
   padding: 0;
   list-style-type: none;
+  margin-left: 1.25em;
   &:before {
     content: "-";
     float: left;
@@ -94,8 +95,10 @@
 .ProseMirror ol > li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */
-  margin-left: 0.75em;
+  margin: 0em;
   padding: 0;
+  margin-left: 2em;
+  list-style-type: decimal-leading-zero;
 }
 
 .ProseMirror li > * {
@@ -110,7 +113,30 @@
   h1, h2, h3, h4, h5, h6 {
     font-size: 1em;
     font-weight: bold;
+    &:before {
+      font-size: 1.25rem;
+      margin-right: 0.5em;
+      font-weight: normal;
+    }
   }
+  h1 {font-size: 150%; &:before {
+    content: "#1";
+  }}
+  h2 {font-size: 140%; &:before {
+    content: "#2";
+  }}
+  h3 {font-size: 130%; &:before {
+    content: "#3";
+  }}
+  h4 {font-size: 120%; &:before {
+    content: "#4";
+  }}
+  h5 {font-size: 110%; &:before {
+    content: "#5";
+  }}
+  h6 {font-size: 100%; &:before {
+    content: "#6";
+  }}
 }
 
 .ProseMirror-hideselection *::selection { background: transparent; }
