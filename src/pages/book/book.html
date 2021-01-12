@@ -184,4 +184,20 @@
        <ion-input autocapitalize=off placeholder="german, french, english" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value"></ion-input>
     </ion-item>            
   </ion-list>
+
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
+    <ion-list-header color="secondary">
+      Databases
+    </ion-list-header>
+    <ion-item>
+      <ion-label stacked>Literature</ion-label>
+       <ion-textarea
+        autoresize
+        placeholder="Export your literature library as BibLaTex format from zotero or similar applications."
+        [(ngModel)]="api.current.issue_options.Options[19].value"
+        (ngModelChange)="api.bookStore()"
+       ></ion-textarea>
+    </ion-item>
+  </ion-list>
+
 </ion-content>

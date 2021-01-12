@@ -5,6 +5,9 @@ import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 import { DomSanitizer } from '@angular/platform-browser';
 
+// @ts-ignore
+import {parseBibFile} from "bibtex";
+
 interface _dataset {
     name:     string;
     title:    string;
@@ -16,6 +19,7 @@ interface _dataset {
     issue:    number;
     status:   boolean;
     syncId:   string;
+    settings: any;
 };
 
 interface _pouch {
@@ -47,7 +51,8 @@ interface _active {
 interface _credentials {
   user        : string;
   key         : string; 
-  server      : string; 
+  server      : string;
+  group       : string; 
 }
 
 interface _debouncers {
@@ -108,7 +113,8 @@ export class Api {
     "SeriesNumber",
     "CoverColor",
     "TextColor",
-    "Language"
+    "Language",
+    "Literature"
   ];
 
   data: Array < _dataset > = [];
@@ -117,7 +123,8 @@ export class Api {
   credentials: _credentials = {
     user:   "",
     key:  "",
-    server: ""
+    server: "",
+    group: ""
   };
   dbsettings: any = {
     size: 250,
@@ -195,7 +202,7 @@ export class Api {
     }
   }
 
-  min_server: Array < number > = [1,0,1];
+  min_server: Array < number > = [1,1,0];
   exportRunning: any;
   online: boolean;
 
@@ -351,6 +358,19 @@ export class Api {
                         ? self.current.issue_options.Options[_i].value
                         : ""
           };
+          if (self.issueoptions[_i] == 'Literature') {
+            console.log('sync literature database', self.current.issue_options.Options[_i].value)
+            // @ts-ignore    
+            document.bibTex = document.bibTex || [];                
+            try {
+              // @ts-ignore
+              document.bibTex = parseBibFile(self.current.issue_options.Options[_i].value).entries_raw.map(e => ({value: e._id,  label: e._id}));          
+              // @ts-ignore
+              console.log(document.bibTex);
+            } catch (error) {
+              console.warn('could not parse bibtex');
+            }
+          }
         }
       }
     }
@@ -559,6 +579,20 @@ export class Api {
 
   }
 
+  trackReferences(doc) {
+    // @ts-ignore    
+    document.marks = document.marks || [];    
+    let element: any;
+    const regex = /:mark\[(.*?)\]/g;
+    while(element = regex.exec(doc.body)) {
+      // @ts-ignore
+      if (document.marks.filter(x => x.value === element[1]).length === 0) {
+        // @ts-ignore
+        document.marks.push({value: element[1],  label: element[1]});  
+      }
+    };
+  }
+
   /* 
    * Loads data for the current issue, attaches a sync to it
    *
@@ -671,6 +705,7 @@ export class Api {
                     }
                   }
                   else {
+                    self.trackReferences(d.doc.data);
                     self.data.push(d.doc.data);
                   }
                 }
@@ -854,7 +889,7 @@ export class Api {
       return;
     }
     try {
-      //console.log("saving...", document, data)
+      console.log("saving...", document, data)
       await this.helpers._pouchsave(this.pouch.data[this.current.issue], document, data);  
     } catch (err) {
       console.log(err)
@@ -913,6 +948,7 @@ export class Api {
       status: false,
       issue: this.current.issue,
       syncId: this.guid(),
+      settings: {}
     };
     if (this.online) {
       this.showLoadingCtrl("Adding new Entry");
@@ -1000,7 +1036,7 @@ export class Api {
 
   logOut() {
     this.showLoadingCtrl("Logging out");
-    this.credentials = {user: "", key: "", server: ""};
+    this.credentials = {user: "", key: "", server: "", group: ""};
     this.helpers._pouchsave(this.pouch.credentials, 'credentials', this.credentials);
     this.issues = false;
     this.current = {

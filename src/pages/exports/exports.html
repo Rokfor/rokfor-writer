@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list>
+  <ion-list *ngIf="exporters.length > 0">
     <ion-list-header color="primary">
       Available Export Formats
     </ion-list-header>    
@@ -23,6 +23,11 @@
         <span *ngIf="!api.exportRunning">Generate</span>
       </button>
     </div>
+  </ion-list>
+  <ion-list *ngIf="exporters.length == 0">
+    <ion-list-header color="danger">
+      No Export Formats defined.
+    </ion-list-header> 
   </ion-list>
 
   <ion-list *ngIf="this.api.current.exports.Status == 'Complete'">

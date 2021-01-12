@@ -6,6 +6,9 @@ import { HttpModule} from '@angular/http';
 import { MyApp } from './app.component';
 import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
+import { PopoverEditor } from '../pages/editor/editor-popover';
+import { PopoverSettings } from '../pages/editor/settings-popover';
+
 import { Exports } from '../pages/exports/exports';
 import { PopoverPage } from '../pages/exports/exports-popover';
 import { Book } from '../pages/book/book';
@@ -18,9 +21,11 @@ import { MyFilterPipe } from '../pipes/myfilter.pipe';
     MyApp,
     Settings,
     Editor,
+    PopoverEditor,
     Book,
     Exports,
     PopoverPage,
+    PopoverSettings,
     Autoresize,
     MyFilterPipe
   ],
@@ -37,7 +42,9 @@ import { MyFilterPipe } from '../pipes/myfilter.pipe';
     Settings,
     Editor,
     Book,
-    PopoverPage,    
+    PopoverEditor,
+    PopoverPage,   
+    PopoverSettings, 
     Exports
   ],
   providers: [

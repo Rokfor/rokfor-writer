@@ -1,15 +1,19 @@
 
 import { Component, ViewChild } from '@angular/core';
 import { Printer, PrintOptions } from '@ionic-native/printer';
-import { Platform, NavController, Slides, Events, AlertController, LoadingController } from 'ionic-angular';
+import { Platform, NavController, Slides, Events, AlertController, LoadingController, ModalController } from 'ionic-angular';
+import { ProsemirrorModule } from 'ng2-prosemirror';
 import { Api } from '../../services/rfapi.component';
+import { PopoverEditor } from './editor-popover';
+import { PopoverSettings } from './settings-popover';
+
 //import 'codemirror/mode/markdown/markdown.js';
 //import 'codemirror/addon/scroll/simplescrollbars.js';
 //import 'codemirror/addon/fold/foldcode.js';
 //import 'codemirror/addon/fold/foldgutter.js';
 //import 'codemirror/addon/fold/markdown-fold.js';
 import {Converter} from "showdown/dist/showdown";
- 
+
 @Component({
   selector: 'page-editor',
   templateUrl: 'editor.html',
@@ -42,6 +46,8 @@ export class Editor {
 */
 
   @ViewChild('mySlider') slider: Slides;
+  // @ts-ignore
+  @ViewChild('myProsemirror') prosemirror:ProsemirrorModule;
 
   constructor(
     public navCtrl: NavController,
@@ -50,6 +56,7 @@ export class Editor {
     public alert: AlertController,
     public loadingCtrl: LoadingController,
     public platform: Platform,
+    private modalCtrl: ModalController,
     public printer: Printer
   ) {
     var self = this;
@@ -102,6 +109,24 @@ export class Editor {
 
   trackByFn(index, i) {
     return i.syncId;
+  }
+ 
+  showOptions(data) {
+    console.log(this, data, this.prosemirror);
+    let modal = this.modalCtrl.create(PopoverSettings, {api: this.api, data: data}, {showBackdrop: true});
+    modal.present();
+  }
+
+  showUpload(data) {
+    console.log('opening modal for document ', data.id);
+    let modal = this.modalCtrl.create(PopoverEditor, {api: this.api, data: data}, {showBackdrop: true});
+    modal.present();
+    modal.onDidDismiss(d => {
+      if (d !== undefined) {
+        // @ts-ignore
+        this.prosemirror.insertAttachement(d)
+      }
+    });
   }
 
   openModal(mode) {
@@ -342,7 +367,7 @@ export class Editor {
   }
 
   showInfo() {
-    let _message = `Rokfor Id: ${this.api.data[this.api.getCurrent()].id}<br>Characters: ${this.api.data[this.api.getCurrent()].body.length}<br>Words: ${this.wordcount(this.api.data[this.api.getCurrent()].body)}`;
+    let _message = `Rokfor Id: ${this.api.data[this.api.getCurrent()]}<br>Characters: ${this.api.data[this.api.getCurrent()].body.length}<br>Words: ${this.wordcount(this.api.data[this.api.getCurrent()].body)}`;
     let _confirm = this.alert.create({
       title: "Document Statistics",
       message: _message,

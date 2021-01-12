@@ -13,6 +13,7 @@ export class Settings {
 
   signup: any =  {
     email: "",
+    group: "",
     sent: false,
     error: false,
     message: "",
@@ -21,7 +22,7 @@ export class Settings {
         let _headers = new Headers({'Content-Type': 'application/json'});
         let _res = await this.http.post(
           this.api.credentials.server + "/signup", 
-          JSON.stringify({email: this.signup.email}),
+          JSON.stringify({email: this.signup.email, group: this.signup.group}),
           {headers: _headers}).toPromise();
         this.signup.sent = _res.ok === true && _res.json().state === "ok";
         this.signup.error = _res.json().state === "error"
