@@ -112,9 +112,9 @@
   version "4.20.0"
   resolved "https://registry.yarnpkg.com/@ionic-native/status-bar/-/status-bar-4.20.0.tgz#76b3f44ee496a4815fe4ddb9b5701aea22e6855f"
 
-"@ionic/app-scripts@3.2.3":
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/@ionic/app-scripts/-/app-scripts-3.2.3.tgz#b1bc492f2ff49777ec0f6594930a0e707a641a4f"
+"@ionic/app-scripts@3.2.4":
+  version "3.2.4"
+  resolved "https://registry.yarnpkg.com/@ionic/app-scripts/-/app-scripts-3.2.4.tgz#db3f6a215ba226099db2a9af41f0f6bb5d4cc368"
   dependencies:
     "@angular-devkit/build-optimizer" "0.0.35"
     autoprefixer "^7.2.6"
@@ -697,6 +697,10 @@ bcrypt-pbkdf@^1.0.0:
   resolved "https://registry.yarnpkg.com/bcrypt-pbkdf/-/bcrypt-pbkdf-1.0.2.tgz#a4301d389b6a43f9b67ff3ca11a3f6637e360e9e"
   dependencies:
     tweetnacl "^0.14.3"
+
+bibtex@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/bibtex/-/bibtex-0.9.0.tgz#62126692c8cc897e6d3824dc5948b0bce13b050e"
 
 big-integer@^1.6.7:
   version "1.6.47"
@@ -3527,8 +3531,8 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
 
 lodash@^4.0.0, lodash@^4.17.11, lodash@^4.17.14, lodash@~4.17.10:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
+  version "4.17.20"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -3589,6 +3593,10 @@ map-visit@^1.0.0:
   resolved "https://registry.yarnpkg.com/map-visit/-/map-visit-1.0.0.tgz#ecdca8f13144e660f1b5bd41f12f3479d98dfb8f"
   dependencies:
     object-visit "^1.0.0"
+
+markdown-it-container@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/markdown-it-container/-/markdown-it-container-3.0.0.tgz#1d19b06040a020f9a827577bb7dbf67aa5de9a5b"
 
 markdown-it@^8.4.2:
   version "8.4.2"
