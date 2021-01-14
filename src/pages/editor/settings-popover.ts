@@ -37,6 +37,13 @@ import { NavParams, ViewController } from 'ionic-angular';
             <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
         </ion-item>
     </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider color="light">Image Handling</ion-item-divider>
+      <ion-item *ngFor="let s of schema.image;">
+          <ion-label>{{s[1]}}</ion-label>
+          <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
+      </ion-item>
+  </ion-item-group>
   </ion-content>
   `,
 })
@@ -69,6 +76,11 @@ export class PopoverSettings {
                 ["antiqua"   , "Option 2: Antiqua"],
                 ["smallfont" , "Option 3: Small"],
                 ["largefont" , "Option 4: Large"],
+            ],
+            "image": [
+                ["size1"   , "Option 1: Small"],
+                ["size2"   , "Option 2: Medium"],
+                ["size3"   , "Option 3: Large"]
             ]
         };
   }

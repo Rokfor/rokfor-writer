@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from 'ionic-angular';
-import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
+//import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 import { File } from '@ionic-native/file';
 
 @Component({
@@ -15,13 +15,20 @@ import { File } from '@ionic-native/file';
   </ion-header>
   <ion-content class="assets">
     <ion-list>
+      <ion-item-divider>
+          <ul>
+            <li>Original: Embedding uploaded file as image tag.
+            <li>Scaled: Embedding scaled variant as img tag
+            <li>Linked: Embedding image as link to the stored entry
+          </ul>
+      </ion-item-divider>
       <ion-item *ngFor="let i of assets; let _in = index;">
         <ion-thumbnail item-start>
           <img src="{{i.Thumbnail}}">
         </ion-thumbnail>
         <ion-label stacked>Caption</ion-label>
         <ion-input autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-input>
-        <button ion-button item-end (click)="addEditor(i, false, false, _in)">Anchor</button>
+        <button ion-button item-end (click)="addEditor(i, false, false, _in)">Linked</button>
         <button ion-button item-end (click)="addEditor(i, true, true)">Original</button>
         <button ion-button item-end (click)="addEditor(i, true, false)">Scaled</button>
         <button ion-button color="danger" item-end (click)="delete(_in)">Delete</button>
@@ -29,13 +36,13 @@ import { File } from '@ionic-native/file';
     </ion-list>
   </ion-content>
   <ion-footer padding>
-    <input class="custom-file-input" type="file" (change)="loadImageFromDevice($event)" id="file-input"  accept="image/png, image/jpeg">
+    <input class="custom-file-input" type="file" (change)="loadImageFromDevice($event)" id="file-input"  accept="image/png, image/jpeg, application/pdf">
   </ion-footer>
   `,
   providers: [
-    FileTransfer,
-    File,
-    FileTransferObject
+    // FileTransfer,
+    // File,
+    // FileTransferObject
   ]
 })
 export class PopoverEditor {
@@ -48,8 +55,8 @@ export class PopoverEditor {
   constructor(
     public viewCtrl: ViewController,
     private navParams: NavParams,
-    private transfer: FileTransfer, 
-    private file: File
+    //private transfer: FileTransfer, 
+    //private file: File
    ) {
      this.timeout = [];
      this.assets = [];
@@ -60,8 +67,10 @@ export class PopoverEditor {
   }
 
   async delete(i) {
+    this.api.showLoadingCtrl('Deletion in Progress');
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i},true)
     let _del = this.assets.splice(i,1);
+    this.api.hideLoadingCtrl();
   }
 
   changeCaption() {
@@ -73,8 +82,19 @@ export class PopoverEditor {
     }, 1000);
   }
 
-  loadImageFromDevice(event) {
-    console.log(event.target.files[0])
+  async loadImageFromDevice(event) {
+    this.api.showLoadingCtrl('Upload in Progress');
+    const reader = new FileReader();
+    const file = event.target.files[0];
+    reader.readAsDataURL(file);
+    reader.onload = async () => { // note using fat arrow function here if we intend to point at current Class context.
+      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post'},true)
+      let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
+      if (_assets.length) {
+        this.assets = _assets
+      }
+      this.api.hideLoadingCtrl();
+    };
   }
 
   addEditor(element, isImage, original, anchorIndex) {
@@ -84,7 +104,7 @@ export class PopoverEditor {
     this.viewCtrl.dismiss({element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements '});
   }
 
-  upload() {
+  /*upload() {
     const fileTransfer: FileTransferObject = this.transfer.create();
     let _file = "";
     let _upload_api = "/upload"
@@ -103,7 +123,7 @@ export class PopoverEditor {
     }, (error) => {
       console.log('download error');
     });
-  }
+  }*/
 
   async updateData() {
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'update', assets: this.assets},true)

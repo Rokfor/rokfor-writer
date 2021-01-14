@@ -63,43 +63,37 @@
       </button>
     </ion-buttons>
     <ion-title>
-      <ion-buttons class="desktop-wrapper">
+      <ion-buttons>
         <button  ion-button padding icon-start (click)="addPage()">
           <ion-icon name="add"></ion-icon>
           New
         </button>
-        <button  ion-button padding icon-start (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
+        <span ion-button icon-start color="success" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+          <ion-toggle (ionChange)="api.change()" [(ngModel)]='api.getCurrentData().status'></ion-toggle>
+          Publish
+        </span>
+
+        <button class="desktop-wrapper" ion-button padding icon-start (click)="api.change()" [disabled]="api.data.length > 0 && api.data[api.getCurrent()] &&api.data[api.getCurrent()].modified == 0">
           <ion-icon name="cloud-upload"></ion-icon>
           Save
         </button>
-        <button  ion-button padding icon-start  (click)="printPage()">
+        <button class="desktop-wrapper" ion-button padding icon-start  (click)="printPage()">
           <ion-icon name="print"></ion-icon>
           Print
         </button>
-        <button  ion-button padding color="danger" icon-start (click)="deletePage()">
+        <button class="desktop-wrapper" ion-button padding color="danger" icon-start (click)="deletePage()">
           <ion-icon name="trash"></ion-icon>
           Trash
         </button>
-        <span ion-button icon-start color="success" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
-          <ion-toggle (click)="api.change()" [(ngModel)]='api.getCurrentData().status'></ion-toggle>
-          Publish
-        </span>
-        <button ion-button padding icon-start (click)="showUpload(api.data[api.getCurrent()])">
+        <button class="desktop-wrapper" ion-button padding icon-start (click)="showUpload(api.data[api.getCurrent()])">
           <ion-icon name="document"></ion-icon>
           Assets
         </button>
 
       </ion-buttons>
-      <ion-buttons class="mobile-wrapper">
-        <button  ion-button  color="primary" clear icon-only icon-start (click)="addPage()">
-          <ion-icon name="add"></ion-icon>
-          New
-        </button>
-        <span ion-button icon-start color="primary" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
-          <ion-toggle (click)="api.change()" [(ngModel)]='api.getCurrentData().status'></ion-toggle>
-          Publish
-        </span>
-      </ion-buttons>
+
+
+    
     </ion-title>
     <ion-buttons end *ngIf="initialized">
       <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="slider.isEnd()">

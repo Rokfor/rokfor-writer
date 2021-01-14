@@ -367,7 +367,7 @@ export class Editor {
   }
 
   showInfo() {
-    let _message = `Rokfor Id: ${this.api.data[this.api.getCurrent()]}<br>Characters: ${this.api.data[this.api.getCurrent()].body.length}<br>Words: ${this.wordcount(this.api.data[this.api.getCurrent()].body)}`;
+    let _message = `Rokfor Id: ${this.api.data[this.api.getCurrent()].id}<br>Characters: ${this.api.data[this.api.getCurrent()].body.length}<br>Words: ${this.wordcount(this.api.data[this.api.getCurrent()].body)}`;
     let _confirm = this.alert.create({
       title: "Document Statistics",
       message: _message,
