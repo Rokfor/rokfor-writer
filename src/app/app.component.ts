@@ -108,6 +108,7 @@ export class MyApp {
         toast.present();
       });
       ipcRenderer.on('main:ipc', (event, message) => {
+        console.log(event, message)
         if (message === 'leave-full-screen') {
           this.toggleFs(false);
         }
