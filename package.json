@@ -75,11 +75,7 @@
         "electron-dl": "^1.13.0",
         "electron-log": "^2.2.16",
         "electron-packager": "^13.1.1",
-<<<<<<< Updated upstream
         "electron-updater": "^4.3.8",
-=======
-        "electron-updater": "^4.3.5",
->>>>>>> Stashed changes
         "fs": "^0.0.1-security",
         "ionic-angular": "^3.9.6",
         "ionicons": "^4.5.8",
