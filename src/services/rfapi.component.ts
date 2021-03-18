@@ -277,6 +277,28 @@ export class Api {
     _confirm.present();
   }
 
+  updateBibTex() {
+    let _index = false;
+    for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
+      if (this.issueoptions[_i] == 'Literature') {
+        // @ts-ignore
+        _index = _i;
+      }
+    }
+    if (_index !== false) {
+      // @ts-ignore    
+      document.bibTex = document.bibTex || [];                
+      try {
+        // @ts-ignore
+        document.bibTex = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw.map(e => ({value: e._id,  label: e._id}));          
+        // @ts-ignore
+        console.log(document.bibTex);
+      } catch (error) {
+        console.warn('could not parse bibtex');
+      }
+    }
+  }
+
   /*
    * INITIALIZE
    *
@@ -326,7 +348,6 @@ export class Api {
       return;      
     }
 
-
     /* Create Databases and Copy Configuration into issue_options */
     let syncIssueWithDataOption = async function(_issue) {
       try {
@@ -358,20 +379,8 @@ export class Api {
                         ? self.current.issue_options.Options[_i].value
                         : ""
           };
-          if (self.issueoptions[_i] == 'Literature') {
-            console.log('sync literature database', self.current.issue_options.Options[_i].value)
-            // @ts-ignore    
-            document.bibTex = document.bibTex || [];                
-            try {
-              // @ts-ignore
-              document.bibTex = parseBibFile(self.current.issue_options.Options[_i].value).entries_raw.map(e => ({value: e._id,  label: e._id}));          
-              // @ts-ignore
-              console.log(document.bibTex);
-            } catch (error) {
-              console.warn('could not parse bibtex');
-            }
-          }
         }
+        self.updateBibTex();
       }
     }
 
@@ -1067,7 +1076,9 @@ export class Api {
     }
     this.timeout.book = setTimeout(() => {
       this.dbIssuesStore();
+      this.updateBibTex();
       console.log(`Issues Stored`);
+
     }, 1000);
 
 

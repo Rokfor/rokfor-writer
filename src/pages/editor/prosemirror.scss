@@ -34,6 +34,31 @@
   cursor: default;
 }
 
+.ProseMirror dl {
+  padding: 0.25em;
+  box-sizing: border-box;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  cursor: default;
+  background: #EEEEEE;
+  & > dd {
+    margin: 0;
+    padding: 0;
+    margin-left: 6em;
+  }
+  & > dt {
+    float: left;
+    font-weight: bold;
+    box-sizing: border-box;
+    display: inline-block;
+    min-width: 5em;
+    padding-right: 1em;
+  }
+  p {
+    margin: 0;
+  }
+}
+
 .ProseMirror blockquote {
   margin-left: 0;
   margin-right: 0;
@@ -227,7 +252,7 @@
     font-weight: bold;
 
 
-    content: "Monospaced";
+    content: "Poem";
     width: 100%;
     left: 0px;
     box-sizing: border-box;

@@ -75,7 +75,7 @@
         "electron-dl": "^1.13.0",
         "electron-log": "^2.2.16",
         "electron-packager": "^13.1.1",
-        "electron-updater": "^4.0.0",
+        "electron-updater": "^4.3.8",
         "fs": "^0.0.1-security",
         "ionic-angular": "^3.9.6",
         "ionicons": "^4.5.8",
@@ -88,8 +88,8 @@
         "pdfjs-dist": "2.0.489",
         "pouchdb": "^7.1.1",
         "pouchdb-adapter-idb": "^7.1.1",
-        "rxjs": "^6.5.2",
-        "rxjs-compat": "^6.5.2",
+        "rxjs": "^6.6.6",
+        "rxjs-compat": "^6.6.6",
         "showdown": "^1.8.6",
         "sw-toolbox": "^3.6.0",
         "uuid": "^3.3.3",
@@ -101,7 +101,7 @@
         "electron": "^4.0.8",
         "electron-builder": "^20.44.4",
         "node-pre-gyp": "^0.11.0",
-        "typescript": "^3.5.2"
+        "typescript": "^3.9.9"
     },
     "cordovaPlugins": [
         "cordova-plugin-whitelist",
