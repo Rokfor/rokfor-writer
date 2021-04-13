@@ -17,12 +17,16 @@
 
 
   <script>
-  if (window && window.process && window.process.type) {
-    console.log("E L E C T R O N... bzzz...")
-    var electron = require('electron');
-    var ipcRenderer = require('electron').ipcRenderer;
-    console.log(electron);
-    console.log(ipcRenderer);
+  if (/electron/i.test(navigator.userAgent)) {
+    try {
+      console.log("E L E C T R O N... bzzz...", window)
+      var electron = require('electron');
+      var ipcRenderer = require('electron').ipcRenderer;
+      console.log(electron);
+      console.log(ipcRenderer);
+    } catch (err) {
+      console.warn('electron not running correctly', err)
+    }
   }
   </script>
 

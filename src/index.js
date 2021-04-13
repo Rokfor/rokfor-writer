@@ -39,8 +39,10 @@ function createWindow () {
     icon: path.join(__dirname, 'assets/electron_icons/256x256.png'),
     webPreferences: {
       plugins: true,
-      //webSecurity: false
+      contextIsolation: false,
+      nodeIntegration: true
     }
+    
   })
   mainWindow.once('ready-to-show', function() {
     mainWindow.show();
@@ -138,6 +140,7 @@ function createWindow () {
          label: 'New Document',
          accelerator: 'Command+N',
          click: function() {
+           console.log('send command');
            mainWindow.webContents.send('main:ipc', 'new-document');
          }
        },
