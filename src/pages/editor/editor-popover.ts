@@ -17,9 +17,9 @@ import { File } from '@ionic-native/file';
     <ion-list>
       <ion-item-divider>
           <ul>
-            <li>Original: Embedding uploaded file as image tag.
-            <li>Scaled: Embedding scaled variant as img tag
-            <li>Linked: Embedding image as link to the stored entry
+            <li><b>Dynamic</b> Linked data, responsive on the web, probably conversion to pdf in print. 
+            <li><b>Raw</b> Use raw file as image tag.
+            <li><b>Web</b> Use small variant as image tag.
           </ul>
       </ion-item-divider>
       <ion-item *ngFor="let i of assets; let _in = index;">
@@ -28,9 +28,9 @@ import { File } from '@ionic-native/file';
         </ion-thumbnail>
         <ion-label stacked>Caption</ion-label>
         <ion-input autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-input>
-        <button ion-button item-end (click)="addEditor(i, false, false, _in)">Linked</button>
-        <button ion-button item-end (click)="addEditor(i, true, true)">Original</button>
-        <button ion-button item-end (click)="addEditor(i, true, false)">Scaled</button>
+        <button ion-button item-end (click)="addEditor(i, false, false, _in)">Dynamic</button>
+        <button ion-button item-end (click)="addEditor(i, true, true)">Raw</button>
+        <button ion-button item-end (click)="addEditor(i, true, false)">Web</button>
         <button ion-button color="danger" item-end (click)="delete(_in)">Delete</button>
       </ion-item>
     </ion-list>
