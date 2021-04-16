@@ -144,10 +144,10 @@ export class MyApp {
           ipcRenderer.send('master:ipc:export', this.api.data[this.api.current.page])
         }
       })
-      this.events.subscribe('export:saveattachment', (data) => {
-        ipcRenderer.send('master:ipc:saveattachment', data)
+      this.events.subscribe('export:saveattachment', (url) => {
+        ipcRenderer.send('master:ipc:saveattachment', url)
         let toast = this.toastCtrl.create({
-          message: `Download started: ${data.Url}`,
+          message: `Download started: ${url}`,
           duration: 3000,
           position: 'top'
         });

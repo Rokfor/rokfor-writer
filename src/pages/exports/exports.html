@@ -9,7 +9,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list *ngIf="exporters.length > 0">
+  <ion-list *ngIf="(exporters && exporters.length) && exporters.length > 0">
     <ion-list-header color="primary">
       Available Export Formats
     </ion-list-header>    
@@ -24,7 +24,7 @@
       </button>
     </div>
   </ion-list>
-  <ion-list *ngIf="exporters.length == 0">
+  <ion-list *ngIf="(exporters && exporters.length) && exporters.length == 0">
     <ion-list-header color="danger">
       No Export Formats defined.
     </ion-list-header> 

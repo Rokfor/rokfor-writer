@@ -82,8 +82,8 @@ function createWindow () {
      }
   });
 
-  ipcMain.on('master:ipc:saveattachment', (event, message) => {
-    download(mainWindow, message.Url)
+  ipcMain.on('master:ipc:saveattachment', (event, url) => {
+    download(mainWindow, url)
     .then(dl => mainWindow.webContents.send('store:ipc:downloadfinished', dl.getSavePath()));
   });
 

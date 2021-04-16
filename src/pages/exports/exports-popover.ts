@@ -100,7 +100,7 @@ export class PopoverPage {
     this.viewCtrl.dismiss();
   }
   export() {
-    this.events.publish('export:saveattachment', this.i);
+    this.events.publish('export:saveattachment', this.i.Url);
   }
 
   skip(dir) {
