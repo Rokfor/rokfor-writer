@@ -47,19 +47,39 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Title</ion-label>
-       <ion-input autocapitalize=off placeholder="Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Name"></ion-input>
+       <ion-textarea
+       autoresize
+       placeholder="Title"
+       [(ngModel)]="api.current.issue_options.Name"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>
     </ion-item>
     <ion-item>
        <ion-label stacked>Bastard Title</ion-label>
-       <ion-input autocapitalize=off placeholder="Inside Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[1].value"></ion-input>
+       <ion-textarea
+       autoresize
+       placeholder="Inside Title"
+       [(ngModel)]="api.current.issue_options.Options[1].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>
     </ion-item>
     <ion-item>
        <ion-label stacked>Subtitle</ion-label>
-       <ion-input autocapitalize=off placeholder="Subtitle" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[2].value"></ion-input>
+       <ion-textarea
+       autoresize
+       placeholder="Subtitle"
+       [(ngModel)]="api.current.issue_options.Options[2].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>
     </ion-item>
     <ion-item>
-       <ion-label stacked>Spine: Title Short Form</ion-label>
-       <ion-input autocapitalize=off placeholder="Short Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[0].value"></ion-input>
+       <ion-label stacked>Spine Title: One Line Short Form</ion-label>
+       <ion-textarea
+       autoresize
+       placeholder="Short Title"
+       [(ngModel)]="api.current.issue_options.Options[0].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>       
     </ion-item>
   </ion-list>
 
@@ -69,11 +89,21 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>Author</ion-label>
-       <ion-input autocapitalize=off placeholder="Author" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[3].value"></ion-input>
+       <ion-textarea
+       autoresize
+       placeholder="Author"
+       [(ngModel)]="api.current.issue_options.Options[3].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>       
     </ion-item>
     <ion-item>
        <ion-label stacked>Spine: Author Short Form</ion-label>
-       <ion-input autocapitalize=off placeholder="Author Short Variant" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[4].value"></ion-input>
+       <ion-textarea
+       autoresize
+       placeholder="Author Short Variant"
+       [(ngModel)]="api.current.issue_options.Options[4].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>       
     </ion-item>
   </ion-list>
 

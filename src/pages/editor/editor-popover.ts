@@ -13,27 +13,49 @@ import { File } from '@ionic-native/file';
       <ion-title>Files for {{i.name}}</ion-title>
     </ion-navbar>
   </ion-header>
-  <ion-content class="assets">
-    <ion-list>
-      <ion-item-divider>
-          <ul>
-            <li><b>Dynamic</b> Linked data, responsive on the web, probably conversion to pdf in print. 
-            <li><b>Raw</b> Use raw file as image tag.
-            <li><b>Web</b> Use small variant as image tag.
-          </ul>
-      </ion-item-divider>
-      <ion-item *ngFor="let i of assets; let _in = index;">
-        <ion-thumbnail item-start>
-          <img src="{{i.Thumbnail}}">
-        </ion-thumbnail>
+  <ion-content class="assets card-background-page">
+
+    <ion-card *ngFor="let i of assets; let _in = index;">
+      <img src="{{i.Resized[1]}}">
+      <ion-card-content>
         <ion-label stacked>Caption</ion-label>
-        <ion-input autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-input>
-        <button ion-button item-end (click)="addEditor(i, false, false, _in)">Dynamic</button>
-        <button ion-button item-end (click)="addEditor(i, true, true)">Raw</button>
-        <button ion-button item-end (click)="addEditor(i, true, false)">Web</button>
-        <button ion-button color="danger" item-end (click)="delete(_in)">Delete</button>
-      </ion-item>
-    </ion-list>
+        <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
+        <ion-label stacked>Copyright</ion-label>
+        <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
+      </ion-card-content>
+      <ion-row padding>
+        <ion-col>
+          <button ion-button item-end (click)="addEditor(i, false, false, _in)">Responsive</button>
+        </ion-col>
+        <ion-col>
+          <button ion-button item-end (click)="addEditor(i, true, true)">Original</button>
+        </ion-col>
+        <ion-col>
+          <button ion-button item-end (click)="addEditor(i, true, false)">Resized</button>
+        </ion-col>
+        <ion-col>
+          <button ion-button color="danger" item-end (click)="delete(_in)">Delete</button>        
+        </ion-col>
+      </ion-row>
+    </ion-card>
+
+    <ion-card>
+      <ion-card-content>
+        <ion-card-title>
+          Guidelines
+        </ion-card-title>
+        <p>
+          <b>Responsive</b> Responsive data: probably original file in print and resized variant on the web.
+        </p>
+        <p>
+          <b>Original</b> Use uploaded file directly as image tag.
+        </p>
+        <p>
+          <b>Resized</b> Use resized and jpg variant as image tag.
+        </p>
+      </ion-card-content>
+    </ion-card>
+
   </ion-content>
   <ion-footer padding>
     <input class="custom-file-input" type="file" (change)="loadImageFromDevice($event)" id="file-input"  accept="image/png, image/jpeg, application/pdf">

@@ -156,13 +156,12 @@ page-editor {
 }
 
 .assets {
-  img {
-    width: 25%;
-    margin-right: 1em;
-    float: left;
-  }
-  .row {
-    clear: both;
+  textarea {
+    border: 1px solid #999;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    padding: 0.5rem;
   }
 }
 
