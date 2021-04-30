@@ -284,6 +284,23 @@
   }
 }
 
+.ProseMirror .force_break {
+  color: transparent;
+  overflow: hidden;
+  position: relative;
+  
+  &:after {
+    content: "↩︎";
+    line-height: 1;
+    color: white;
+    background-color: blue;
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
 .ProseMirror .soft_hyphen {
   &:after {
     content: "|";

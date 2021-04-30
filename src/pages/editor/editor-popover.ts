@@ -53,6 +53,12 @@ import { File } from '@ionic-native/file';
         <p>
           <b>Resized</b> Use resized and jpg variant as image tag.
         </p>
+        <p>
+          Whereas <b>original</b> and <b>resized</b> both 
+          add a <code>&lt;img&gt;</code> Tag, <b>responsive</b> adds a 
+          custom <code>{{attachement}}</code> node which needs to be prepared by the backend 
+          or the generator and cannot be shown directly in the markdown document.
+        </p>
       </ion-card-content>
     </ion-card>
 
