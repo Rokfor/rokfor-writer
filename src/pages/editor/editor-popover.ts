@@ -129,7 +129,7 @@ export class PopoverEditor {
     original = original || false;
     isImage  = isImage  || false;
     anchorIndex = anchorIndex || false;
-    this.viewCtrl.dismiss({element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements '});
+    this.viewCtrl.dismiss({element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'});
   }
 
   /*upload() {

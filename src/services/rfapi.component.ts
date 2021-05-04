@@ -532,6 +532,10 @@ export class Api {
   async activateIssue() {
 
     return new Promise(async (resolve, reject) => {
+      // @ts-ignore
+      document.marks = [];
+      // @ts-ignore
+      document.attachements = [];    
 
       this.showLoadingCtrl("Activating Issues");
 
@@ -601,6 +605,23 @@ export class Api {
       }
     };
   }
+
+  trackAttachements(doc) {
+    // @ts-ignore    
+    document.attachements = document.attachements || [];    
+    let element: any;
+    const regex = /\{\{Attachements:(.*?)\}\}/g;
+    while(element = regex.exec(doc.body)) {
+      let _name = `${doc.id}-${doc.name}-${element[1]}`;
+      // @ts-ignore
+      if (document.attachements.filter(x => x.value === _name).length === 0) {
+        // @ts-ignore
+        document.attachements.push({value: _name,  label: `Attachement ${element[1]} in ${doc.id} / ${doc.name}`});  
+      }
+    };
+    // @ts-ignore    
+    console.log(document.attachements)
+  }  
 
   /* 
    * Loads data for the current issue, attaches a sync to it
@@ -715,6 +736,7 @@ export class Api {
                   }
                   else {
                     self.trackReferences(d.doc.data);
+                    self.trackAttachements(d.doc.data);
                     self.data.push(d.doc.data);
                   }
                 }

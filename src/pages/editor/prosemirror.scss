@@ -73,6 +73,7 @@
 
 .ProseMirror mark,
 .ProseMirror reference,
+.ProseMirror imagereference,
 .ProseMirror bibliography,
 .ProseMirror fn,
 .ProseMirror .attachement {
@@ -99,6 +100,7 @@
 
 .ProseMirror mark {&:before {content: "Mark";}}
 .ProseMirror reference {&:before {content: "Ref.";}}
+.ProseMirror imagereference {&:before {content: "Image Ref.";}}
 .ProseMirror fn {&:before {content: "Fn.";}}
 .ProseMirror bibliography {&:before {content: "Lit.";}}
 .ProseMirror .attachement {border-color: black; &:before {color: black; content: "Att.";}}
