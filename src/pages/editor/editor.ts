@@ -125,6 +125,16 @@ export class Editor {
       if (d !== undefined) {
         // @ts-ignore
         this.prosemirror.insertAttachement(d)
+        // Add to attachements global
+        // {element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'}
+        if (d.isImage === false) {
+          let _name = `${data.id}-${data.name}-${d.anchorIndex}`;
+          // @ts-ignore
+          if (document.attachements.filter(x => x.value === _name).length === 0) {
+            // @ts-ignore
+            document.attachements.push({value: _name,  label: `Attachement ${d.anchorIndex} in ${data.id} / ${data.name}`});  
+          }
+        }
       }
     });
   }
