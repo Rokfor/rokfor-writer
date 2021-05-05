@@ -53,8 +53,10 @@
 
       <ion-item *ngIf="!signup.sent">
          <ion-label floating *ngIf="signup.error">{{signup.message}}</ion-label>
-         <ion-label floating>E-Mail</ion-label>
-         <ion-input autocapitalize=off clearInput [(ngModel)]="signup.email"></ion-input>
+         <ion-label floating *ngIf="!signup.error">E-Mail</ion-label>
+         <ion-input autocapitalize=off clearInput [(ngModel)]="signup.email"></ion-input>         
+      </ion-item>
+      <ion-item *ngIf="!signup.sent">         
          <ion-label floating>Group</ion-label>
          <ion-input autocapitalize=off clearInput [(ngModel)]="signup.group"></ion-input>
       </ion-item>

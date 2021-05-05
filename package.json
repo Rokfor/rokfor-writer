@@ -3,7 +3,7 @@
     "author": "Rokfor & Urs Hofer",
     "homepage": "http://www.rokfor.ch/",
     "private": false,
-    "version": "2.1.11",
+    "version": "2.1.16",
     "license": "mit",
     "main": "./www/index.js",
     "scripts": {
@@ -18,12 +18,20 @@
     "build": {
         "appId": "com.github.rokfor.rokfor-writer",
         "productName": "Rokfor Writer",
+        "afterSign": "scripts/notarize.js",
         "mac": {
             "category": "rokfor.writer",
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "build/entitlements.mac.plist",
+            "entitlementsInherit": "build/entitlements.mac.plist",
             "target": [
                 "zip",
                 "dmg"
             ]
+        },
+        "dmg": {
+            "sign": false
         },
         "publish": [
             {
@@ -74,7 +82,6 @@
         "electron-build": "^0.0.3",
         "electron-dl": "^1.13.0",
         "electron-log": "^2.2.16",
-        "electron-packager": "^13.1.1",
         "electron-updater": "^4.3.8",
         "fs": "^0.0.1-security",
         "ionic-angular": "^3.9.6",
@@ -98,8 +105,11 @@
     "devDependencies": {
         "@ionic/app-scripts": "3.2.4",
         "@types/showdown": "^1.9.3",
+        "dotenv": "^9.0.0",
         "electron": "^12.0.6",
-        "electron-builder": "^22.9.1",
+        "electron-builder": "^22.11.1",
+        "electron-notarize": "^1.0.0",
+        "electron-packager": "^15.2.0",
         "node-pre-gyp": "^0.11.0",
         "typescript": "^3.9.9"
     },
