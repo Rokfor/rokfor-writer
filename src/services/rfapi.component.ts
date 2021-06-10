@@ -232,6 +232,7 @@ export class Api {
         if (e === 'change') {
           this.hideLoadingCtrl();
         }
+        this.updateBibTex();
       }.bind(this))
       this.online = navigator.onLine;
       window.addEventListener('offline', () => {
@@ -279,6 +280,8 @@ export class Api {
 
   updateBibTex() {
     let _index = false;
+    // @ts-ignore    
+    document.bibTex = document.bibTex || [];    
     for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
       if (this.issueoptions[_i] == 'Literature') {
         // @ts-ignore
@@ -286,13 +289,9 @@ export class Api {
       }
     }
     if (_index !== false) {
-      // @ts-ignore    
-      document.bibTex = document.bibTex || [];                
       try {
         // @ts-ignore
         document.bibTex = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw.map(e => ({value: e._id,  label: e._id}));          
-        // @ts-ignore
-        console.log(document.bibTex);
       } catch (error) {
         console.warn('could not parse bibtex');
       }
@@ -380,7 +379,7 @@ export class Api {
                         : ""
           };
         }
-        self.updateBibTex();
+        //self.updateBibTex();
       }
     }
 
@@ -669,7 +668,7 @@ export class Api {
 
               if (d.doc._id === `contribution-${self.current.issue}-exports`) {
 
-                console.log(d);
+                // console.log(d);
                 
                 /* Set Current Issue */
 
@@ -1098,7 +1097,7 @@ export class Api {
     }
     this.timeout.book = setTimeout(() => {
       this.dbIssuesStore();
-      this.updateBibTex();
+      //this.updateBibTex();
       console.log(`Issues Stored`);
 
     }, 1000);
