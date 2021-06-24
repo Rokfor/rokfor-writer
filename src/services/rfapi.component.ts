@@ -6,7 +6,7 @@ import PouchDB from 'pouchdb';
 import { DomSanitizer } from '@angular/platform-browser';
 
 // @ts-ignore
-import {parseBibFile} from "bibtex";
+import {parseBibFile, normalizeFieldValue} from "bibtex";
 
 interface _dataset {
     name:     string;
@@ -291,7 +291,9 @@ export class Api {
     if (_index !== false) {
       try {
         // @ts-ignore
-        document.bibTex = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw.map(e => ({value: e._id,  label: e._id}));          
+        let _bt = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw.map(e => ({value: e._id,  label: `${e._id}: ${normalizeFieldValue(e.getField("TITLE")).substr(0, 30)}`}));
+        // @ts-ignore
+        document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
       } catch (error) {
         console.warn('could not parse bibtex');
       }
