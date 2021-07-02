@@ -31,6 +31,7 @@
           <ion-icon name="share"></ion-icon>
         </button>
         <ion-label>{{i.Name}}</ion-label>
+        <ion-badge item-end color="secondary">ID {{i.Id}}</ion-badge>
         <ion-radio value="{{i.Id}}" (ionSelect)="api.activateIssue()"></ion-radio>
       </ion-item>
 
@@ -220,6 +221,10 @@
       Databases
     </ion-list-header>
     <ion-item>
+      <ion-label>Publish Literature without citing</ion-label>
+      <ion-toggle (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[21].value"></ion-toggle>
+    </ion-item>    
+    <ion-item>
       <ion-label stacked>Literature</ion-label>
        <ion-textarea
         autoresize
@@ -229,5 +234,13 @@
        ></ion-textarea>
     </ion-item>
   </ion-list>
-
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
+    <ion-list-header color="danger">
+      Danger Zone
+    </ion-list-header>
+    <ion-item>
+      <ion-label>Publish Book to Web</ion-label>
+      <ion-toggle (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[20].value"></ion-toggle>
+    </ion-item>
+  </ion-list>  
 </ion-content>

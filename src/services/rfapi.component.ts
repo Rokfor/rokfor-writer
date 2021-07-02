@@ -114,7 +114,9 @@ export class Api {
     "CoverColor",
     "TextColor",
     "Language",
-    "Literature"
+    "Literature",
+    "Published",
+    "ForceLiteraturePrint"
   ];
 
   data: Array < _dataset > = [];
@@ -376,12 +378,13 @@ export class Api {
         for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
           self.current.issue_options.Options[_i] = {
             key: self.issueoptions[_i],
-            value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value 
+            value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value !== undefined
                         ? self.current.issue_options.Options[_i].value
                         : ""
           };
         }
         //self.updateBibTex();
+        console.log(self.current.issue_options)
       }
     }
 
@@ -718,11 +721,13 @@ export class Api {
                     for (var _i = self.issueoptions.length - 1; _i >= 0; _i--) {
                       self.current.issue_options.Options[_i] = {
                         key: self.issueoptions[_i],
-                        value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value 
+                        value: self.current.issue_options.Options[_i] && self.current.issue_options.Options[_i].value !== undefined
                           ? self.current.issue_options.Options[_i].value
                           : ""
                       };
                     }
+
+                    console.log(self.current.issue_options)
 
                     /* Copy into issues Database */
 

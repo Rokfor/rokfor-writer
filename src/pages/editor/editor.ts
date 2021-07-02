@@ -122,7 +122,8 @@ export class Editor {
     let modal = this.modalCtrl.create(PopoverEditor, {api: this.api, data: data}, {showBackdrop: true});
     modal.present();
     modal.onDidDismiss(d => {
-      if (d !== undefined) {
+      console.log(d)
+      if (d !== undefined && d !== null) {
         // @ts-ignore
         this.prosemirror.insertAttachement(d)
         // Add to attachements global

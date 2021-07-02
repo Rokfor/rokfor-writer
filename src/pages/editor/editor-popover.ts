@@ -16,13 +16,15 @@ import { File } from '@ionic-native/file';
   <ion-content class="assets card-background-page">
 
     <ion-card *ngFor="let i of assets; let _in = index;">
-      <img src="{{i.Resized[1]}}">
-      <ion-card-content>
-        <ion-label stacked>Caption</ion-label>
-        <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
-        <ion-label stacked>Copyright</ion-label>
-        <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
-      </ion-card-content>
+      <div class="assets-flex">
+        <img src="{{i.Resized[1]}}">
+        <ion-card-content>
+          <ion-label stacked>Caption</ion-label>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
+          <ion-label stacked>Copyright</ion-label>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
+        </ion-card-content>
+      </div>
       <ion-row padding>
         <ion-col>
           <button ion-button item-end (click)="addEditor(i, false, false, _in)">Responsive</button>
@@ -36,6 +38,10 @@ import { File } from '@ionic-native/file';
         <ion-col>
           <button ion-button color="danger" item-end (click)="delete(_in)">Delete</button>        
         </ion-col>
+        <ion-col>
+          <input class="custom-replace-input" type="file" (change)="loadImageFromDevice($event, _in)" id="file-input"  accept="image/png, image/jpeg, application/pdf">
+        </ion-col>
+
       </ion-row>
     </ion-card>
 
@@ -110,13 +116,13 @@ export class PopoverEditor {
     }, 1000);
   }
 
-  async loadImageFromDevice(event) {
+  async loadImageFromDevice(event, i = false) {
     this.api.showLoadingCtrl('Upload in Progress');
     const reader = new FileReader();
     const file = event.target.files[0];
     reader.readAsDataURL(file);
     reader.onload = async () => { // note using fat arrow function here if we intend to point at current Class context.
-      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post'},true)
+      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post', index: i},true)
       let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
       if (_assets.length) {
         this.assets = _assets
