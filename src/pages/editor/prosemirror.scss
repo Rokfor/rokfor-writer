@@ -1,6 +1,9 @@
 .ProseMirror {
+  background: #FFF;
+  max-width: 850px !important;
+  margin: auto !important;
+  min-height: 100vh;
 
-  position: absolute;
   word-wrap: break-word;
   white-space: pre-wrap;
   font-family: ic, Courier, monospace;
@@ -10,8 +13,6 @@
   color: black;
   font-size: 1em;
   line-height: 1.5em;
-  overflow-x: hidden;
-  overflow-y: auto;
 
   -moz-user-select: text !important;
   -webkit-user-select: text !important;
@@ -398,16 +399,25 @@ li.ProseMirror-selectednode:after {
 }
 
 .ProseMirror-menubar {
+  position: sticky !important;
+  top: 0px !important;
   margin: 0;
   padding: 0em !important;
   line-height: 1;
-  background: #EEE !important;
-  height: 35px !important;
-  border-color: black !important;
+  padding-top: 5px !important;
+  background: #FFF !important;
+  height: 39px !important;
+  border: none !important;
+  box-shadow: 0px 0px 3px 0px rgba(0,0,0,0.5);
+  left: 0px;
+  width: 100%;
   &-wrapper {
     background: #EEE !important;
-    height: 35px !important;
+    position: relative;
   }
+  &-spacer {
+    display: none !important;
+  }  
 }
 
 .ProseMirror-tooltip .ProseMirror-menu {

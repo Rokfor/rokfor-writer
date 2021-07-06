@@ -26,33 +26,24 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="no-scroll paper"  *ngIf="api.data.length > 0 && api.data[api.getCurrent()]" [ngClass]="{'fullscreen': api.state.fullscreen}">
-  <ion-slides #mySlider
-  [direction] = "vertical"
-  [slidesPerView] = "1"
-  [pager] = "true"
-  [paginationType] = "fraction"
-  [parallax] = "true"
-  >
-    <ion-slide>
-      <ion-item>
-        <ion-label stacked>Titel</ion-label>
-        <ion-input [(ngModel)]="api.getCurrentData().title" (ngModelChange)="changeDebounce()" placeholder="{{api.getCurrentData().title}}"></ion-input>
-      </ion-item>
-      <div class="editorWrapper">
-        <prosemirror 
-          [(data)]="api.getCurrentData().body" 
-          [(searchString)]="findString"
-          *ngIf="updating === false"
-          (search)="search()" 
-          (blur)="change()" 
-          (change)="api.getCurrentData().modified = 1;"
-          #myProsemirror
-        >
-        </prosemirror>
-      </div>
-    </ion-slide>
-  </ion-slides>
+<ion-content class="paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
+  <div class="editorPage" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
+    <ion-item>
+      <ion-label stacked>Titel</ion-label>
+      <ion-input [(ngModel)]="api.getCurrentData().title" (ngModelChange)="changeDebounce()" placeholder="{{api.getCurrentData().title}}"></ion-input>
+    </ion-item>
+    <div class="editorWrapper">
+      <prosemirror 
+        [(data)]="api.getCurrentData().body" 
+        [(searchString)]="findString"
+        (search)="search()" 
+        (blur)="change()" 
+        (change)="api.getCurrentData().modified = 1;"
+        #myProsemirror
+      >
+      </prosemirror>
+    </div>
+  </div>
 </ion-content>
 <ion-footer *ngIf="!api.state.fullscreen">
   <ion-toolbar class="btn-wrapper">

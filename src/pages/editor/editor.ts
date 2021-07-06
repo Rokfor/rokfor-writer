@@ -1,17 +1,10 @@
-
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, NgZone } from '@angular/core';
 import { Printer, PrintOptions } from '@ionic-native/printer';
-import { Platform, NavController, Slides, Events, AlertController, LoadingController, ModalController } from 'ionic-angular';
+import { Platform, NavController, Events, AlertController, LoadingController, ModalController } from 'ionic-angular';
 import { ProsemirrorModule } from 'ng2-prosemirror';
 import { Api } from '../../services/rfapi.component';
 import { PopoverEditor } from './editor-popover';
 import { PopoverSettings } from './settings-popover';
-
-//import 'codemirror/mode/markdown/markdown.js';
-//import 'codemirror/addon/scroll/simplescrollbars.js';
-//import 'codemirror/addon/fold/foldcode.js';
-//import 'codemirror/addon/fold/foldgutter.js';
-//import 'codemirror/addon/fold/markdown-fold.js';
 import {Converter} from "showdown/dist/showdown";
 
 @Component({
@@ -23,30 +16,12 @@ import {Converter} from "showdown/dist/showdown";
 export class Editor {
   service: any;
   content: any;
-  mySlideOptions: any;
-  initialSlide: number = 0;
   initialized: boolean = false;
-  updating: boolean = false;
-
   afterSaveCallback: any;
   confirm: any;
   timeout_change: any;
   findString: any;  
 
-  /*cm_options: any = {
-    viewportMargin: 10,
-    mode: 'markdown',
-    lineNumbers: false,
-    theme: "default",
-    inputStyle: "textarea",
-    lineWrapping: true,
-    scrollbarStyle: 'overlay',
-    foldGutter: true,
-    gutters: ["CodeMirror-foldgutter"]
-  };
-*/
-
-  @ViewChild('mySlider') slider: Slides;
   // @ts-ignore
   @ViewChild('myProsemirror') prosemirror:ProsemirrorModule;
 
@@ -58,66 +33,23 @@ export class Editor {
     public loadingCtrl: LoadingController,
     public platform: Platform,
     private modalCtrl: ModalController,
-    public printer: Printer
+    public printer: Printer,
+    private zone: NgZone
   ) {
-    var self = this;
-
-
-
-    //self.cm_options.cursorBlinkRate = self.platform.is('core') ? "500" : -1;
 
     events.subscribe('page:change', (page) => {
-      this.updating = true;    
-      this.api.setCurrent(page);      
-      console.log("got page change", this.api.getCurrentData().body);  
-      setTimeout(() => {
-        this.updating = false;    
-      }, 250);      
-      //self.slider.slideTo(page);
-      /*
-      if (self.slider.getSlider() !== undefined && typeof self.slider.slideTo === "function") {
-        setTimeout(() => {
-          console.log('done')
-          self.slider.slideTo(page);
-        }, 250);
-      }*/
+      this.zone.run(() => {
+        this.api.setCurrent(page);  
+      });    
+      console.log("got page change");  
     });
 
     events.subscribe('page:redraw', (page) => {
-      console.log("got page redraw", this.prosemirror);
-      this.api.setCurrent(page);
-      //self.slider.slideTo(self.slider.getActiveIndex(), 0, false)
-      /*
-      console.log(self.slider);
-      if (self.slider.getSlider() !== undefined) {
-        setTimeout(() => {
-          let s = self.slider.getSlider();
-          //s.update();
-          self.slider.slideTo(self.slider.getActiveIndex(), 0, false);
-        }, 250);
-      }*/
+      this.zone.run(() => {
+        this.api.setCurrent(page);  
+      });    
+      console.log("got page redraw");
     });
-
-    //console.log("Initialize Slide ", self.initialSlide);
-    //if (self.initialized && self.slider) {
-    //  self.slider.slideTo(self.initialSlide, 0);
-    //}
-    self.mySlideOptions = {
-      direction: "vertical",
-      onlyExternal: true,
-      slidesPerView: 1,
-      runCallbacksOnInit: false,
-      preventClicksPropagation: false,
-      preventClicks: false,
-      initialSlide: self.api.getCurrent(),
-      onInit: (slides: any) => {
-        self.initialized = true;
-      }
-    };
-  }
-
-  trackByFn(index, i) {
-    return i.syncId;
   }
  
   showOptions(data) {
@@ -202,23 +134,8 @@ export class Editor {
 
   ngAfterViewInit() {
     this.initialized = true;
-    /*this.slider.onlyExternal = true;
-    this.slider.paginationType = "fraction";
-    this.slider.simulateTouch = false;
-    this.slider.touchEventsTarget = "container";
-    this.slider.keyboardControl = false;*/
   }
 
-/*
-  ngAfterViewChecked() {
-    if (this && this.slider && this.slider.getSlider() !== undefined && typeof this.slider.slideTo === "function") {
-      if (Number(this.slider.getActiveIndex()) !== this.api.getCurrent()) {
-        console.log("Manual Update needed...")
-        //this.slider.slideTo(this.api.getCurrent())
-      }
-    }
-  }
-*/
   ionViewDidLoad() {
 
   }
@@ -247,11 +164,6 @@ export class Editor {
     })
   }
 
-  /*slideWillChange() {
-    if (!this.initialized) return false;
-    this.api.setCurrent(this.slider.getActiveIndex());
-  }*/
-
   _checkunsafed(cb) {
     try {
       if (this.api.data[this.api.getCurrent()].modified == 1) {
@@ -269,11 +181,15 @@ export class Editor {
   }
 
   next() {
-    this._checkunsafed(function(t){t.slider.slideNext();});
+    if (this.api.getCurrent() < this.api.data.length - 1) {
+      this._checkunsafed(() => {this.api.current.page++});
+    }
   }
 
   prev() {
-    this._checkunsafed(function(t){t.slider.slidePrev();});
+    if (this.api.getCurrent() > 0) {
+      this._checkunsafed(() => {this.api.current.page--});
+    }    
   }
 
 
@@ -299,10 +215,6 @@ export class Editor {
       this.change();
     }, 1000);
   }
-
-  /*slideDidChange() {
-    if (!this.initialized) return false;
-  }*/
 
   addPage() {
     if (!this.initialized) return false;
