@@ -26,6 +26,7 @@ export class Editor {
   mySlideOptions: any;
   initialSlide: number = 0;
   initialized: boolean = false;
+  updating: boolean = false;
 
   afterSaveCallback: any;
   confirm: any;
@@ -61,11 +62,18 @@ export class Editor {
   ) {
     var self = this;
 
+
+
     //self.cm_options.cursorBlinkRate = self.platform.is('core') ? "500" : -1;
 
     events.subscribe('page:change', (page) => {
-      console.log("got page change");
-      self.slider.slideTo(page);
+      this.updating = true;    
+      this.api.setCurrent(page);      
+      console.log("got page change", this.api.getCurrentData().body);  
+      setTimeout(() => {
+        this.updating = false;    
+      }, 250);      
+      //self.slider.slideTo(page);
       /*
       if (self.slider.getSlider() !== undefined && typeof self.slider.slideTo === "function") {
         setTimeout(() => {
@@ -76,8 +84,9 @@ export class Editor {
     });
 
     events.subscribe('page:redraw', (page) => {
-      console.log("got page redraw");
-      self.slider.slideTo(self.slider.getActiveIndex(), 0, false)
+      console.log("got page redraw", this.prosemirror);
+      this.api.setCurrent(page);
+      //self.slider.slideTo(self.slider.getActiveIndex(), 0, false)
       /*
       console.log(self.slider);
       if (self.slider.getSlider() !== undefined) {
@@ -193,11 +202,11 @@ export class Editor {
 
   ngAfterViewInit() {
     this.initialized = true;
-    this.slider.onlyExternal = true;
+    /*this.slider.onlyExternal = true;
     this.slider.paginationType = "fraction";
     this.slider.simulateTouch = false;
     this.slider.touchEventsTarget = "container";
-    this.slider.keyboardControl = false;
+    this.slider.keyboardControl = false;*/
   }
 
 /*
@@ -238,10 +247,10 @@ export class Editor {
     })
   }
 
-  slideWillChange() {
+  /*slideWillChange() {
     if (!this.initialized) return false;
     this.api.setCurrent(this.slider.getActiveIndex());
-  }
+  }*/
 
   _checkunsafed(cb) {
     try {
@@ -291,13 +300,13 @@ export class Editor {
     }, 1000);
   }
 
-  slideDidChange() {
+  /*slideDidChange() {
     if (!this.initialized) return false;
-  }
+  }*/
 
   addPage() {
     if (!this.initialized) return false;
-    let index = this.api.data.length == 0 ? 0 : this.slider.getActiveIndex() + 1;
+    let index = this.api.data.length == 0 ? 0 : this.api.getCurrent() + 1;
     this.api.add(index);
     console.log("Page Added")
   }

@@ -26,28 +26,27 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
-<ion-content class="no-scroll paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
+<ion-content class="no-scroll paper"  *ngIf="api.data.length > 0 && api.data[api.getCurrent()]" [ngClass]="{'fullscreen': api.state.fullscreen}">
   <ion-slides #mySlider
   [direction] = "vertical"
   [slidesPerView] = "1"
-  [initialSlide] = "api.getCurrent()"
   [pager] = "true"
   [paginationType] = "fraction"
   [parallax] = "true"
-  (ionSlideDidChange)="slideDidChange()" (ionSlideWillChange)="slideWillChange()">
-    <ion-slide *ngFor="let e of api.data; trackBy: trackByFn; index as i;">
-      <ion-item *ngIf="this.api.getCurrent() == i">
+  >
+    <ion-slide>
+      <ion-item>
         <ion-label stacked>Titel</ion-label>
-        <ion-input [(ngModel)]="e.title" (ngModelChange)="changeDebounce()" placeholder="{{e.title}}"></ion-input>
+        <ion-input [(ngModel)]="api.getCurrentData().title" (ngModelChange)="changeDebounce()" placeholder="{{api.getCurrentData().title}}"></ion-input>
       </ion-item>
       <div class="editorWrapper">
         <prosemirror 
-          *ngIf="this.api.getCurrent() == i" 
-          [(data)]="e.body" 
-          [(searchString)]="findString" 
+          [(data)]="api.getCurrentData().body" 
+          [(searchString)]="findString"
+          *ngIf="updating === false"
           (search)="search()" 
           (blur)="change()" 
-          (change)="e.modified = 1;"
+          (change)="api.getCurrentData().modified = 1;"
           #myProsemirror
         >
         </prosemirror>
@@ -58,7 +57,7 @@
 <ion-footer *ngIf="!api.state.fullscreen">
   <ion-toolbar class="btn-wrapper">
     <ion-buttons float-start>
-      <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="slider.isBeginning()">
+      <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="api.getCurrent() == 0">
         <ion-icon name="arrow-back"></ion-icon>
       </button>
     </ion-buttons>
@@ -96,7 +95,7 @@
     
     </ion-title>
     <ion-buttons end *ngIf="initialized">
-      <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="slider.isEnd()">
+      <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="(api.data.length - 1) == api.getCurrent()">
         <ion-icon name="arrow-forward"></ion-icon>
       </button>
     </ion-buttons>
