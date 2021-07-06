@@ -3,7 +3,7 @@
   "author": "Rokfor & Urs Hofer",
   "homepage": "http://www.rokfor.ch/",
   "private": false,
-  "version": "2.1.19",
+  "version": "2.1.24",
   "license": "mit",
   "main": "./www/index.js",
   "scripts": {

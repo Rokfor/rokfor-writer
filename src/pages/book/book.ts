@@ -26,7 +26,10 @@ export class Book {
   }
 
 
-
+  getAttachements() {
+    // @ts-ignore
+    return document.attachements
+  }
 
   deleteIssue(issueId) {
     this.api._call("/delete", `Deleted Book ${issueId}`, {issue: issueId}, false);

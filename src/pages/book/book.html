@@ -197,7 +197,18 @@
     <ion-item>
        <ion-label stacked>Cover Image</ion-label>
        <ion-input autocapitalize=off placeholder="URL" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[14].value"></ion-input>
-    </ion-item>    
+    </ion-item>   
+    <ion-item>
+      <ion-label stacked>Cover Asset</ion-label>
+      <ion-select (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[22].value">
+        <ion-option 
+          value="{{_att.value}}" 
+          selected="{{_att.value == api.current.issue_options.Options[22].value}}"
+          *ngFor="let _att of getAttachements()" 
+        >{{_att.label}}
+        </ion-option>
+      </ion-select>
+    </ion-item>       
     <ion-item>
        <ion-label stacked>Series Number</ion-label>
        <ion-input autocapitalize=off placeholder="1 or No. 1" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[15].value"></ion-input>
