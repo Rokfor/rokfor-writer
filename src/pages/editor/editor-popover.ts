@@ -17,7 +17,13 @@ import { File } from '@ionic-native/file';
 
     <ion-card *ngFor="let i of assets; let _in = index;">
       <div class="assets-flex">
-        <img src="{{i.Resized[1]}}">
+        <ion-card-content>
+          <img src="{{i.Resized[1]}}">
+          <img class="alternateImg" *ngIf="i.AttachementsAlternate" src="{{i.AttachementsAlternate.Thumbnail}}">
+          <ion-label stacked>Alternative Image Variant (Web)</ion-label>
+          <button ion-button outline small round [disabled]="!i.AttachementsAlternate" color="danger" item-end (click)="delete(_in, true)">Delete</button>        
+          <input class="custom-variant-input" type="file" (change)="loadImageFromDevice($event, _in, true)" id="file-input"  accept="image/png, image/jpeg, application/pdf">
+        </ion-card-content>
         <ion-card-content>
           <ion-label stacked>Caption</ion-label>
           <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
@@ -100,10 +106,17 @@ export class PopoverEditor {
     this.viewCtrl.dismiss();
   }
 
-  async delete(i) {
+  async delete(i, variant = false) {
     this.api.showLoadingCtrl('Deletion in Progress');
-    let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i},true)
-    let _del = this.assets.splice(i,1);
+    let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i, variant: variant},true)
+    if (variant === false) {
+      let _del = this.assets.splice(i,1);
+    } else {
+      let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
+      if (_assets.length) {
+        this.assets = _assets
+      }
+    }
     this.api.hideLoadingCtrl();
   }
 
@@ -116,13 +129,13 @@ export class PopoverEditor {
     }, 1000);
   }
 
-  async loadImageFromDevice(event, i = false) {
+  async loadImageFromDevice(event, i = false, variant = false) {
     this.api.showLoadingCtrl('Upload in Progress');
     const reader = new FileReader();
     const file = event.target.files[0];
     reader.readAsDataURL(file);
     reader.onload = async () => { // note using fat arrow function here if we intend to point at current Class context.
-      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post', index: i},true)
+      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post', index: i, variant: variant},true)
       let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
       if (_assets.length) {
         this.assets = _assets

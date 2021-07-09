@@ -11,6 +11,9 @@
       </ion-input>
     </ion-title>
     <ion-buttons end *ngIf="api.state.initialized">
+      <button ion-button clear>
+        <ion-badge *ngIf="api.data.length > 0 && api.data[api.getCurrent()]" item-end color="secondary">{{api.getCurrent() + 1}} / {{api.data.length}}</ion-badge>
+      </button>
       <button ion-button clear icon-only (click)="showOptions(api.data[api.getCurrent()])" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
         <ion-icon name="settings"></ion-icon>
       </button> 

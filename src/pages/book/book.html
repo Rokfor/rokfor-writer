@@ -208,7 +208,7 @@
         >{{_att.label}}
         </ion-option>
       </ion-select>
-    </ion-item>       
+    </ion-item>
     <ion-item>
        <ion-label stacked>Series Number</ion-label>
        <ion-input autocapitalize=off placeholder="1 or No. 1" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[15].value"></ion-input>
@@ -223,8 +223,19 @@
     </ion-item>
     <ion-item>
        <ion-label stacked>Language</ion-label>
-       <ion-input autocapitalize=off placeholder="german, french, english" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value"></ion-input>
+       <ion-select (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value">
+        <ion-option 
+          value="{{_att}}" 
+          selected="{{_att == api.current.issue_options.Options[18].value}}"
+          *ngFor="let _att of ['german', 'french', 'english', 'italian', 'arabic']" 
+        >{{_att}}
+        </ion-option>
+      </ion-select>
     </ion-item>            
+    <ion-item>
+      <ion-label>Use alternative images in PDF's</ion-label>
+      <ion-toggle (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[23].value"></ion-toggle>
+    </ion-item>
   </ion-list>
 
   <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
