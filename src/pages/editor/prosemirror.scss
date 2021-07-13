@@ -76,7 +76,6 @@
 .ProseMirror reference,
 .ProseMirror imagereference,
 .ProseMirror bibliography,
-.ProseMirror fn,
 .ProseMirror .attachement {
   display: inline;
   border: 1px solid red;
@@ -102,24 +101,23 @@
 .ProseMirror mark {&:before {content: "Mark";}}
 .ProseMirror reference {&:before {content: "Ref.";}}
 .ProseMirror imagereference {&:before {content: "Image Ref.";}}
-.ProseMirror fn {&:before {content: "Fn.";}}
 .ProseMirror bibliography {&:before {content: "Lit.";}}
 .ProseMirror .attachement {border-color: black; &:before {color: black; content: "Att.";}}
 
 
 .ProseMirror index {
   display: inline;
-  border-bottom: 1px solid red;
-  background: white !important;
+  border: 1px dotted red;
+  position: relative;
+  padding-left: 0.25em;
   &:before {
     color: red;
-    padding-right: 0.25em;
-    margin-right: 0.25em;
     left: 0px;
     top: 0px;
     font-size: 60%;
     font-weight: bold;
-    content: "Index";
+    content: "idx ";
+    line-height: 0;
   }  
 }
 
@@ -152,7 +150,7 @@
 .ProseMirror language[language="french"] {&:before {content: "Français";}}
 
 
-
+.ProseMirror fn,
 .ProseMirror comment,
 .ProseMirror latex,
 .ProseMirror paragraphalternate,
@@ -185,11 +183,21 @@
   }  
 }
 
+.ProseMirror fn,
 .ProseMirror footnote {
   &:before {
     color: red;    
     content: "Footnote";
   }  
+}
+
+.ProseMirror fn {
+  display: inline;
+  padding: 0;
+  padding-left: 4em;
+  padding-bottom: 1px;
+  background:rgba(250, 150, 250, 0.5);
+
 }
 
 

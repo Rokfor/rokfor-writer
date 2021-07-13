@@ -116,13 +116,11 @@ export class MyApp {
           this.toggleFs(true);
         }
         if (this.nav.getActive().name === "Editor") {
-          if (message === 'next-document') {
-            if (this.nav.getActive().instance.slider.isEnd()) return;
-            this.nav.getActive().instance.slider.slideNext();
+          if (message === 'next-document' && this.nav.getActive().instance.api.getCurrent() < this.nav.getActive().instance.api.data.length - 1) {
+            this.nav.getActive().instance.api.current.page++;
           }
-          if (message === 'previous-document') {
-            if (this.nav.getActive().instance.slider.isBeginning()) return;
-            this.nav.getActive().instance.slider.slidePrev();
+          if (message === 'previous-document' && this.nav.getActive().instance.api.getCurrent() > 0) {
+            this.nav.getActive().instance.api.current.page--
           }
           if (message === 'save-document') {
             this.nav.getActive().instance.api.change();
