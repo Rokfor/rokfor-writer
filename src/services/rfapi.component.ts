@@ -117,7 +117,8 @@ export class Api {
     "Literature",
     "Published",
     "ForceLiteraturePrint",
-    "CoverAsset"
+    "CoverAsset",
+    "ForceAltImages"
   ];
 
   data: Array < _dataset > = [];

@@ -133,6 +133,7 @@ page-editor {
 
 }
 
+.custom-variant-input,
 .custom-replace-input,
 .custom-file-input {
   width: 100%;
@@ -145,7 +146,7 @@ page-editor {
     visibility: hidden;
   }
   box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-  &::before {
+  &:before {
     content: 'ADD ASSET';
     text-align: center;
     display: inline-block;
@@ -167,7 +168,7 @@ page-editor {
     font-weight: bold;
     border-radius: 2px;
   }
-  &:hover::before {
+  &:hover:before {
     border-color: black;
   }
   &:active{
@@ -178,11 +179,12 @@ page-editor {
   }
 }
 
+.custom-variant-input,
 .custom-replace-input {
   height: 2.55em;
   margin-top: 4px;
   box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
-  &::before {
+  &:before {
     content: 'REPLACE';
     background: #32db64;
     padding: 1.25em 0.5em;
@@ -195,13 +197,36 @@ page-editor {
   }  
 }
 
+.custom-variant-input {
+  float: right;
+  border-radius: 64px;
+  padding: 0 2.6rem;
+  height: 2.1em;
+  color: #32db64;
+  border: 1px solid #32db64;  
+  box-sizing: border-box;  
+  font-size: 13px;
+  width: calc(50% - 20px);
+  box-shadow: none;
+  &:before {
+    content: 'ADD';
+    color: #32db64;
+    background: transparent;
+    border-radius: 64px;
+    padding: 0 2.6rem;
+    line-height: 2.6rem;
+    box-sizing: border-box;  
+  }
+}
+
 .assets {
   img {
-    max-width: 50%;
+    max-width: 100%;
     height: auto;
     width: auto;
     object-fit: contain;
-    padding: 1rem;
+    padding: 0rem;
+    margin-bottom: 0.5rem;
     object-position: center top;
     background: #EEE;    
   }
@@ -214,6 +239,7 @@ page-editor {
   }
   &-flex {
     display: flex;
+    position: relative;
     .card-content-md {
       width: 100%;
       padding: 0.75rem;
@@ -221,6 +247,17 @@ page-editor {
     }
     .label-md {
       margin: 0;
+    }
+    .alternateImg {
+      position: absolute;
+      border: 1px solid white;
+      top: 1.5rem;
+      left: 1.5rem;
+      max-width: 20%;
+      width: auto;
+      height: auto;
+      padding: 0;
+      box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px;
     }
   }
   ion-row {
