@@ -32,8 +32,26 @@ export class Book {
   }
 
   deleteIssue(issueId) {
-    this.api._call("/delete", `Deleted Book ${issueId}`, {issue: issueId}, false);
-  }
+    let _confirm = this.api.alert.create({
+      title: "Delete Book",
+      message: `Are you sure you want to delete book id <b>${issueId}</b>? 
+                If you are the only user, the book will be removed permanently.
+                Shared books remain active for all other members.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {}
+        },
+        {
+          text: 'Delete',
+          handler: data => {
+            this.api._call("/delete", `Deleted Book ${issueId}`, {issue: issueId}, false);
+          }
+        }
+      ]
+    });
+    _confirm.present();
+  }  
 
 
   shareIssue(issueId) {

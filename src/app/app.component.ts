@@ -117,10 +117,14 @@ export class MyApp {
         }
         if (this.nav.getActive().name === "Editor") {
           if (message === 'next-document' && this.nav.getActive().instance.api.getCurrent() < this.nav.getActive().instance.api.data.length - 1) {
-            this.nav.getActive().instance.api.current.page++;
+            this.zone.run(() => {
+              this.nav.getActive().instance.api.current.page++;
+            });
           }
           if (message === 'previous-document' && this.nav.getActive().instance.api.getCurrent() > 0) {
-            this.nav.getActive().instance.api.current.page--
+            this.zone.run(() => {
+              this.nav.getActive().instance.api.current.page--;
+            });
           }
           if (message === 'save-document') {
             this.nav.getActive().instance.api.change();
