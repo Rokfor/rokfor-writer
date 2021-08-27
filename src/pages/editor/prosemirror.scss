@@ -77,15 +77,16 @@
 .ProseMirror imagereference,
 .ProseMirror bibliography,
 .ProseMirror .attachement {
-  display: inline;
+  display: inline-block;
   border: 1px solid red;
   background: white !important;
-  color: rgba(0, 0, 0, .5);
+  color: red;
   font-size: 60%;
   padding-right: 0.25em;
   line-height: 1;
   vertical-align: middle;
   font-weight: bold;
+  white-space: nowrap;
   &:before {
     color: red;
     padding-right: 0.25em;
@@ -93,8 +94,16 @@
     margin-right: 0.25em;
     left: 0px;
     top: 0px;
-
-  }  
+  }
+  &.ProseMirror-selectednode {
+    background: #eee !important;
+    border-color: #666 !important;
+    color: #666 !important;
+    outline: 3px solid #eee;
+    &:before {
+      color: #666 !important;
+    }
+  }
 }
 
 
@@ -103,7 +112,6 @@
 .ProseMirror imagereference {&:before {content: "Image Ref.";}}
 .ProseMirror bibliography {&:before {content: "Lit.";}}
 .ProseMirror .attachement {border-color: black; &:before {color: black; content: "Att.";}}
-
 
 .ProseMirror index {
   display: inline;
@@ -150,11 +158,9 @@
 .ProseMirror language[language="french"] {&:before {content: "Français";}}
 
 
-.ProseMirror fn,
 .ProseMirror comment,
 .ProseMirror latex,
-.ProseMirror paragraphalternate,
-.ProseMirror footnote {
+.ProseMirror paragraphalternate {
   display: block;
   border: 2px solid transparent;
   background:rgba(0, 0, 0, .05);
@@ -183,21 +189,30 @@
   }  
 }
 
-.ProseMirror fn,
 .ProseMirror footnote {
+  display: inline;
+  padding: 0 0.25rem;      
   &:before {
     color: red;    
-    content: "Footnote";
-  }  
-}
-
-.ProseMirror fn {
-  display: inline;
-  padding: 0;
-  padding-left: 4em;
-  padding-bottom: 1px;
-  background:rgba(250, 150, 250, 0.5);
-
+    content: "Fn.";
+    position: absolute;
+    left: 1rem;
+    font-size: 50%;
+  }
+  span {
+    &.fncontent {
+      background:rgba(250, 150, 250, 0.5);
+      padding: 0.25rem 0.5rem;      
+    }
+    &.fnbegin,
+    &.fnend {
+      opacity: 0;
+      width: 0px;
+      height: 1px;
+      overflow: hidden;
+      display: inline-block;
+    }
+  }
 }
 
 
