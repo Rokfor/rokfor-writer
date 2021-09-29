@@ -61,7 +61,11 @@ import { NavParams, ViewController } from 'ionic-angular';
             placeholder="Title for Print (with new lines)"
             [(ngModel)]="values.settings[schema.meta[2][0]]"
           ></ion-textarea>
-      </ion-item>            
+      </ion-item>
+      <ion-item>
+          <ion-label>{{schema.meta[3][1]}}</ion-label>
+          <ion-toggle [(ngModel)]="values.settings[schema.meta[3][0]]"></ion-toggle>
+      </ion-item>      
     </ion-item-group>    
   </ion-content>
   `,
@@ -104,7 +108,8 @@ export class PopoverSettings {
             "meta": [
               ["author"   , "Autor"],
               ["keywords" , "Keywords"],
-              ["alttitle" , "Alt. Title"]
+              ["alttitle" , "Alt. Title"],
+              ["hideweb"  , "Hide on Web"],
             ]
         };
   }
