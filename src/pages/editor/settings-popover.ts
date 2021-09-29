@@ -43,7 +43,26 @@ import { NavParams, ViewController } from 'ionic-angular';
           <ion-label>{{s[1]}}</ion-label>
           <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
       </ion-item>
-  </ion-item-group>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider color="light">Meta Info</ion-item-divider>
+      <ion-item>
+          <ion-label>{{schema.meta[0][1]}}</ion-label>
+          <ion-input autocapitalize=off placeholder="FirstName LastName" [(ngModel)]="values.settings[schema.meta[0][0]]"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label>{{schema.meta[1][1]}}</ion-label>
+          <ion-input autocapitalize=off placeholder="FirstName LastName" [(ngModel)]="values.settings[schema.meta[1][0]]"></ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label>{{schema.meta[2][1]}}</ion-label>
+          <ion-textarea
+            autoresize
+            placeholder="Title for Print (with new lines)"
+            [(ngModel)]="values.settings[schema.meta[2][0]]"
+          ></ion-textarea>
+      </ion-item>            
+    </ion-item-group>    
   </ion-content>
   `,
 })
@@ -81,6 +100,11 @@ export class PopoverSettings {
                 ["size1"   , "Option 1: Small"],
                 ["size2"   , "Option 2: Medium"],
                 ["size3"   , "Option 3: Large"]
+            ],
+            "meta": [
+              ["author"   , "Autor"],
+              ["keywords" , "Keywords"],
+              ["alttitle" , "Alt. Title"]
             ]
         };
   }
