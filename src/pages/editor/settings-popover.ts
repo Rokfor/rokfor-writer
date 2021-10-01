@@ -93,6 +93,8 @@ export class PopoverSettings {
                 ["hidetoc"   , "Hide in ToC"],
                 ["wide"      , "Wide"],
                 ["small"     , "Small"],
+                ["noheader"  , "Supress Header"],
+                ["nofooter"  , "Supress Footer"],
             ],
             "font": [
                 ["grotesk"   , "Option 1: Grotesk"],
