@@ -175,7 +175,20 @@
        ></ion-textarea>
     </ion-item>
     <ion-item>
-       <ion-label stacked>Thanks</ion-label>
+      <ion-label stacked>About Title</ion-label>
+      <ion-input autocapitalize=off placeholder="About Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[25].value"></ion-input>
+   </ion-item>
+   <ion-item>
+     <ion-label stacked>About</ion-label>
+      <ion-textarea
+       autoresize
+       placeholder="Enter a about"
+       [(ngModel)]="api.current.issue_options.Options[26].value"
+       (ngModelChange)="api.bookStore()"
+      ></ion-textarea>
+   </ion-item>
+    <ion-item>
+       <ion-label stacked>Acknowledgements</ion-label>
         <ion-textarea
         autoresize
         placeholder="Enter a thanks"
@@ -209,7 +222,7 @@
         </ion-option>
         <ion-option 
           value="{{false}}" 
-          selected="{{false == api.current.issue_options.Options[24].value}}"
+          selected="{{false == api.current.issue_options.Options[22].value}}"
         >Disabled
         </ion-option>        
       </ion-select>
