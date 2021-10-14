@@ -95,6 +95,8 @@ export class PopoverSettings {
                 ["small"     , "Small"],
                 ["noheader"  , "Supress Header"],
                 ["nofooter"  , "Supress Footer"],
+                ["alternate" , "Alternate Layout"],
+                ["compact"   , "Compact Layout"]
             ],
             "font": [
                 ["grotesk"   , "Option 1: Grotesk"],

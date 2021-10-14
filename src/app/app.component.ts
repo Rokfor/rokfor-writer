@@ -190,6 +190,16 @@ export class MyApp {
       }
     });
 
+    this.events.subscribe('report:bug', (data) => {
+      let toast = this.toastCtrl.create({
+        message: data,
+        duration: 3000,
+        position: 'top',
+        showCloseButton: true
+      });
+      toast.present();
+    });    
+
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();

@@ -307,6 +307,7 @@ export class Api {
         document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
       } catch (error) {
         console.warn(`could not parse bibtex: ${error}`);
+        this.events.publish('report:bug', `Bibtex Error: ${error}`);
       }
     }
   }
