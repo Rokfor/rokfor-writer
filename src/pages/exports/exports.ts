@@ -48,7 +48,7 @@ export class Exports {
     let _data = await this.api._call("/exporters", "", {}, true);
     this.exporters = _data.exporters;
     if (this.exporters == null) {
-      this.api.showAlert("No Connection", "Exporting a book requires a internet connection", null);
+      this.api.showAlert("No Exporters available", "No exporters defined for your group. Check your login settings or your internet connection.", null);
     }
   }
   async export() {
@@ -64,7 +64,7 @@ export class Exports {
       loader.dismiss();
     } else {
       loader.dismiss();
-      this.api.showAlert("Exporter Error", "Exporter Error is currently not available.", null);
+      this.api.showAlert("Exporter Error", "Exporter is currently not available.", null);
     }
     
   }

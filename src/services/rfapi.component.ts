@@ -121,7 +121,8 @@ export class Api {
     "ForceAltImages",
     "LogoAsset",
     "AboutTitle",
-    "About"
+    "About",
+    "Draft"
   ];
 
   data: Array < _dataset > = [];

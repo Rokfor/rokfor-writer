@@ -298,5 +298,10 @@
       <ion-label>Publish Book to Web</ion-label>
       <ion-toggle (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[20].value"></ion-toggle>
     </ion-item>
+
+    <ion-item>
+      <ion-label>Draft Mode</ion-label>
+      <ion-toggle (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[27].value"></ion-toggle>
+    </ion-item>    
   </ion-list>  
 </ion-content>

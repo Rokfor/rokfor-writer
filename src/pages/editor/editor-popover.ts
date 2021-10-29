@@ -29,6 +29,8 @@ import { File } from '@ionic-native/file';
           <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
           <ion-label stacked>Copyright</ion-label>
           <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
+          <ion-label stacked>Alternate Caption (Web)</ion-label>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[3]"></ion-textarea>
         </ion-card-content>
       </div>
       <ion-row padding>
