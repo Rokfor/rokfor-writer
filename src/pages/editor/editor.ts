@@ -20,7 +20,8 @@ export class Editor {
   afterSaveCallback: any;
   confirm: any;
   timeout_change: any;
-  findString: any;  
+  findString: any;
+  forceSave: any = null;
 
   // @ts-ignore
   @ViewChild('myProsemirror') prosemirror:ProsemirrorModule;
@@ -170,6 +171,22 @@ export class Editor {
         this.afterSaveCallback = cb;
         this.confirm = this.loadingCtrl.create({content: 'Saving Changes'})
         this.confirm.present();
+        this.forceSave = setTimeout(() =>{
+          let _confirm = this.alert.create({
+            title: "Warning",
+            message: "Your document contains consecutive new lines. These are not supported both in the Markdown and LaTeX world, hence concatenated to one line.",
+            buttons: [
+              {
+                text: 'Ok',
+                handler: data => {
+                  console.log('Cancel clicked');
+                }
+              }
+            ]
+          });
+          _confirm.present();
+          this.change()
+        }, 2000)
       }
       else {
         this.afterSaveCallback = null;
@@ -194,6 +211,10 @@ export class Editor {
 
 
   change() {
+    if (this.forceSave != null) {
+      clearTimeout(this.forceSave);
+      this.forceSave = null;
+    }
     this.api.change();
     if (this.afterSaveCallback) {
       this.afterSaveCallback(this);
