@@ -966,22 +966,40 @@ export class Api {
   delete(item) {
     let _self = this;
     if (this.state.initialized === false) return;
-
-    // Move Page back before delete if on the last page
-    if (this.current.page == this.data.length - 1 && this.current.page > 0) {
-      this.current.page--;
-      this.events.publish('page:change', this.current.page);
-    }
-    let _delete = this.data.splice(item, 1);
-    this.pouch.data[this.current.issue].get(`contribution-${this.current.issue}-${_delete[0].syncId}`).then(function (doc) {
-      console.log(`Deleted ${_delete[0].syncId} from DB`);
-      return _self.pouch.data[_self.current.issue].put({
-        _id: doc._id,
-        _rev: doc._rev,
-        _deleted: true,
-        data: doc.data.id
-      })
+    let _confirm = this.alert.create({
+      title: "Delete Entry",
+      message: `Are you sure you want to delete entry<br><b>${this.data[item].title}</b><br><b>${this.data[item].name}</b>? 
+                <br>Data will be permanently lost.`,
+      buttons: [
+        {
+          text: 'Cancel',
+          handler: data => {
+            return
+          }
+        },
+        {
+          text: 'Delete',
+          handler: data => {
+            // Move Page back before delete if on the last page
+            if (this.current.page == this.data.length - 1 && this.current.page > 0) {
+              this.current.page--;
+              this.events.publish('page:change', this.current.page);
+            }
+            let _delete = this.data.splice(item, 1);
+            this.pouch.data[this.current.issue].get(`contribution-${this.current.issue}-${_delete[0].syncId}`).then(function (doc) {
+              console.log(`Deleted ${_delete[0].syncId} from DB`);
+              return _self.pouch.data[_self.current.issue].put({
+                _id: doc._id,
+                _rev: doc._rev,
+                _deleted: true,
+                data: doc.data.id
+              })
+            });            
+          }
+        }
+      ]
     });
+    _confirm.present();    
   }
 
   add(position: number) {
