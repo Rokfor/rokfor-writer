@@ -20,7 +20,8 @@ page-editor {
       background: #FFF !important;
     }
     & .editorWrapper {
-      top: 1em;
+      top: 0em;
+      margin-top: 0em;
     }
     & .CodeMirror-sizer {
       max-width: 850px !important;
@@ -36,7 +37,12 @@ page-editor {
     }
 
     .ProseMirror-menubar {
-      display: none !important;
+      transform: translateY(calc(-100% + 5px));
+      position: fixed !important;
+      transition: transform 0.25s ease-in-out;
+      &:hover {
+        transform: translateY(0);
+      }
     }
     .ProseMirror {
       top: 0 !important;

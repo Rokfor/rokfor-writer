@@ -21,6 +21,9 @@ export class Editor {
   confirm: any;
   timeout_change: any;
   findString: any;
+  findCount: number = 0;
+  replaceString: any;
+  caseSensitive: boolean = true;
   forceSave: any = null;
 
   // @ts-ignore
@@ -336,35 +339,81 @@ export class Editor {
     _confirm.present();
   }
 
+  find =  {
+    clear: () => {
+      this.findString = false
+    },
+    next: () => {
+      // @ts-ignore
+      this.prosemirror.findNext()
+    },
+    prev: () => {
+      // @ts-ignore
+      this.prosemirror.findPrev()
+    },
+    replace: () => {
+      // @ts-ignore
+      this.prosemirror.replace()
+    },
+    replaceAll: () => {
+      // @ts-ignore
+      this.prosemirror.replaceAll()
+    }
+  }
+  
+  updateSearchCount(a) {
+    this.findCount = a.elements
+  }
+
+  clearSearch(a) {
+    console.log(a)
+    this.findCount = 0
+    this.findString = "";
+    this.replaceString = "";
+    let _confirm = this.alert.create({
+      title: "Search Results",
+      message: `Replaced ${a.elements} Elements`,
+      buttons: [
+        {
+          text: 'Close'
+        }
+      ]
+    });
+    _confirm.present();
+  }
+
   search(a) {
     console.log(a);
     let _confirm = this.alert.create({
       title: "Search",
-      message: "Search Term",
       inputs: [
         {
           name: "SearchTerm",
+          placeholder: "Search",
           value: this.findString ? this.findString : ""
         },
+        {
+          name: "ReplaceTerm",
+          placeholder: "Replace",
+          value: this.replaceString ? this.replaceString : ""
+        }              
       ],
       buttons: [
-        {
-          text: 'Clear',
-          handler: data => {
-            console.log('Cancel clicked');
-            this.findString = false;
-          }
-        },
         {
           text: 'Search',
           handler: data => {
             console.log('Saved clicked', data);
             this.findString = data.SearchTerm;
+            this.replaceString = data.ReplaceTerm;
           }
         }
       ]
     });
-    _confirm.present();
+    _confirm.present().then(() => {
+      const firstInput: any = document.querySelector('ion-alert input');
+      firstInput.focus();
+      return;
+    });
   }
 
   deletePage() {

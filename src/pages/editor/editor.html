@@ -39,8 +39,12 @@
       <prosemirror 
         [(data)]="api.getCurrentData().body" 
         [(searchString)]="findString"
-        (search)="search()" 
+        [(replaceString)]="replaceString"
+        [(caseSensitive)]="caseSensitive"
+        (search)="search($event)" 
         (blur)="change()" 
+        (clearSearch)="clearSearch($event)"
+        (searchExecuted)="updateSearchCount($event)"
         (change)="api.getCurrentData().modified = 1;"
         #myProsemirror
       >
@@ -48,7 +52,7 @@
     </div>
   </div>
 </ion-content>
-<ion-footer *ngIf="!api.state.fullscreen">
+<ion-footer *ngIf="!api.state.fullscreen && !findString">
   <ion-toolbar class="btn-wrapper">
     <ion-buttons float-start>
       <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="api.getCurrent() == 0">
@@ -82,11 +86,7 @@
           <ion-icon name="document"></ion-icon>
           Assets
         </button>
-
       </ion-buttons>
-
-
-    
     </ion-title>
     <ion-buttons end *ngIf="initialized">
       <button ion-button color="primary" icon-only clear   (click)="next()" [disabled]="(api.data.length - 1) == api.getCurrent()">
@@ -94,4 +94,48 @@
       </button>
     </ion-buttons>
   </ion-toolbar>
+</ion-footer>
+<ion-footer *ngIf="findString">
+  <ion-toolbar class="btn-wrapper">
+    <ion-buttons float-start>
+      <button ion-button clear (click)="search()">
+        <ion-badge item-end color="secondary">{{findString}}&nbsp;({{findCount}})</ion-badge>
+        &nbsp;&rarr;&nbsp;
+        <ion-badge *ngIf="replaceString" item-end color="primary">{{replaceString}}</ion-badge>
+        <ion-badge *ngIf="!replaceString" item-end color="light">no replacement</ion-badge>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      <ion-buttons>
+        <!--<ion-input autocapitalize=off placeholder="Replace" [(ngModel)]="replaceString"></ion-input>-->
+        <button ion-button padding icon-start  (click)="find.prev()">
+          <ion-icon name="arrow-back"></ion-icon>
+          Previous
+        </button>
+        <button ion-button padding icon-end (click)="find.next()">
+          Next
+          <ion-icon name="arrow-forward"></ion-icon>
+        </button>      
+        <button ion-button padding icon-start [disabled]="!replaceString" (click)="find.replace()">
+          <ion-icon name="document"></ion-icon>
+          Replace
+        </button>
+        <button ion-button padding icon-start [disabled]="!replaceString" (click)="find.replaceAll()">
+          <ion-icon name="book"></ion-icon>
+          Replace all
+        </button>
+        <button ion-button padding icon-start (click)="caseSensitive = !caseSensitive">
+          <ion-icon *ngIf="caseSensitive" name="checkbox"></ion-icon>
+          <ion-icon *ngIf="!caseSensitive" name="square-outline"></ion-icon>
+          Case Sensitive
+        </button>      
+      </ion-buttons>
+    </ion-title>      
+    <ion-buttons end>
+      <button ion-button  color="danger" padding icon-start (click)="find.clear()">
+        <ion-icon name="close-circle"></ion-icon>
+        Quit Search
+      </button>
+    </ion-buttons>
+  </ion-toolbar>  
 </ion-footer>
