@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavParams, ViewController } from 'ionic-angular';
 //import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
-import { File } from '@ionic-native/file';
+//import { File } from '@ionic-native/file';
 
 @Component({
   template: `
@@ -110,9 +110,9 @@ export class PopoverEditor {
 
   async delete(i, variant = false) {
     this.api.showLoadingCtrl('Deletion in Progress');
-    let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i, variant: variant},true)
+    await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i, variant: variant},true)
     if (variant === false) {
-      let _del = this.assets.splice(i,1);
+      this.assets.splice(i,1);
     } else {
       let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
       if (_assets.length) {

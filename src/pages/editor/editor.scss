@@ -37,12 +37,7 @@ page-editor {
     }
 
     .ProseMirror-menubar {
-      transform: translateY(calc(-100% + 5px));
-      position: fixed !important;
-      transition: transform 0.25s ease-in-out;
-      &:hover {
-        transform: translateY(0);
-      }
+      top: 0px !important;
     }
     .ProseMirror {
       top: 0 !important;

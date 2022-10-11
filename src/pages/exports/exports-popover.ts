@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavParams, ViewController, Events } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
