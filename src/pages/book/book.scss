@@ -15,4 +15,13 @@ page-book {
             background: rgb(180, 186, 190) !important;
         }
     }
+    .bibtex-error {
+        pre {
+            background: rgb(180, 186, 190) !important;
+            padding: 1rem;
+            padding-bottom: 0;
+            border-radius: 10px;
+            font-size: 75%;    
+        }
+    }
 }

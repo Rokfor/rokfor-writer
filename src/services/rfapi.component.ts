@@ -4,6 +4,7 @@ import { reorderArray, Platform, Events, LoadingController, AlertController } fr
 import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 import { DomSanitizer } from '@angular/platform-browser';
+import {parse} from "@retorquere/bibtex-parser";
 
 // @ts-ignore
 import {parseBibFile, normalizeFieldValue} from "bibtex";
@@ -214,6 +215,8 @@ export class Api {
   exportRunning: any;
   online: boolean;
 
+  bibtexErrors: any = []
+
   constructor (
       platform: Platform,
       events: Events,
@@ -287,7 +290,8 @@ export class Api {
   }
 
   updateBibTex() {
-    let _index = false;
+    let _index = false as any;
+    this.bibtexErrors = []
     // @ts-ignore    
     document.bibTex = document.bibTex || [];    
     for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
@@ -298,7 +302,6 @@ export class Api {
     }
     if (_index !== false) {
       try {
-        // @ts-ignore
         let _raw = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw;
         let _bt = _raw.map((e) => {
           let _f = `${e.getFieldAsString("title")}`;
@@ -307,8 +310,34 @@ export class Api {
         // @ts-ignore
         document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
       } catch (error) {
-        console.warn(`could not parse bibtex: ${error}`);
-        this.events.publish('report:bug', `Bibtex Error: ${error}`);
+
+        const _validate = parse(this.current.issue_options.Options[_index].value);
+
+        /*
+         [
+            {
+              message: 'Expected "#", "%", ",", "\\"", "{", "{\\\\verb", Mandatory Whitespace, Optional Whitespace, [_:a-zA-Z0-9\\-], [a-zA-Z0-9\\-&_:], [a-zA-Z\\-_], or [})] but "/" found.',
+              line: 1618,
+              column: 13,
+              source: '@incollection{uspenskii_algorithms_2002,\n' +
+                '\tlocation = {Berlin},\n' +
+                '\ttitle = {Algorithms, Theory of},\n' +
+                '\tbooktitle = {Encyclopedia of Mathematics},\n' +
+                '\tauthor = {Uspenskii, V.A.},\n' +
+                '\tdate = {2002},\n' +
+                '\tpublisher = {Springer},\n' +
+                '\tlangid = {english},\n' +
+                '\turl = http://encyclopediaofmath.org/index.php?title=Algorithms,_theory_of&oldid=45081},\n' +
+                '}\n' +
+                '\n'
+            }
+          ]
+          */
+        if (_validate.errors?.length > 0) {
+          this.events.publish('report:bug', `Bibtex Error`);
+          this.bibtexErrors = _validate.errors
+          console.log(_validate.errors)
+        }
       }
     }
   }

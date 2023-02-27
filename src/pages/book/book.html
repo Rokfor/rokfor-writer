@@ -290,6 +290,19 @@
        ></ion-textarea>
     </ion-item>
   </ion-list>
+  <ion-list *ngIf="api.bibtexErrors?.length > 0">    
+    <ion-list-header color="danger">
+      BibTex Errors
+    </ion-list-header>
+    <ion-item *ngFor="let i of api.bibtexErrors">
+      <ion-label class="bibtex-error">
+        <p *ngIf="i.line">Line: {{i.line}}</p>
+        <p *ngIf="i.column">Column: {{i.column}}</p>
+        <p *ngIf="i.message">{{i.message}}</p>
+        <pre color="danger" *ngIf="i.source">{{i.source}}</pre>
+      </ion-label>
+    </ion-item>
+  </ion-list>
   <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
     <ion-list-header color="danger">
       Danger Zone
