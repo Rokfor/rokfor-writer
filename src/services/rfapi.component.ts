@@ -5,6 +5,7 @@ import { Http, Headers } from '@angular/http';
 import PouchDB from 'pouchdb';
 import { DomSanitizer } from '@angular/platform-browser';
 import {parse} from "@retorquere/bibtex-parser";
+import tidy from 'bibtex-tidy';
 
 // @ts-ignore
 import {parseBibFile, normalizeFieldValue} from "bibtex";
@@ -123,7 +124,9 @@ export class Api {
     "LogoAsset",
     "AboutTitle",
     "About",
-    "Draft"
+    "Draft",
+    "Bibtex",
+    "extra"
   ];
 
   data: Array < _dataset > = [];
@@ -290,17 +293,16 @@ export class Api {
   }
 
   updateBibTex() {
-    let _index = false as any;
+    console.log('update bibtex')
+    let _index = this.issueoptions.findIndex((i:string) => i === 'Literature');
+    let _indexBibtex = this.issueoptions.findIndex((i:string) => i === 'Bibtex');
     this.bibtexErrors = []
     // @ts-ignore    
     document.bibTex = document.bibTex || [];    
-    for (var _i = this.issueoptions.length - 1; _i >= 0; _i--) {
-      if (this.issueoptions[_i] == 'Literature') {
-        // @ts-ignore
-        _index = _i;
-      }
-    }
-    if (_index !== false) {
+        
+    let _doProcess = _indexBibtex !== -1 && this.current.issue_options.Options[_indexBibtex].value === true
+   
+    if (_index !== -1 && _doProcess) {
       try {
         let _raw = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw;
         let _bt = _raw.map((e) => {
@@ -310,43 +312,35 @@ export class Api {
         // @ts-ignore
         document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
       } catch (error) {
-        var _validate
+        // Step One: Bibtex Tidy
         try {
-          _validate = parse(this.current.issue_options.Options[_index].value);
-        } catch (err) {
-          console.log(err.message)
-          this.events.publish('report:bug', `Bibtex Error`);
+          tidy.tidy(this.current.issue_options.Options[_index].value);
+        }
+        catch (err) {
           this.bibtexErrors.push({
             source: err.message
           })
         }
-
-        /*
-         [
-            {
-              message: 'Expected "#", "%", ",", "\\"", "{", "{\\\\verb", Mandatory Whitespace, Optional Whitespace, [_:a-zA-Z0-9\\-], [a-zA-Z0-9\\-&_:], [a-zA-Z\\-_], or [})] but "/" found.',
-              line: 1618,
-              column: 13,
-              source: '@incollection{uspenskii_algorithms_2002,\n' +
-                '\tlocation = {Berlin},\n' +
-                '\ttitle = {Algorithms, Theory of},\n' +
-                '\tbooktitle = {Encyclopedia of Mathematics},\n' +
-                '\tauthor = {Uspenskii, V.A.},\n' +
-                '\tdate = {2002},\n' +
-                '\tpublisher = {Springer},\n' +
-                '\tlangid = {english},\n' +
-                '\turl = http://encyclopediaofmath.org/index.php?title=Algorithms,_theory_of&oldid=45081},\n' +
-                '}\n' +
-                '\n'
-            }
-          ]
-          */
-        if (_validate?.errors?.length > 0) {
-          this.events.publish('report:bug', `Bibtex Error`);
-          this.bibtexErrors = _validate.errors
-          console.log(_validate.errors)
+        // Step Two: parse Bibtec 
+        var _validate
+        try {
+          _validate = parse(this.current.issue_options.Options[_index].value);
+        } catch (err) {
+          this.bibtexErrors.push({source: err.message})
         }
+        if (_validate?.errors?.length > 0) {
+          this.bibtexErrors = [
+            ... this.bibtexErrors,
+            ... _validate.errors
+          ]
+        }
+        /*if (this.bibtexErrors.length > 0) {
+          this.events.publish('report:bug', `Bibtex Error`);
+        }*/
       }
+    }
+    else {
+      console.log('skip processing')
     }
   }
 
@@ -671,8 +665,6 @@ export class Api {
         document.attachements.push({value: _name,  label: `Attachement ${element[1]} in ${doc.id} / ${doc.name}`});  
       }
     };
-    // @ts-ignore    
-    console.log(document.attachements)
   }  
 
   /* 
@@ -974,7 +966,6 @@ export class Api {
       return;
     }
     try {
-      console.log("saving...", document, data)
       await this.helpers._pouchsave(this.pouch.data[this.current.issue], document, data);  
     } catch (err) {
       console.log(err)

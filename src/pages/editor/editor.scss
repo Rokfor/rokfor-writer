@@ -23,12 +23,6 @@ page-editor {
       top: 0em;
       margin-top: 0em;
     }
-    & .CodeMirror-sizer {
-      max-width: 850px !important;
-      padding: 0.2em;
-      margin: auto !important;
-    }
-
     ion-slide {
       max-width: 100% !important;
     }
@@ -266,5 +260,5 @@ page-editor {
   }
 }
 
-@import "codemirror.scss";
+
 @import "prosemirror.scss";

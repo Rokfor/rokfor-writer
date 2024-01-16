@@ -1,7 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
-
 
 /*
   Generated class for the Book page.
@@ -13,6 +12,7 @@ import { Api } from '../../services/rfapi.component';
   selector: 'page-book',
   templateUrl: 'book.html'
 })
+
 export class Book {
 
   constructor(

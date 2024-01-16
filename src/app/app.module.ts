@@ -1,6 +1,7 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { ProsemirrorModule } from 'ng2-prosemirror';
+import { CodemirrorModule } from 'ng2-codemirror';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpModule} from '@angular/http';
 import { MyApp } from './app.component';
@@ -34,7 +35,8 @@ import { MyFilterPipe } from '../pipes/myfilter.pipe';
     BrowserModule,
     IonicModule.forRoot(MyApp),
     ProsemirrorModule,
-    PdfViewerModule
+    PdfViewerModule,
+    CodemirrorModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

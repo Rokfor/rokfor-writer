@@ -28,6 +28,37 @@
   @media screen and (max-width : 700px) {
     top: 0;
   }
+  &-wide {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    max-height: 10vh;
+    overflow: auto;
+    transition: all 0.5s;
+    border-radius: 4px;          
+    &:has(.ProseMirror-focused) {
+      max-height: 75vh;
+    }
+    .ProseMirror {
+      max-width: 100% !important;
+      margin: 0 !important;
+      background: #e2e2e2 !important;
+      border-radius: 4px;      
+    }
+    .ProseMirror-menubar {
+      width: 100% !important;
+      margin: 0 !important;
+      box-shadow: none;
+      background: #e2e2e2 !important;
+    }
+    .ProseMirror-menubar-wrapper {
+      max-width: 100% !important;
+      margin: 0 !important;
+      width: 100% !important;
+      background-color: transparent !important;
+    }
+  }
 }
 
 .ProseMirror ul, .ProseMirror ol {

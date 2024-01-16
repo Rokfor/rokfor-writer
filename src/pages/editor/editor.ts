@@ -44,6 +44,7 @@ export class Editor {
     events.subscribe('page:change', (page) => {
       this.zone.run(() => {
         this.api.setCurrent(page);  
+        events.publish('page:change:complete', page);
       });    
       console.log("got page change");  
     });

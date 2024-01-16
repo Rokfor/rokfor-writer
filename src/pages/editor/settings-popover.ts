@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavParams, ViewController } from 'ionic-angular';
+import { Events, NavParams, ViewController } from 'ionic-angular';
 
 
 @Component({
@@ -7,7 +7,7 @@ import { NavParams, ViewController } from 'ionic-angular';
   <ion-header>
     <ion-navbar>
       <ion-buttons start>
-        <button ion-button (click)="dismiss()">Close</button>
+        <button ion-button (click)="dismiss()">SAVE</button>
       </ion-buttons>
       <ion-title>Document Settings</ion-title>
     </ion-navbar>
@@ -20,28 +20,28 @@ import { NavParams, ViewController } from 'ionic-angular';
         <ion-item-divider color="light">Language Settings</ion-item-divider>
         <ion-item *ngFor="let s of schema.language;">
             <ion-label>{{s[1]}}</ion-label>
-            <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
+            <ion-toggle checked="values.settings[s[0]]" [(ngModel)]="values.settings[s[0]]"></ion-toggle>
         </ion-item>
     </ion-item-group>
     <ion-item-group>
         <ion-item-divider color="light">Layout Settings</ion-item-divider>
         <ion-item *ngFor="let s of schema.layout;">
             <ion-label>{{s[1]}}</ion-label>
-            <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
+            <ion-toggle checked="values.settings[s[0]]" [(ngModel)]="values.settings[s[0]]"></ion-toggle>
         </ion-item>
     </ion-item-group>
     <ion-item-group>
         <ion-item-divider color="light">Font Settings</ion-item-divider>
         <ion-item *ngFor="let s of schema.font;">
             <ion-label>{{s[1]}}</ion-label>
-            <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
+            <ion-toggle checked="values.settings[s[0]]" [(ngModel)]="values.settings[s[0]]"></ion-toggle>
         </ion-item>
     </ion-item-group>
     <ion-item-group>
       <ion-item-divider color="light">Image Handling</ion-item-divider>
       <ion-item *ngFor="let s of schema.image;">
           <ion-label>{{s[1]}}</ion-label>
-          <ion-toggle [(ngModel)]="values.settings[s[0]]"></ion-toggle>
+          <ion-toggle checked="values.settings[s[0]]" [(ngModel)]="values.settings[s[0]]"></ion-toggle>
       </ion-item>
     </ion-item-group>
     <ion-item-group>
@@ -64,8 +64,12 @@ import { NavParams, ViewController } from 'ionic-angular';
       </ion-item>
       <ion-item>
           <ion-label>{{schema.meta[3][1]}}</ion-label>
-          <ion-toggle [(ngModel)]="values.settings[schema.meta[3][0]]"></ion-toggle>
+          <ion-toggle checked="values.settings[schema.meta[3][0]]" [(ngModel)]="values.settings[schema.meta[3][0]]"></ion-toggle>
       </ion-item>      
+      <ion-item>
+          <ion-label>{{schema.meta[4][1]}}</ion-label>
+          <ion-toggle checked="values.settings[schema.meta[4][0]]" [(ngModel)]="values.settings[schema.meta[4][0]]"></ion-toggle>
+      </ion-item>            
     </ion-item-group>    
   </ion-content>
   `,
@@ -78,6 +82,7 @@ export class PopoverSettings {
   
       
   constructor(
+    events: Events,
     public viewCtrl: ViewController,
     private navParams: NavParams,
    ) {
@@ -114,8 +119,14 @@ export class PopoverSettings {
               ["keywords" , "Keywords"],
               ["alttitle" , "Alt. Title"],
               ["hideweb"  , "Hide on Web"],
+              ["extra", "Enable Extra Links"]
             ]
         };
+
+
+        events.subscribe('page:change:complete', (page) => {
+          this.values = this.navParams.data.api.data[this.navParams.data.api.getCurrent()];      
+        });
   }
 
   dismiss() {
