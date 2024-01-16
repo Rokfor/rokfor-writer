@@ -3,14 +3,12 @@
   "author": "Rokfor & Urs Hofer",
   "homepage": "http://www.rokfor.ch/",
   "private": false,
-  "version": "2.1.43",
+  "version": "2.1.45",
   "license": "mit",
   "main": "./www/index.js",
   "scripts": {
     "ionic:build": "ionic-app-scripts build",
     "ionic:serve": "ionic-app-scripts serve",
-    "electron:start": "./electron-run.sh",
-    "electron:compile": "./electron-build.sh",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "publish": "electron-builder -p always"

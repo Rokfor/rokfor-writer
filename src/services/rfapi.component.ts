@@ -310,8 +310,16 @@ export class Api {
         // @ts-ignore
         document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
       } catch (error) {
-
-        const _validate = parse(this.current.issue_options.Options[_index].value);
+        var _validate
+        try {
+          _validate = parse(this.current.issue_options.Options[_index].value);
+        } catch (err) {
+          console.log(err.message)
+          this.events.publish('report:bug', `Bibtex Error`);
+          this.bibtexErrors.push({
+            source: err.message
+          })
+        }
 
         /*
          [
@@ -333,7 +341,7 @@ export class Api {
             }
           ]
           */
-        if (_validate.errors?.length > 0) {
+        if (_validate?.errors?.length > 0) {
           this.events.publish('report:bug', `Bibtex Error`);
           this.bibtexErrors = _validate.errors
           console.log(_validate.errors)

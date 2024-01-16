@@ -348,6 +348,15 @@
   }
 }
 
+.ProseMirror .nbsp {
+  position: absolute;
+  &:after {
+    content: "_";
+    position: relative;
+    color: blue;
+  }
+}
+
 .ProseMirror ul > li {
   position: relative;
   pointer-events: none; /* Don't do weird stuff with marker clicks */
