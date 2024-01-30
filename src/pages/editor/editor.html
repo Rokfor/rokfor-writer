@@ -5,7 +5,7 @@
     </button>
     <ion-title *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
       <ion-input
-        (ngModelChange)="changeDebounce()"
+        (ionChange)="changeDebounce()"
         [(ngModel)]='api.data[api.getCurrent()].name'
         placeholder="{{api.data[api.getCurrent()].name}}">
       </ion-input>
@@ -31,19 +31,26 @@
 </ion-header>
 <ion-content class="paper" [ngClass]="{'fullscreen': api.state.fullscreen}">
   <div class="editorPage" *ngIf="api.data.length > 0 && api.data[api.getCurrent()]">
-    <ion-item>
+    <ion-item class="titleBar">
       <ion-label stacked>Titel</ion-label>
-      <ion-input [(ngModel)]="api.getCurrentData().title" (ngModelChange)="changeDebounce()" placeholder="{{api.getCurrentData().title}}"></ion-input>
+      <ion-textarea
+        appAutoGrow
+        placeholder="{{api.getCurrentData().title}}"
+        [(ngModel)]="api.getCurrentData().title"
+        (ionChange)="changeDebounce()"
+      ></ion-textarea>
     </ion-item>
     <div class="editorWrapper">
       <prosemirror 
         [(data)]="api.getCurrentData().body" 
+        [(editorMarks)]="api.editorMarks"
         [(searchString)]="findString"
         [(replaceString)]="replaceString"
         [(caseSensitive)]="caseSensitive"
         (search)="search($event)" 
         (blur)="change()" 
         (clearSearch)="clearSearch($event)"
+        (attachementClick)="attachementClick($event)"
         (searchExecuted)="updateSearchCount($event)"
         (change)="api.getCurrentData().modified = 1;"
         #myProsemirror
@@ -52,7 +59,7 @@
     </div>
   </div>
 </ion-content>
-<ion-footer *ngIf="!api.state.fullscreen && !findString">
+<ion-footer *ngIf="!api.state.fullscreen && !findString && !previewAsset">
   <ion-toolbar class="btn-wrapper">
     <ion-buttons float-start>
       <button ion-button color="primary" icon-only  clear  (click)="prev()" [disabled]="api.getCurrent() == 0">
@@ -107,7 +114,6 @@
     </ion-buttons>
     <ion-title>
       <ion-buttons>
-        <!--<ion-input autocapitalize=off placeholder="Replace" [(ngModel)]="replaceString"></ion-input>-->
         <button ion-button padding icon-start  (click)="find.prev()">
           <ion-icon name="arrow-back"></ion-icon>
           Previous
@@ -135,6 +141,19 @@
       <button ion-button  color="danger" padding icon-start (click)="find.clear()">
         <ion-icon name="close-circle"></ion-icon>
         Quit Search
+      </button>
+    </ion-buttons>
+  </ion-toolbar>  
+</ion-footer>
+<ion-footer *ngIf="previewAsset">
+  <ion-toolbar class="btn-wrapper">
+    <ion-buttons float-start>
+      <img class="previewAssetThumbnail" src="{{previewAsset.Thumbnail}}" (click)="enlarge()"/>
+    </ion-buttons>      
+    <ion-buttons end>
+      <button ion-button  color="danger" padding icon-start (click)="previewAsset = null">
+        <ion-icon name="close-circle"></ion-icon>
+        Close
       </button>
     </ion-buttons>
   </ion-toolbar>  

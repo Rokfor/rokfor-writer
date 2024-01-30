@@ -9,11 +9,15 @@ import { Settings } from '../pages/settings/settings';
 import { Editor } from '../pages/editor/editor';
 import { PopoverEditor } from '../pages/editor/editor-popover';
 import { PopoverSettings } from '../pages/editor/settings-popover';
+import { ImagePopover } from '../pages/editor/image-popover';
+import { MarkdownPopover } from '../pages/book/markdown-popover';
+import { LiteraturePopover } from '../pages/book/literature-popover';
 
 import { Exports } from '../pages/exports/exports';
 import { PopoverPage } from '../pages/exports/exports-popover';
 import { Book } from '../pages/book/book';
 import { Autoresize } from '../directives/shrink';
+import { AutoGrowDirective } from '../directives/autogrow';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { MyFilterPipe } from '../pipes/myfilter.pipe';
 
@@ -23,11 +27,15 @@ import { MyFilterPipe } from '../pipes/myfilter.pipe';
     Settings,
     Editor,
     PopoverEditor,
+    LiteraturePopover,
     Book,
     Exports,
     PopoverPage,
+    ImagePopover,
     PopoverSettings,
+    MarkdownPopover,
     Autoresize,
+    AutoGrowDirective,
     MyFilterPipe
   ],
   imports: [
@@ -45,8 +53,11 @@ import { MyFilterPipe } from '../pipes/myfilter.pipe';
     Editor,
     Book,
     PopoverEditor,
+    LiteraturePopover,
+    ImagePopover,
     PopoverPage,   
-    PopoverSettings, 
+    PopoverSettings,
+    MarkdownPopover, 
     Exports
   ],
   providers: [

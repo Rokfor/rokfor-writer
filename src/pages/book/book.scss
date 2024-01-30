@@ -9,26 +9,28 @@ page-book {
             background: rgb(226, 226, 226) !important;
         }        
     }
-    codemirror {
-        width: 100%;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
     .focused {
         textarea {
             height: 50vh;
             background: rgb(180, 186, 190) !important;
         }
     }
+}
+
+literature-popover {
     .bibtex-error {
-        width: 100%;
+        position: sticky;
+        bottom: 0px;
+        padding: 1rem;
+        background: #CCC;
+        overflow: auto;
+        max-height: 250px;
         pre {
-            background: rgb(180, 186, 190) !important;
             padding: 1rem;
             padding-bottom: 0;
-            border-radius: 10px;
-            font-size: 12px;
-            white-space: pre-wrap;
+            border-radius: 4px;
+            font-size: 10px;
+            background: #FCC;
         }
     }
 }

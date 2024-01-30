@@ -49,37 +49,37 @@
     <ion-item>
        <ion-label stacked>Title</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Title"
        [(ngModel)]="api.current.issue_options.Name"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>
     </ion-item>
     <ion-item>
        <ion-label stacked>Bastard Title</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Inside Title"
        [(ngModel)]="api.current.issue_options.Options[1].value"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>
     </ion-item>
     <ion-item>
        <ion-label stacked>Subtitle</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Subtitle"
        [(ngModel)]="api.current.issue_options.Options[2].value"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>
     </ion-item>
     <ion-item>
        <ion-label stacked>Spine Title: One Line Short Form</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Short Title"
        [(ngModel)]="api.current.issue_options.Options[0].value"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>       
     </ion-item>
   </ion-list>
@@ -91,19 +91,19 @@
     <ion-item>
        <ion-label stacked>Author</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Author"
        [(ngModel)]="api.current.issue_options.Options[3].value"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>       
     </ion-item>
     <ion-item>
        <ion-label stacked>Spine: Author Short Form</ion-label>
        <ion-textarea
-       autoresize
+       appAutoGrow
        placeholder="Author Short Variant"
        [(ngModel)]="api.current.issue_options.Options[4].value"
-       (ngModelChange)="api.bookStore()"
+       (ionChange)="api.bookStore()"
       ></ion-textarea>       
     </ion-item>
   </ion-list>
@@ -114,88 +114,47 @@
     <ion-list-header color="secondary">
       Imprint &amp; Preface
     </ion-list-header>
-    <ion-item>
-      <ion-label stacked>Imprint</ion-label>
-       <ion-textarea
-        autoresize
-        placeholder="Enter a imprint"
-        [(ngModel)]="api.current.issue_options.Options[6].value"
-        (ngModelChange)="api.bookStore()"
-       ></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Copyright Note</ion-label>
-       <ion-textarea
-        autoresize
-        placeholder="Copyright note"
-        [(ngModel)]="api.current.issue_options.Options[13].value"
-        (ngModelChange)="api.bookStore()"
-       ></ion-textarea>
-    </ion-item>    
-    <ion-item>
-       <ion-label stacked>Cover Backside</ion-label>
+      <ion-item>
+        <ion-label stacked>Preface Title</ion-label>
         <ion-textarea
-        autoresize
-        placeholder="Enter a cover backside Text"
-        [(ngModel)]="api.current.issue_options.Options[7].value"
-        (ngModelChange)="api.bookStore()"
-       ></ion-textarea>
-    </ion-item>
-    <ion-item>
-       <ion-label stacked>Preface Title</ion-label>
-       <ion-input autocapitalize=off placeholder="Preface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[11].value"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Preface</ion-label>
-       <ion-textarea
-        autoresize
-        placeholder="Enter a preface"
-        [(ngModel)]="api.current.issue_options.Options[8].value"
-        (ngModelChange)="api.bookStore()"
-       ></ion-textarea>
-    </ion-item>
+        appAutoGrow
+        placeholder="Preface Title"
+        [(ngModel)]="api.current.issue_options.Options[11].value"
+        (ionChange)="api.bookStore()"
+       ></ion-textarea>       
+      </ion-item>
+      <button ion-item (click)="showModal(6, 'Imprint')">Imprint</button>
+      <button ion-item (click)="showModal(8, 'Preface')">Preface</button>
+      <button ion-item (click)="showModal(13, 'Preface')">Copyright Note</button>
+      <button ion-item (click)="showModal(7, 'Cover Backside')">Cover Text Backside</button>
   </ion-list>
 
 
-<ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
-    <ion-list-header color="secondary">
-      Postface
-    </ion-list-header>
-    <ion-item>
-       <ion-label stacked>Postface Title</ion-label>
-       <ion-input autocapitalize=off placeholder="Postface Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[12].value"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>Postface</ion-label>
-       <ion-textarea
-        autoresize
-        placeholder="Enter a postface"
-        [(ngModel)]="api.current.issue_options.Options[9].value"
-        (ngModelChange)="api.bookStore()"
-       ></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-label stacked>About Title</ion-label>
-      <ion-input autocapitalize=off placeholder="About Title" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[25].value"></ion-input>
-   </ion-item>
-   <ion-item>
-     <ion-label stacked>About</ion-label>
-      <ion-textarea
-       autoresize
-       placeholder="Enter a about"
-       [(ngModel)]="api.current.issue_options.Options[26].value"
-       (ngModelChange)="api.bookStore()"
-      ></ion-textarea>
-   </ion-item>
-    <ion-item>
-       <ion-label stacked>Acknowledgements</ion-label>
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
+      <ion-list-header color="secondary">
+        Postface
+      </ion-list-header>
+      <ion-item>
+        <ion-label stacked>Postface Title</ion-label>
         <ion-textarea
-        autoresize
-        placeholder="Enter a thanks"
-        [(ngModel)]="api.current.issue_options.Options[10].value"
-        (ngModelChange)="api.bookStore()"
+        appAutoGrow
+        placeholder="Postface Title"
+        [(ngModel)]="api.current.issue_options.Options[12].value"
+        (ionChange)="api.bookStore()"
        ></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>About Title</ion-label>
+        <ion-textarea
+        appAutoGrow
+        placeholder="About Title"
+        [(ngModel)]="api.current.issue_options.Options[25].value"
+        (ionChange)="api.bookStore()"
+       ></ion-textarea>        
     </ion-item>
+    <button ion-item (click)="showModal(9, 'Postface')">Postface</button>
+    <button ion-item (click)="showModal(26, 'About')">About</button>
+    <button ion-item (click)="showModal(10, 'Acknowledgements')">Acknowledgements</button>
   </ion-list>
 
 
@@ -205,15 +164,15 @@
     </ion-list-header>
     <ion-item>
        <ion-label stacked>ISBN (optional)</ion-label>
-       <ion-input autocapitalize=off placeholder="xxx-x-xx-xxxxxx-x" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="xxx-x-xx-xxxxxx-x" (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[5].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Cover Image</ion-label>
-       <ion-input autocapitalize=off placeholder="URL" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[14].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="URL" (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[14].value"></ion-input>
     </ion-item>   
     <ion-item>
       <ion-label stacked>Cover Asset</ion-label>
-      <ion-select (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[22].value">
+      <ion-select (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[22].value">
         <ion-option 
           value="{{_att.value}}" 
           selected="{{_att.value == api.current.issue_options.Options[22].value}}"
@@ -229,7 +188,7 @@
     </ion-item>
     <ion-item>
       <ion-label stacked>Logo Asset</ion-label>
-      <ion-select (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[24].value">
+      <ion-select (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[24].value">
         <ion-option 
           value="{{_att.value}}" 
           selected="{{_att.value == api.current.issue_options.Options[24].value}}"
@@ -245,19 +204,19 @@
     </ion-item>    
     <ion-item>
        <ion-label stacked>Series Number</ion-label>
-       <ion-input autocapitalize=off placeholder="1 or No. 1" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[15].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="1 or No. 1" (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[15].value"></ion-input>
     </ion-item>  
     <ion-item>
        <ion-label stacked>Special Color: Cover</ion-label>
-       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[16].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[16].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Special Color: Text</ion-label>
-       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[17].value"></ion-input>
+       <ion-input autocapitalize=off placeholder="CCC,MMM,YYY,KKK" (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[17].value"></ion-input>
     </ion-item>
     <ion-item>
        <ion-label stacked>Language</ion-label>
-       <ion-select (ngModelChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value">
+       <ion-select (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[18].value">
         <ion-option 
           value="{{_att}}" 
           selected="{{_att == api.current.issue_options.Options[18].value}}"
@@ -268,46 +227,23 @@
     </ion-item>            
     <ion-item>
       <ion-label>Create OA Pdf</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[23].value" [(ngModel)]="api.current.issue_options.Options[23].value"></ion-toggle>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[23].value" [(ngModel)]="api.current.issue_options.Options[23].value"></ion-toggle>
     </ion-item>
     <ion-item>
       <ion-label>Enable Extra Links</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[29].value" [(ngModel)]="api.current.issue_options.Options[29].value"></ion-toggle>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[29].value" [(ngModel)]="api.current.issue_options.Options[29].value"></ion-toggle>
     </ion-item>
   </ion-list>
 
   <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
     <ion-list-header color="secondary">
-      Databases
+      Literature
     </ion-list-header>
     <ion-item>
       <ion-label>Publish Literature without citing</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[21].value" [(ngModel)]="api.current.issue_options.Options[21].value"></ion-toggle>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[21].value" [(ngModel)]="api.current.issue_options.Options[21].value"></ion-toggle>
     </ion-item>
-    <ion-item>
-      <ion-label>Enable Bibtex</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[28].value" [(ngModel)]="api.current.issue_options.Options[28].value"></ion-toggle>
-    </ion-item>        
-    <ion-item>
-      <ion-label stacked>Literature</ion-label>
-        <codemirror [(ngModel)]="api.current.issue_options.Options[19].value"
-          *ngIf="api.current.issue_options.Options[28].value"
-          item-content
-          [config]="{lineNumbers: true, viewportMargin: 0}"
-          (change)="api.bookStore()">
-        </codemirror>       
-        <prosemirror #pmLiterature
-          class="ProseMirror-wide"
-          item-content
-          *ngIf="!api.current.issue_options.Options[28].value"
-          [(data)]="api.current.issue_options.Options[19].value" 
-          (blur)="api.bookStore()" 
-          ></prosemirror>
-        <div item-content class="bibtex-error"  *ngIf="api.bibtexErrors?.length > 0">
-          <pre color="danger"  *ngFor="let i of api.bibtexErrors">{{i.line ? "Line: " : ""}}{{i.line}}{{i.line ? "\n" : ""}}{{i.column ? "Column: " : ""}}{{i.column}}{{i.column ? "\n" : ""}}{{i.message}}{{i.message ? "\n" : ""}}{{i.source?.trim()}}
-          </pre>
-        </div>
-    </ion-item>
+    <button ion-item (click)="showLiteratureModal()">Literature</button>
   </ion-list>
   <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Options">
     <ion-list-header color="danger">
@@ -315,12 +251,12 @@
     </ion-list-header>
     <ion-item>
       <ion-label>Publish Book to Web</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[20].value" [(ngModel)]="api.current.issue_options.Options[20].value"></ion-toggle>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[20].value" [(ngModel)]="api.current.issue_options.Options[20].value"></ion-toggle>
     </ion-item>
 
     <ion-item>
       <ion-label>Draft Mode</ion-label>
-      <ion-toggle (ngModelChange)="api.bookStore()" checked="api.current.issue_options.Options[27].value" [(ngModel)]="api.current.issue_options.Options[27].value"></ion-toggle>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[27].value" [(ngModel)]="api.current.issue_options.Options[27].value"></ion-toggle>
     </ion-item>    
   </ion-list>  
 </ion-content>

@@ -61,6 +61,14 @@ interface _debouncers {
   book        : any;
 }
 
+
+interface _editorMarks {
+  attachements: any[];
+  bibTex: any[];
+  marks: any[];
+}
+
+
 @Injectable()
 
 export class Api {
@@ -68,6 +76,12 @@ export class Api {
 
   timeout: _debouncers = {
     book: false
+  }
+
+  editorMarks: _editorMarks = {
+    attachements: [],
+    marks: [],
+    bibTex: []
   }
 
   state: _state = {
@@ -246,7 +260,6 @@ export class Api {
         if (e === 'change') {
           this.hideLoadingCtrl();
         }
-        this.updateBibTex();
       }.bind(this))
       this.online = navigator.onLine;
       window.addEventListener('offline', () => {
@@ -292,55 +305,62 @@ export class Api {
     _confirm.present();
   }
 
+  lintBibTex(bibTexString: string) {
+    this.bibtexErrors = []
+    let bibTexParsed = []
+    try {
+      let _raw = parseBibFile(bibTexString).entries_raw;
+      let _bt = _raw.map((e) => {
+        let _f = `${e.getFieldAsString("title")}`;
+        return ({value: e._id,  label: `${e._id}: ${_f.substr(0, 30)}`})
+      });
+      // @ts-ignore
+      bibTexParsed = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
+    } catch (error) {
+      // Step One: Bibtex Tidy
+      try {
+        tidy.tidy(bibTexString);
+      }
+      catch (err) {
+        this.bibtexErrors.push({
+          source: err.message
+        })
+      }
+      // Step Two: parse Bibtec 
+      var _validate
+      try {
+        _validate = parse(bibTexString);
+      } catch (err) {
+        this.bibtexErrors.push({source: err.message})
+      }
+      if (_validate?.errors?.length > 0) {
+        this.bibtexErrors = [
+          ... this.bibtexErrors,
+          ... _validate.errors
+        ]
+      }
+    }
+    return bibTexParsed;
+  }
+
   updateBibTex() {
     console.log('update bibtex')
     let _index = this.issueoptions.findIndex((i:string) => i === 'Literature');
     let _indexBibtex = this.issueoptions.findIndex((i:string) => i === 'Bibtex');
-    this.bibtexErrors = []
-    // @ts-ignore    
-    document.bibTex = document.bibTex || [];    
+    
+    
+    
         
     let _doProcess = _indexBibtex !== -1 && this.current.issue_options.Options[_indexBibtex].value === true
    
     if (_index !== -1 && _doProcess) {
-      try {
-        let _raw = parseBibFile(this.current.issue_options.Options[_index].value).entries_raw;
-        let _bt = _raw.map((e) => {
-          let _f = `${e.getFieldAsString("title")}`;
-          return ({value: e._id,  label: `${e._id}: ${_f.substr(0, 30)}`})
-        });
-        // @ts-ignore
-        document.bibTex = _bt.sort((a:any, b:any) => (a.value.localeCompare(b.value)))
-      } catch (error) {
-        // Step One: Bibtex Tidy
-        try {
-          tidy.tidy(this.current.issue_options.Options[_index].value);
-        }
-        catch (err) {
-          this.bibtexErrors.push({
-            source: err.message
-          })
-        }
-        // Step Two: parse Bibtec 
-        var _validate
-        try {
-          _validate = parse(this.current.issue_options.Options[_index].value);
-        } catch (err) {
-          this.bibtexErrors.push({source: err.message})
-        }
-        if (_validate?.errors?.length > 0) {
-          this.bibtexErrors = [
-            ... this.bibtexErrors,
-            ... _validate.errors
-          ]
-        }
-        /*if (this.bibtexErrors.length > 0) {
-          this.events.publish('report:bug', `Bibtex Error`);
-        }*/
-      }
+      // @ts-ignore
+      this.editorMarks.bibTex = this.lintBibTex(this.current.issue_options.Options[_index].value);
     }
     else {
       console.log('skip processing')
+      // @ts-ignore    
+      this.editorMarks.bibTex = [];    
     }
   }
 
@@ -425,7 +445,6 @@ export class Api {
                         : ""
           };
         }
-        //self.updateBibTex();
         console.log(self.current.issue_options)
       }
     }
@@ -521,10 +540,11 @@ export class Api {
       //console.log("syncing…")
       self.pouch.issues_sync = self.pouch.issues.sync(`${self.credentials.server}/db/rf-${self.credentials.user}`, self.helpers._syncsettings(self))
       .on('change',   function (info)  {
-        //console.log('----> sync issue change');
+        console.log(`----> sync issue change ${info.direction}`);
         if (info.direction === "pull" ) {
           try {
             configureissues(false);
+            self.updateBibTex();
           } catch (err) {
             console.log(err);
           }
@@ -578,10 +598,8 @@ export class Api {
   async activateIssue() {
 
     return new Promise(async (resolve, reject) => {
-      // @ts-ignore
-      document.marks = [];
-      // @ts-ignore
-      document.attachements = [];    
+      this.editorMarks.marks = [];
+      this.editorMarks.attachements = [];    
 
       this.showLoadingCtrl("Activating Issues");
 
@@ -632,6 +650,7 @@ export class Api {
       //console.log("there")
       //this.activationinprogress = false;
       this.hideLoadingCtrl();
+      this.updateBibTex();
       resolve(true);
 
     });
@@ -639,30 +658,25 @@ export class Api {
   }
 
   trackReferences(doc) {
-    // @ts-ignore    
-    document.marks = document.marks || [];    
+    this.editorMarks.marks = this.editorMarks.marks || [];    
     let element: any;
-    const regex = /:mark\[(.*?)\]/g;
+    const regex = /:mark\["(.*?)"\]/g;
     while(element = regex.exec(doc.body)) {
-      // @ts-ignore
-      if (document.marks.filter(x => x.value === element[1]).length === 0) {
-        // @ts-ignore
-        document.marks.push({value: element[1],  label: element[1]});  
+      if (this.editorMarks.marks.filter(x => x.value === element[1]).length === 0) {
+        this.editorMarks.marks.push({value: element[1],  label: element[1]});  
       }
     };
   }
 
   trackAttachements(doc) {
-    // @ts-ignore    
-    document.attachements = document.attachements || [];    
+    console.log(`tracking attachements ${doc.id}`)
+    this.editorMarks.attachements = this.editorMarks.attachements || [];    
     let element: any;
     const regex = /\{\{Attachements:(.*?)\}\}/g;
     while(element = regex.exec(doc.body)) {
       let _name = `${doc.id}-${doc.name}-${element[1]}`;
-      // @ts-ignore
-      if (document.attachements.filter(x => x.value === _name).length === 0) {
-        // @ts-ignore
-        document.attachements.push({value: _name,  label: `Attachement ${element[1]} in ${doc.id} / ${doc.name}`});  
+      if (this.editorMarks.attachements.filter(x => x.value === _name).length === 0) {
+        this.editorMarks.attachements.push({value: _name,  label: `Attachement ${element[1]} in ${doc.id} / ${doc.name}`});  
       }
     };
   }  
@@ -1161,9 +1175,8 @@ export class Api {
     }
     this.timeout.book = setTimeout(() => {
       this.dbIssuesStore();
-      //this.updateBibTex();
+      this.updateBibTex();
       console.log(`Issues Stored`);
-
     }, 1000);
 
 

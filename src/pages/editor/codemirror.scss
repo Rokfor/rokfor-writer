@@ -2,23 +2,13 @@
   /* Set height, width, borders, and global font properties here */
   font-family: ic, Courier, monospace;
   width: 100%;
-  height: 300px !important;
+  height: auto;
   color: black;
   font-size: 1.4rem;
   line-height: normal;
-  background: #e2e2e2 !important;
-  border-radius: 4px;
-  transition: all 0.5s;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  max-height: 10vh;
-  transition: all 0.5s;
-  border-radius: 4px;   
+  background: #efefce !important;
   padding: 0;
-  &-focused {
-    max-height: 50vh;
-  }
-
+  display: block;
  }
 
 /* PADDING */

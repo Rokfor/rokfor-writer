@@ -1,7 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { ModalController, NavController } from 'ionic-angular';
 import { Api } from '../../services/rfapi.component';
-
+import { MarkdownPopover } from './markdown-popover';
+import { LiteraturePopover } from './literature-popover';
 /*
   Generated class for the Book page.
 
@@ -14,10 +15,11 @@ import { Api } from '../../services/rfapi.component';
 })
 
 export class Book {
-
+  
   constructor(
     public api:Api,
     public navCtrl: NavController,
+    private modalCtrl: ModalController
   ) {
   }
 
@@ -25,10 +27,33 @@ export class Book {
     //console.log(this.api.issues, this.api.current.issue);
   }
 
+  showModal(index:number, label:string) {
+    const before = this.api.current.issue_options.Options[index].value ?? "";
+    const modal = this.modalCtrl.create(
+      MarkdownPopover, {value: before, label: label, api: this.api}, {showBackdrop: true, enableBackdropDismiss: false}
+    )
+    modal.onDidDismiss(data => {
+      if (data != null && data != before) {
+        this.api.current.issue_options.Options[index].value = data;
+        this.api.bookStore()
+      }
+    })
+    modal.present();
+  }  
+
+  showLiteratureModal() {
+    const modal = this.modalCtrl.create(
+      LiteraturePopover, {api: this.api}, {showBackdrop: true, enableBackdropDismiss: false}
+    )
+    modal.present();
+  }  
+
+  
+
 
   getAttachements() {
     // @ts-ignore
-    return document.attachements
+    return this.api.editorMarks.attachements
   }
 
   deleteIssue(issueId) {

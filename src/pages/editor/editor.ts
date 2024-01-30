@@ -1,9 +1,10 @@
 import { Component, ViewChild, NgZone } from '@angular/core';
 import { Printer, PrintOptions } from '@ionic-native/printer';
-import { Platform, NavController, Events, AlertController, LoadingController, ModalController } from 'ionic-angular';
+import { Platform, NavController, Events, AlertController, LoadingController, ModalController, ToastController } from 'ionic-angular';
 import { ProsemirrorModule } from 'ng2-prosemirror';
 import { Api } from '../../services/rfapi.component';
 import { PopoverEditor } from './editor-popover';
+import { ImagePopover } from './image-popover';
 import { PopoverSettings } from './settings-popover';
 import {Converter} from "showdown/dist/showdown";
 
@@ -25,7 +26,7 @@ export class Editor {
   replaceString: any;
   caseSensitive: boolean = true;
   forceSave: any = null;
-
+  previewAsset: any = null;
   // @ts-ignore
   @ViewChild('myProsemirror') prosemirror:ProsemirrorModule;
 
@@ -37,6 +38,7 @@ export class Editor {
     public loadingCtrl: LoadingController,
     public platform: Platform,
     private modalCtrl: ModalController,
+    public  toastCtrl:    ToastController,
     public printer: Printer,
     private zone: NgZone
   ) {
@@ -76,10 +78,8 @@ export class Editor {
         // {element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'}
         if (d.isImage === false) {
           let _name = `${data.id}-${data.name}-${d.anchorIndex}`;
-          // @ts-ignore
-          if (document.attachements.filter(x => x.value === _name).length === 0) {
-            // @ts-ignore
-            document.attachements.push({value: _name,  label: `Attachement ${d.anchorIndex} in ${data.id} / ${data.name}`});  
+          if (this.api.editorMarks.attachements.filter(x => x.value === _name).length === 0) {
+            this.api.editorMarks.attachements.push({value: _name,  label: `Attachement ${d.anchorIndex} in ${data.id} / ${data.name}`});  
           }
         }
       }
@@ -381,6 +381,48 @@ export class Editor {
       ]
     });
     _confirm.present();
+  }
+
+  enlarge() {
+    if (this.previewAsset) {
+      this.modalCtrl.create(
+        ImagePopover, {previewAsset: this.previewAsset}, {showBackdrop: true}
+      ).present();
+    }
+  }
+
+  async attachementClick(a:{target: HTMLSpanElement}) {
+    let _id = this.api.data[this.api.getCurrent()].id
+    if (_id) {
+      let _assets = await this.api._call('/assets',false,{id: _id, mode: 'get'},true)
+      if (_assets.length) {
+        let att  = new RegExp('\{\{attachements:(.*?)\}\}', "gi");
+        let m = att.exec(a.target.textContent)
+        try {
+          let _previewAsset = _assets[m[1] as any - 1];
+          _previewAsset._id = m[1] as any - 1;
+          if (_previewAsset.Thumbnail) {
+            this.previewAsset = _previewAsset;          
+          } else {
+            throw('not found...')
+          }
+        } catch (e) {
+          this.previewAsset = null;
+          var restoreFocus = document.activeElement
+          this.toastCtrl.create({
+            message: `Asset Unknown: Check index «${m[1]}»`,
+            duration: 3000,
+            position: 'top',
+            showCloseButton: false,
+            cssClass: 'disablefocus'
+          }).present().then(() => {
+            if (restoreFocus instanceof HTMLElement) {
+              restoreFocus.focus();
+            }
+          });
+        }
+      }
+    }
   }
 
   search(a) {
