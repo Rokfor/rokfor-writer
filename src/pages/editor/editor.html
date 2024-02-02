@@ -51,6 +51,9 @@
         (blur)="change()" 
         (clearSearch)="clearSearch($event)"
         (attachementClick)="attachementClick($event)"
+        (imagereferenceClick)="imagereferenceClick($event)"
+        (attachementDoubleClick)="attachementDoubleClick($event)"
+        (imagereferenceDoubleClick)="imagereferenceDoubleClick($event)"        
         (searchExecuted)="updateSearchCount($event)"
         (change)="api.getCurrentData().modified = 1;"
         #myProsemirror
@@ -102,8 +105,8 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>
-<ion-footer *ngIf="findString">
-  <ion-toolbar class="btn-wrapper">
+<ion-footer class="animated-footer" [ngClass]="{'animated-footer-hidden': !findString}">
+  <ion-toolbar color="dark" class="btn-wrapper">
     <ion-buttons float-start>
       <button ion-button clear (click)="search()">
         <ion-badge item-end color="secondary">{{findString}}&nbsp;({{findCount}})</ion-badge>
@@ -145,10 +148,10 @@
     </ion-buttons>
   </ion-toolbar>  
 </ion-footer>
-<ion-footer *ngIf="previewAsset">
-  <ion-toolbar class="btn-wrapper">
+<ion-footer class="animated-footer" [ngClass]="{'animated-footer-hidden': !previewAsset}">
+  <ion-toolbar color="dark" class="btn-wrapper">
     <ion-buttons float-start>
-      <img class="previewAssetThumbnail" src="{{previewAsset.Thumbnail}}" (click)="enlarge()"/>
+      <img class="previewAssetThumbnail" src="{{previewAsset?.Thumbnail}}" (click)="enlarge()"/>
     </ion-buttons>      
     <ion-buttons end>
       <button ion-button  color="danger" padding icon-start (click)="previewAsset = null">

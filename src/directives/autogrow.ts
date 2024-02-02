@@ -19,7 +19,6 @@ export class AutoGrowDirective {
   private adjustTextAreaHeight(): void {
     let textarea = this.el.nativeElement.querySelector('textarea');
     if (textarea) {
-        console.log(textarea.scrollHeight)
         this.renderer.setStyle(textarea, 'overflow', 'hidden');
         this.renderer.setStyle(textarea, 'height', 'auto');
         this.renderer.setStyle(textarea, 'height', textarea.scrollHeight + 'px');

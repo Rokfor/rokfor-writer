@@ -11,6 +11,7 @@ import tidy from 'bibtex-tidy';
 import {parseBibFile, normalizeFieldValue} from "bibtex";
 
 interface _dataset {
+    _attachements: any;
     name:     string;
     title:    string;
     body:     string;
@@ -63,9 +64,9 @@ interface _debouncers {
 
 
 interface _editorMarks {
-  attachements: any[];
-  bibTex: any[];
-  marks: any[];
+  attachements: any[]
+  bibTex: any[]
+  marks: any[]
 }
 
 
@@ -259,6 +260,17 @@ export class Api {
         console.log(e);
         if (e === 'change') {
           this.hideLoadingCtrl();
+        }
+        if (e === 'paused') {
+          try {
+            const doc = this.getCurrentData();
+            if (doc) {
+              this.trackReferences(doc);
+              this.trackAttachements(doc);
+            }
+          } catch (err) {
+            console.warn(err)
+          }
         }
       }.bind(this))
       this.online = navigator.onLine;
@@ -658,25 +670,63 @@ export class Api {
   }
 
   trackReferences(doc) {
+    console.log(`tracking marks ${doc.id}`)
     this.editorMarks.marks = this.editorMarks.marks || [];    
     let element: any;
     const regex = /:mark\["(.*?)"\]/g;
+    // Always clean own marks
+    this.editorMarks.marks = this.editorMarks.marks.filter(element => element.doc !== doc.id);
     while(element = regex.exec(doc.body)) {
       if (this.editorMarks.marks.filter(x => x.value === element[1]).length === 0) {
-        this.editorMarks.marks.push({value: element[1],  label: element[1]});  
+        this.editorMarks.marks.push({value: element[1],  label: element[1], doc: doc.id});  
       }
     };
   }
 
   trackAttachements(doc) {
+
+
+
+
+/*
+let _assets = await this.api._call('/assets',false,{id: id, mode: 'get'},true)
+        if (_assets.length) {
+            let _previewAsset = _assets[index - 1];
+            _previewAsset._id = index - 1;
+            if (_previewAsset.Thumbnail) {
+              this.previewAsset = _previewAsset;          
+            } else {
+              throw('not found...')
+            }
+        }
+        */
+
     console.log(`tracking attachements ${doc.id}`)
     this.editorMarks.attachements = this.editorMarks.attachements || [];    
+
+    /* Only called if attachements are empty... */
+    if (doc._attachements == undefined) {
+      this._call('/assets',false,{id: doc.id, mode: 'get'},true).then(async d => {
+        doc._attachements = d
+        console.log('---> initially updated attachement in couch/pouch')
+        await this.dbStore(doc);
+      })
+    }
+
     let element: any;
     const regex = /\{\{Attachements:(.*?)\}\}/g;
+    // Always clean own marks
+    this.editorMarks.attachements = this.editorMarks.attachements.filter(element => element.doc !== doc.id);
     while(element = regex.exec(doc.body)) {
       let _name = `${doc.id}-${doc.name}-${element[1]}`;
+      let _thumbnail = false
+      try {
+        _thumbnail = doc._attachements[element[1] - 1].Thumbnail
+      } catch (e) {
+        _thumbnail = false
+      }
       if (this.editorMarks.attachements.filter(x => x.value === _name).length === 0) {
-        this.editorMarks.attachements.push({value: _name,  label: `Attachement ${element[1]} in ${doc.id} / ${doc.name}`});  
+        this.editorMarks.attachements.push({value: _name,  label: `${doc.title}<b>Attachement ${element[1]} in ${doc.name}</b>`, doc: doc.id, thumbnail: _thumbnail});  
       }
     };
   }  
@@ -1045,7 +1095,7 @@ export class Api {
   }
 
   add(position: number) {
-    let _data = {
+    let _data:_dataset = {
       name: 'rf001',
       title: 'Empty Title',
       body: "Write Here",
@@ -1056,7 +1106,8 @@ export class Api {
       status: false,
       issue: this.current.issue,
       syncId: this.guid(),
-      settings: {}
+      settings: {},
+      _attachements: {}
     };
     if (this.online) {
       this.showLoadingCtrl("Adding new Entry");

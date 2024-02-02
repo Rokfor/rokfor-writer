@@ -70,9 +70,14 @@ export class Editor {
     let modal = this.modalCtrl.create(PopoverEditor, {api: this.api, data: data}, {showBackdrop: true});
     modal.present();
     modal.onDidDismiss(d => {
-      console.log(d)
+      
+      this.api._call('/assets',false,{id: data.id, mode: 'get'},true).then(d => {
+        console.log('---> updated attachement in couch/pouch')
+        this.api.getCurrentData()._attachements = d
+        this.api.change()
+      })
+
       if (d !== undefined && d !== null) {
-        // @ts-ignore
         this.prosemirror.insertAttachement(d)
         // Add to attachements global
         // {element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'}
@@ -391,38 +396,64 @@ export class Editor {
     }
   }
 
-  async attachementClick(a:{target: HTMLSpanElement}) {
-    let _id = this.api.data[this.api.getCurrent()].id
-    if (_id) {
-      let _assets = await this.api._call('/assets',false,{id: _id, mode: 'get'},true)
-      if (_assets.length) {
-        let att  = new RegExp('\{\{attachements:(.*?)\}\}', "gi");
-        let m = att.exec(a.target.textContent)
-        try {
-          let _previewAsset = _assets[m[1] as any - 1];
-          _previewAsset._id = m[1] as any - 1;
-          if (_previewAsset.Thumbnail) {
-            this.previewAsset = _previewAsset;          
-          } else {
-            throw('not found...')
-          }
-        } catch (e) {
-          this.previewAsset = null;
-          var restoreFocus = document.activeElement
-          this.toastCtrl.create({
-            message: `Asset Unknown: Check index «${m[1]}»`,
-            duration: 3000,
-            position: 'top',
-            showCloseButton: false,
-            cssClass: 'disablefocus'
-          }).present().then(() => {
-            if (restoreFocus instanceof HTMLElement) {
-              restoreFocus.focus();
+  imagereferenceClick(a:{target: HTMLSpanElement}) {
+    try {
+      const referenceValues = a.target.getAttribute("reference").split('-');
+      this.showAttachement(referenceValues[0] as unknown as number, referenceValues[2] as unknown as number);
+    }
+    catch (err) {
+      console.warn(err)
+    }
+
+  }
+
+  attachementClick(a:{target: HTMLSpanElement}) {
+    const _id = this.api.data[this.api.getCurrent()].id
+    const index = (a.target.dataset.id as unknown as number)
+    this.showAttachement(_id, index)
+  }
+
+  attachementDoubleClick(a:{target: HTMLSpanElement}) {
+    this.previewAsset = null;
+    this.showUpload(this.api.data[this.api.getCurrent()])
+  }
+
+  imagereferenceDoubleClick(a:{target: HTMLSpanElement}) {
+    this.previewAsset = null;
+  }
+
+  async showAttachement(id:number, index:number) {
+    try {
+      if (id) {
+        let _assets = await this.api._call('/assets',false,{id: id, mode: 'get'},true)
+        if (_assets.length) {
+            let _previewAsset = _assets[index - 1];
+            _previewAsset._id = index - 1;
+            if (_previewAsset.Thumbnail) {
+              this.previewAsset = _previewAsset;
+            } else {
+              throw('not found...')
             }
-          });
+        } else {
+          throw('not found...')
         }
       }
+    } catch (e) {
+      this.previewAsset = null;
+      var restoreFocus = document.activeElement
+      this.toastCtrl.create({
+        message: `Asset Unknown: Check index «${index}»`,
+        duration: 3000,
+        position: 'top',
+        showCloseButton: false,
+        cssClass: 'disablefocus'
+      }).present().then(() => {
+        if (restoreFocus instanceof HTMLElement) {
+          restoreFocus.focus();
+        }
+      });
     }
+
   }
 
   search(a) {

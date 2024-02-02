@@ -78,13 +78,41 @@ page-editor {
     padding: 0 !important;
     background: transparent !important;
     .item-inner {
-      padding: 0 0.5rem 0.5rem 0.5rem;
+      padding: 0 16px 0.5rem 16px;
       border: none !important;
       box-shadow: none !important;
       background: #CEE;
       textarea {
         resize:none;
         box-sizing: border-box;
+        font-size: $toolbar-md-title-font-size;
+      }
+    }
+  }
+
+  & > ion-header {
+    .toolbar-title {
+      margin-left: 2rem;
+      &:before {
+        content: "EDIT";
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%) translateX(-100%);
+        margin-top: 1px;
+        line-height: 1;
+        font-size: 50%;
+        vertical-align: middle;
+        border: 1px solid white;
+        padding: 2px;
+        border-radius: 3px;
+      }
+    }
+    &:hover {
+      .toolbar-title {
+        &:before {
+          background: white;
+          color: color($colors, dark);
+        }
       }
     }
   }
@@ -277,5 +305,11 @@ page-editor {
   }
 }
 
+.animated-footer {
+  transition: all 0.125s ease-out;
+  &-hidden {
+    transform: translateY(100%);
+  }
+}
 
 @import "prosemirror.scss";

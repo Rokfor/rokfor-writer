@@ -114,132 +114,151 @@
 .ProseMirror bibliography,
 .ProseMirror .attachement {
   display: inline-block;
-  border: 1px solid red;
-  background: white !important;
-  color: red;
-  caret-color: black;
+  background: red !important;
   font-size: 60%;
   padding-right: 0.25em;
   line-height: 1;
   vertical-align: middle;
   font-weight: bold;
   white-space: nowrap;
-  padding: 3px 4px 3px 1px;
+  padding: 4px 10px 4px 7px;
   margin-top: -2px;
+  cursor: pointer;  
+  font-family: $font-family-md-base;  
+  border-radius: 8px;
+  color: white;
+  &:after {
+    color: white;
+  }
   &:before {
-    color: red;
+    color: white;
     padding-right: 0.25em;
     padding-left: 0.25em;
     margin-right: 0.25em;
     left: 0px;
     top: 0px;
   }
+  &:hover {
+    background-color: #CCC !important;
+  }    
   &.ProseMirror-selectednode {
-    background: #eee !important;
-    border-color: #666 !important;
+    background: #333 !important;
   }
 }
 
 .ProseMirror extra {
-  background: black !important;
-  border-color: black;
-  color: white;
-  &:before {content: "\2630  Extra"; color: white;}
-  &:after {content: attr(id);}  
+  background: white !important;
+  border: 1px solid black !important;
+  &:before {content: "Extra:"; color: black !important;}
+  &:after {content: attr(id); color: black !important;}  
   &.ProseMirror-selectednode {
-    color: red;
-    background: black!important;
-    border-color: black !important;
-    &:before {
-      color: red;
-    }
+    &:before {color: white !important;}
+    &:after {color: white !important;}  
   }
 }
 .ProseMirror mark {
-  &:before {content: "Mark";}
+  background: blue !important;
+  &:before {content: "Mark:";}
   &:after {content: attr(reference);}  
 }
 .ProseMirror reference {
-  &:before {content: "Ref.";}
+  background: blue !important;
+  &:before {content: "Cross Reference:";}
   &:after {content: attr(reference);}
 }
 .ProseMirror imagereference {
-  &:before {content: "Image Ref.";}
+  background: green !important;
+  &:before {content: "Image Reference:";}
   &:after {content: attr(reference);}  
 }
 .ProseMirror bibliography {
-  &:before {content: "Lit.";}
+  &:before {content: "Literature:";}
   &:after {content: attr(reference);}
 }
 
 .ProseMirror .attachement {
-  border-color: black; 
+  background: green !important;
   &:before {
-    color: black; content: "Att.";
-  }
-  &:hover {
-    background-color: #CCC !important;
-    cursor: pointer;
+    content: "Image:";
   }
 }
 
 .ProseMirror index {
   display: inline;
-  border: 1px dotted red;
   position: relative;
-  padding-left: 0.25em;
+  color: red;
   &:before {
-    color: red;
+    color: white;
+    display: inline-block;
+    background: red;
+    font-family: $font-family-md-base;  
     left: 0px;
     top: 0px;
     font-size: 60%;
     font-weight: bold;
-    content: "idx ";
-    line-height: 0;
+    content: "Index";
+    padding: 2px 5px;
+    margin-right: 3px;
+    transform: translateY(-1px);
+    line-height: 1;
+    cursor: pointer;  
+    border-radius: 8px;    
   }  
 }
 
 .ProseMirror language {
-  display: block;
+  display: inline-block;
+  &:hover {
+    &:before {
+      background-color: #CCC !important;
+    }
+  }   
+  &.ProseMirror-selectednode {
+    background: transparent !important;
+    &:before {
+      background: black !important;
+    }
+  }
   &:before {
-    border: 1px solid red;
-    background: white !important;
-    color: red;
+    background: magenta !important;
+    color: white;
     font-weight: bold;
-    padding-left: 0.1em;
-    padding-right: 0.1em;
+    padding: 4px 10px 4px 7px;
     left: 0px;
     top: 0px;
-    line-height: 1.25;
+    line-height: 1;
+    font-family: $font-family-md-base;  
     display: inline-block;
     min-width: 5em;
     text-align: center;
     margin-bottom: 0.5em;
     font-size: 60%;
+    box-sizing: border-box;
+    border-radius: 8px;    
   }  
   * {
     display: none;
   }
 }
-.ProseMirror language[language="arabic"] {&:before {content: "Arabic";}}
-.ProseMirror language[language="english"] {&:before {content: "English";}}
-.ProseMirror language[language="ngerman"] {&:before {content: "Deutsch";}}
-.ProseMirror language[language="italian"] {&:before {content: "Italiano";}}
-.ProseMirror language[language="french"] {&:before {content: "Français";}}
+.ProseMirror language[language="arabic"] {&:before {content: "Language: Arabic";}}
+.ProseMirror language[language="english"] {&:before {content: "Language: English";}}
+.ProseMirror language[language="ngerman"] {&:before {content: "Language: Deutsch";}}
+.ProseMirror language[language="italian"] {&:before {content: "Language: Italiano";}}
+.ProseMirror language[language="french"] {&:before {content: "Language: Français";}}
 
 
 .ProseMirror comment,
 .ProseMirror latex,
 .ProseMirror paragraphalternate {
   display: block;
-  border: 2px solid transparent;
   background:rgba(0, 0, 0, .05);
   position: relative;
   box-sizing: border-box;
-  padding: 0.25em 1em 0.25em 4em;
+  padding: .75em 0.25em 0.25em;
   margin: 1em 0;
+  border-radius: 8px;
   & > p:first-child {
-    margin-top: 0em;
+    margin-top: 0.5em;
   }
   & > p:last-child {
     margin-bottom: 0em;
@@ -249,12 +268,11 @@
     margin: 0;
     line-height: 1;
     font-size: 60%;
-    border-bottom: 1px solid;
     position: absolute;
     display: inline;
     left: 0.5em;
-    top: 0.25em;
-    content: "Footnote";
+    top: 0.5em;
+    font-family: $font-family-md-base;
     font-weight: bold;
   }  
 }
@@ -270,7 +288,7 @@
   }
   span {
     &.fncontent {
-      background:rgba(250, 150, 250, 0.5);
+      background:rgb(255, 207, 255);
       padding: 0.25rem 0.5rem;
     }
     &.fnbegin,
@@ -286,34 +304,24 @@
 
 
 .ProseMirror comment {
-  border-color: yellow;
-  background: yellow;
+  background: rgb(255, 255, 172);
   &:before {
     content: "Comment";
   }  
 }
 
 .ProseMirror latex {
+  background: rgb(200, 225, 248);
   &:before {
     content: "LaTeX";
   }  
 }
 
 .ProseMirror paragraphalternate {
-  padding-left: 0.25em;
-  padding-top: 1.25em;
-  border: 1px solid;
-  background: transparent;
+  background: rgb(74, 74, 74);
+  color: white;
   &:before {
-    content: "Alternate Paragraph Style";
-    width: 100%;
-    left: 0px;
-    box-sizing: border-box;
-    padding-left: 0.5em;
-    padding-bottom: 0.25em;
-    padding-top: 0.25em;
-    background:rgba(0, 0, 0, .05);
-    top: 0px;
+    content: "Alternate Style";
   }  
 }
 
@@ -544,7 +552,7 @@ li.ProseMirror-selectednode:after {
 
 .ProseMirror-menuitem {
   display: inline-flex;
-  font-family: ic, Courier, monospace;
+  font-family: $font-family-md-base;
   color: black;
   justify-content: center;
   align-items: center;
@@ -721,36 +729,65 @@ li.ProseMirror-selectednode:after {
 }
 
 .ProseMirror-prompt {
-  background: white;
+  background: #EFEFEF;
   padding: 1em;
-  border: 1px solid silver;
   position: fixed;
   border-radius: 3px;
   z-index: 11;
-  box-shadow: -.5px 2px 5px rgba(0, 0, 0, .2);
-  font-size: 18px;
-  font-family: ic, Courier, monospace;
-
+  box-shadow: 2px 4px 4px 2px rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  font-size: 16px;
+  font-family: $font-family-md-base;
+  font-weight: normal;
 }
 
 .ProseMirror-prompt h5 {
   margin: 0;
   font-weight: normal;
-  margin-bottom: 0.5em;
-  max-width: 400px;
+  margin-bottom: 1em;
+  font: inherit;
+}
+.ProseMirror-prompt h6 {
+  margin: 0;
+  font-weight: normal;
+  margin-bottom: 2rem;
+  max-width: 300px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 15px;
 }
 
 .ProseMirror-prompt input[type="text"],
 .ProseMirror-prompt textarea {
-  background: white;
+  background: #E2E2E2;
   border: none;
-  border-bottom: 1px solid gray;
   margin-top: 0.2em;
   outline: none;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 1rem !important;
+  appearance: none;
+  box-sizing: border-box;
 }
 
-.ProseMirror-prompt input[type="text"] {
-  padding: 0 4px;
+.Prosemirror-Prompt-selectbox {
+  background: #E2E2E2;
+  position: relative;
+  &:after {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    content: "↓";
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  select {
+    padding: 1rem 0.5rem !important;
+    appearance: none;
+    position: relative;
+    border: none;  
+    background: transparent;
+    width: 100%;
+  }
 }
 
 .ProseMirror-prompt-close {
@@ -775,6 +812,56 @@ li.ProseMirror-selectednode:after {
 }
 
 .ProseMirror-prompt-buttons {
-  margin-top: 5px;
-  display: none;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  & > button {
+    text-transform: uppercase;
+    font-family: $font-family-md-base;
+    border-radius: 2px;
+    overflow: hidden;
+    height: 3.6rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #fff;
+    background-color: #488aff;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1), color 300ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1), background-color 300ms cubic-bezier(0.4, 0, 0.2, 1), color 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1), background-color 300ms cubic-bezier(0.4, 0, 0.2, 1), color 300ms cubic-bezier(0.4, 0, 0.2, 1), -webkit-box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 1.1em;
+    &.ProseMirror-prompt-cancel {
+      background-color: #ccc;
+    }
+  }
+}
+
+.Prosemirror-Prompt-imagelist {
+  max-height: 50vh;
+  overflow: auto;
+  border: 1px solid silver;
+  border-radius: 3px;
+  font-size: 14px;
+  & > div {
+    display: flex;
+    padding: 0.5em;
+    border-bottom: 1px solid silver;    
+    transition: all 0.25s;
+    &.active {
+      background: #CCC !important;
+    }
+    &:hover {
+      background: #EFEFEF;
+    }
+    & > p {
+      margin: 0;
+      margin-left: 0.5rem;
+      max-width: 250px;
+      padding: 0;
+      b {
+        display: block;
+      }
+    }
+  }
 }

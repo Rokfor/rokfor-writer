@@ -1,28 +1,32 @@
 #!/bin/bash
-echo "building prosemirror menu setup\n"
+echo "🚀 building prosemirror menu setup"
 cd ../prosemirror-menu/
-npm update
+npm update > /dev/null 2>&1
 npm run build
-git commit -am "automatic build"
-git push
-echo "building prosemirror example setup\n"
+git commit -am "automatic build" > /dev/null 2>&1
+git push > /dev/null 2>&1
+echo " "
+echo "🚀 building prosemirror example setup"
 cd ../prosemirror-example-setup/
-npm update
+npm update > /dev/null 2>&1
 npm run build
-git commit -am "automatic build"
-git push
-echo "building prosemirror markdown\n"
+git commit -am "automatic build" > /dev/null 2>&1
+git push > /dev/null 2>&1
+echo " "
+echo "🚀 building prosemirror markdown"
 cd ../prosemirror-markdown/
-npm update
+npm update > /dev/null 2>&1
 npm run build
-git commit -am "automatic build"
-git push
-echo "building ng2-prosemirror\n"
+git commit -am "automatic build" > /dev/null 2>&1
+git push > /dev/null 2>&1
+echo " "
+echo "🚀 building ng2-prosemirror"
 cd ../ng2-prosemirror
-npm update
+npm update > /dev/null 2>&1
 npm run build
-git commit -am "upd. dep"
-git push
-echo "updating rokfor-writer dependencies\n"
+git commit -am "upd. dep" > /dev/null 2>&1
+git push > /dev/null 2>&1
+echo " "
+echo "🚀 updating rokfor-writer dependencies"
 cd ../rokfor-writer
-npm update
+npm update > /dev/null 2>&1

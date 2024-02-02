@@ -43,9 +43,53 @@
 
 
 .smallfont {
-    font-size: 1rem;
+    font-size: 1.1rem;
 }
 
 .disablefocus {
     pointer-events: none;
+}
+
+ion-menu {
+    .menu-inner {
+        background: #5d5d5d !important;
+    }
+    ion-item,
+    ion-item-sliding,
+    ion-content {
+        background: transparent !important;
+        color: white !important;
+    }
+    ion-header {
+        background: transparent !important;
+        button {
+            background: transparent !important;
+            color: white !important;
+        }
+        ion-list {
+            background: transparent !important;
+            margin: 0.5rem 0 !important;
+        }
+    }
+    ion-item-divider {
+        font-size: 1.1rem !important;
+        background: transparent!important;
+        border: none !important;
+        color: white !important;
+    }
+}
+
+ion-header {
+    .toolbar-background {
+        background: #5d5d5d !important;
+    }
+    * {
+        color: white !important;
+    }
+}
+
+* {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss09", "ss06", "ss04", "ss01", "ss02", "ss03", "ss05", "ss07";
 }
