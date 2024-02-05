@@ -141,7 +141,8 @@ export class Api {
     "About",
     "Draft",
     "Bibtex",
-    "extra"
+    "extra",
+    "BookType"
   ];
 
   data: Array < _dataset > = [];
@@ -363,7 +364,7 @@ export class Api {
     
     
         
-    let _doProcess = _indexBibtex !== -1 && this.current.issue_options.Options[_indexBibtex].value === true
+    let _doProcess = _indexBibtex !== -1 && !this.current.issue_options.Options[_indexBibtex].value
    
     if (_index !== -1 && _doProcess) {
       // @ts-ignore

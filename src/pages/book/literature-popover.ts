@@ -20,14 +20,14 @@ import { NavParams, ViewController } from 'ionic-angular';
   </ion-header>
   <ion-content>
     <codemirror
-      *ngIf="api.current.issue_options.Options[28].value"
+      *ngIf="!api.current.issue_options.Options[28].value"
       [config]="{lineNumbers: true, viewportMargin: 0}"
       [(ngModel)]="api.current.issue_options.Options[19].value"
       (change)="api.lintBibTex(api.current.issue_options.Options[19].value)">
     </codemirror>       
     <prosemirror
       class="ProseMirror-wide"
-      *ngIf="!api.current.issue_options.Options[28].value"
+      *ngIf="api.current.issue_options.Options[28].value"
       [(data)]="api.current.issue_options.Options[19].value" 
       [(editorMarks)]="api.editorMarks"
       ></prosemirror>
@@ -39,7 +39,7 @@ import { NavParams, ViewController } from 'ionic-angular';
   <ion-footer>
     <ion-toolbar>
         <ion-label>
-            Enable BibLatex
+            Disable BibLatex
         </ion-label>
         <ion-buttons end>
             <ion-toggle (ionChange)="toggleBibLatex()" checked="api.current.issue_options.Options[28].value" [(ngModel)]="api.current.issue_options.Options[28].value"></ion-toggle>    
@@ -70,7 +70,7 @@ export class LiteraturePopover {
   }
 
   toggleBibLatex() {
-    if (this.api.current.issue_options.Options[28].value == true) {
+    if (!this.api.current.issue_options.Options[28].value) {
         this.api.lintBibTex(this.api.current.issue_options.Options[19].value)
     } else {
         this.api.bibtexErrors = [];
