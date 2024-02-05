@@ -48,7 +48,7 @@
     </ion-list-header>
     <ion-item>
       <ion-label stacked>Book Type</ion-label>
-      <ion-select (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[30].value">
+      <ion-select  (ionChange)="api.bookStore()" [(ngModel)]="api.current.issue_options.Options[30].value">
        <ion-option 
          value="{{_att}}" 
          selected="{{_att == api.current.issue_options.Options[30].value}}"
@@ -56,8 +56,9 @@
        >{{_att}}
        </ion-option>
      </ion-select>
-   </ion-item>        
-
+   </ion-item>
+  </ion-list>
+  <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Name && api.current.issue_options.Options">
     <ion-list-header color="secondary">
       Titles
     </ion-list-header>
