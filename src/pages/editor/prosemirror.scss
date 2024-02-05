@@ -181,6 +181,7 @@
   &:before {
     content: "Image:";
   }
+  &:after {content: attr(data-id);}  
 }
 
 .ProseMirror index {

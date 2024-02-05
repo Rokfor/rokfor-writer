@@ -79,7 +79,6 @@ export class Editor {
 
       if (d !== undefined && d !== null) {
         this.prosemirror.insertAttachement(d)
-        // Add to attachements global
         // {element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'}
         if (d.isImage === false) {
           let _name = `${data.id}-${data.name}-${d.anchorIndex}`;
