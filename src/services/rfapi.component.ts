@@ -142,7 +142,8 @@ export class Api {
     "Draft",
     "Bibtex",
     "extra",
-    "BookType"
+    "BookType",
+    "SeriesNumberInteger"
   ];
 
   data: Array < _dataset > = [];
