@@ -132,6 +132,7 @@ export class PopoverSettings {
         ["nofooter", "Supress Footer"],
         ["alternate", "Alternate Layout"],
         ["compact", "Compact Layout"],
+        ["ispart", "Use as Part in ToC"],
       ],
       font: [
         ["grotesk", "Option 1: Grotesk"],
