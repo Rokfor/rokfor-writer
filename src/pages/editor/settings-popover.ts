@@ -28,6 +28,13 @@ import { Events, NavParams, ViewController } from "ionic-angular";
       <ion-item-group>
         <ion-item-divider color="light">Layout Settings</ion-item-divider>
         <ion-item *ngFor="let s of schema.layout">
+          <ion-icon
+            *ngIf="s[2]"
+            item-start
+            name="information-circle"
+            class="tooltip-icon"
+            [attr.data-tooltip]="s[2]"
+          ></ion-icon>         
           <ion-label>{{ s[1] }}</ion-label>
           <ion-toggle
             checked="values.settings[s[0]]"
@@ -38,6 +45,13 @@ import { Events, NavParams, ViewController } from "ionic-angular";
       <ion-item-group>
         <ion-item-divider color="light">Font Settings</ion-item-divider>
         <ion-item *ngFor="let s of schema.font">
+          <ion-icon
+            *ngIf="s[2]"
+            item-start
+            name="information-circle"
+            class="tooltip-icon"
+            [attr.data-tooltip]="s[2]"
+          ></ion-icon>         
           <ion-label>{{ s[1] }}</ion-label>
           <ion-toggle
             checked="values.settings[s[0]]"
@@ -46,8 +60,15 @@ import { Events, NavParams, ViewController } from "ionic-angular";
         </ion-item>
       </ion-item-group>
       <ion-item-group>
-        <ion-item-divider color="light">Image Handling</ion-item-divider>
+        <ion-item-divider color="light">Image Options</ion-item-divider>
         <ion-item *ngFor="let s of schema.image">
+          <ion-icon
+            *ngIf="s[2]"
+            item-start
+            name="information-circle"
+            class="tooltip-icon"
+            [attr.data-tooltip]="s[2]"
+          ></ion-icon>         
           <ion-label>{{ s[1] }}</ion-label>
           <ion-toggle
             checked="values.settings[s[0]]"
@@ -89,6 +110,14 @@ import { Events, NavParams, ViewController } from "ionic-angular";
             [(ngModel)]="values.settings[schema.meta[5][0]]"
           ></ion-input>
         </ion-item>
+        <ion-item>
+          <ion-label>{{ schema.meta[6][1] }}</ion-label>
+          <ion-input
+            autocapitalize="off"
+            placeholder="Download Link"
+            [(ngModel)]="values.settings[schema.meta[6][0]]"
+          ></ion-input>
+        </ion-item>        
         <ion-item>
           <ion-label>{{ schema.meta[3][1] }}</ion-label>
           <ion-toggle
@@ -132,7 +161,7 @@ export class PopoverSettings {
         ["nofooter", "Supress Footer"],
         ["alternate", "Alternate Layout"],
         ["compact", "Compact Layout"],
-        ["ispart", "Use as Part in ToC"],
+        ["ispart", "Use as Part in ToC", "Enabling this option raises the level of this entry in the table of contents to 'Part'. Keep in mind that a single entry on 'Part' level changes the ToC for the entire book."],
       ],
       font: [
         ["grotesk", "Option 1: Grotesk"],
@@ -141,9 +170,11 @@ export class PopoverSettings {
         ["largefont", "Option 4: Large"],
       ],
       image: [
-        ["size1", "Option 1: Small"],
-        ["size2", "Option 2: Medium"],
-        ["size3", "Option 3: Large"],
+        ["size1", "Full Page Images"],
+        ["size2", "Full Bleed Images"],
+        ["size3", "Double Page Images"],
+        ["nocaptiondefault", "Default Placement for Images without Captions", "By default, images without captions are placed as full page images. Enabling this option will place images without captions the same way as images with captions."],
+        ["noadjacent", "Disable Layout Exceptions for Ajacent Images", "By default, adjacent images are placed inline as floating elements. Enabling this option will place adjacent images the like single images on a full page."],
       ],
       meta: [
         ["author", "Autor"],
@@ -151,7 +182,8 @@ export class PopoverSettings {
         ["alttitle", "Alt. Title"],
         ["hideweb", "Hide on Web"],
         ["extra", "Enable Extra Links"],
-        ["doi", "Bibliography (DOI)"],
+        ["doi", "Bibliography"],
+        ["download", "Download"],
       ],
     };
 

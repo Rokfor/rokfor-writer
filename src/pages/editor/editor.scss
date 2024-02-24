@@ -6,6 +6,37 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=1 );
 }
 
+.tooltip-icon {
+  cursor: pointer;
+}
+
+.tooltip-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  z-index: 100000;
+  right: 0px;
+  width: calc(100% - 8rem);
+  box-sizing: border-box;
+  z-index: 10;
+  background-color: black;
+  color: #fff;
+  border-radius: 4px;
+  font-size: 10px;
+  line-height: 11px;
+  padding: 1rem;
+  margin: 0.5rem 1rem;
+  display: none;
+  text-align: left;
+  align-items: center;
+  justify-content: center;
+}
+
+.tooltip-icon:hover::after {
+  display: flex;
+}
+
 page-editor {
 
   .previewAssetThumbnail {
