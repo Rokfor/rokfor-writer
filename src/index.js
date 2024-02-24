@@ -372,8 +372,9 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
     type: 'info',
     buttons: ['Restart', 'Later'],
     title: 'Application Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+    defaultId: 0,
+    message: 'A new version has been downloaded. Restart the application to apply the updates.',
+    detail: releaseName + "\n\n" + releaseNotes,
   }
  
   dialog.showMessageBox(dialogOpts, (returnValue) => {
