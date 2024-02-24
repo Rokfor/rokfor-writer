@@ -143,7 +143,8 @@ export class Api {
     "Bibtex",
     "extra",
     "BookType",
-    "SeriesNumberInteger"
+    "SeriesNumberInteger",
+    "OaPdf"
   ];
 
   data: Array < _dataset > = [];

@@ -246,9 +246,13 @@
       </ion-select>
     </ion-item>            
     <ion-item>
-      <ion-label>Create OA Pdf</ion-label>
+      <ion-label>Use Alternate Images in PDF</ion-label>
       <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[23].value" [(ngModel)]="api.current.issue_options.Options[23].value"></ion-toggle>
     </ion-item>
+    <ion-item>
+      <ion-label>Create OA Pdf</ion-label>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[32].value" [(ngModel)]="api.current.issue_options.Options[32].value"></ion-toggle>
+    </ion-item>    
     <ion-item>
       <ion-label>Enable Extra Links</ion-label>
       <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[29].value" [(ngModel)]="api.current.issue_options.Options[29].value"></ion-toggle>
