@@ -57,6 +57,14 @@
        </ion-option>
      </ion-select>
    </ion-item>
+   <ion-item>
+      <ion-label>Large Size Format</ion-label>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[34].value" [(ngModel)]="api.current.issue_options.Options[34].value"></ion-toggle>
+    </ion-item>   
+    <ion-item>
+      <ion-label>Generate Draft PDF without Images</ion-label>
+      <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[33].value" [(ngModel)]="api.current.issue_options.Options[33].value"></ion-toggle>
+    </ion-item>    
   </ion-list>
   <ion-list *ngIf="api.current.issue && api.issues.Issues.length > 0 && api.current.issue_options.Name && api.current.issue_options.Options">
     <ion-list-header color="secondary">
@@ -274,12 +282,11 @@
       Danger Zone
     </ion-list-header>
     <ion-item>
-      <ion-label>Publish Book to Web</ion-label>
+      <ion-label>Publish Book to Live Web</ion-label>
       <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[20].value" [(ngModel)]="api.current.issue_options.Options[20].value"></ion-toggle>
     </ion-item>
-
     <ion-item>
-      <ion-label>Draft Mode</ion-label>
+      <ion-label>Publish Book to Preview Page</ion-label>
       <ion-toggle (ionChange)="api.bookStore()" checked="api.current.issue_options.Options[27].value" [(ngModel)]="api.current.issue_options.Options[27].value"></ion-toggle>
     </ion-item>    
   </ion-list>  

@@ -144,7 +144,9 @@ export class Api {
     "extra",
     "BookType",
     "SeriesNumberInteger",
-    "OaPdf"
+    "OaPdf",
+    "DraftPdf",
+    "LargeSize"
   ];
 
   data: Array < _dataset > = [];
