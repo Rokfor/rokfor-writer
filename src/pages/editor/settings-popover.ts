@@ -162,6 +162,7 @@ export class PopoverSettings {
         ["alternate", "Alternate Layout"],
         ["compact", "Compact Layout"],
         ["ispart", "Use as Part in ToC", "Enabling this option raises the level of this entry in the table of contents to 'Part'. Keep in mind that a single entry on 'Part' level changes the ToC for the entire book."],
+        ["alphanumbering", "Use alphabetic list numbering", "Sets the enumeration style to alphabetic (a,b,c). Default: Numeric (1,2,3)"],
       ],
       font: [
         ["grotesk", "Option 1: Grotesk"],

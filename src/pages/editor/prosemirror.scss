@@ -283,6 +283,9 @@
 
 .ProseMirror footnote {
   display: inline;
+  background:rgb(255, 228, 255);
+  border-left: 1px solid black;
+  border-right: 1px solid black;
   &:before {
     color: red;    
     content: "Fn.";
@@ -292,16 +295,12 @@
   }
   span {
     &.fncontent {
-      background:rgb(255, 207, 255);
-      padding: 0.25rem 0.5rem;
+      font-size: 80%;
     }
     &.fnbegin,
     &.fnend {
-      opacity: 0;
-      width: 0px;
-      height: 1px;
-      overflow: hidden;
-      display: inline-block;
+      display: inline;
+      padding: 0rem .25rem;
     }
   }
 }

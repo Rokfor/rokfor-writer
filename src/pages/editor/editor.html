@@ -40,7 +40,7 @@
         (ionChange)="changeDebounce()"
       ></ion-textarea>
     </ion-item>
-    <div class="editorWrapper">
+    <div class="editorWrapper" [ngClass]="{'editorWrapper-arabic': api.getCurrentData().settings && api.getCurrentData().settings.alphanumbering}">
       <prosemirror 
         [(data)]="api.getCurrentData().body" 
         [(editorMarks)]="api.editorMarks"

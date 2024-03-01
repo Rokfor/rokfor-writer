@@ -172,6 +172,11 @@ page-editor {
       display: flex;
       flex-grow: 4;
     }
+    &-arabic {
+      .ProseMirror ol > li {
+        list-style-type: lower-alpha !important;
+      }
+    }
   }
 
   .paper {
