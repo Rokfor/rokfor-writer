@@ -3,7 +3,7 @@
   "author": "Rokfor & Urs Hofer",
   "homepage": "http://www.rokfor.ch/",
   "private": false,
-  "version": "2.2.8",
+  "version": "2.2.11",
   "license": "mit",
   "main": "./www/index.js",
   "scripts": {
@@ -105,11 +105,11 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.2.4",
+    "@tylerlong/electron-notarize": "^1.1.1",
     "@types/showdown": "^1.9.4",
     "dotenv": "^9.0.2",
     "electron": "^14.2.9",
     "electron-builder": "^23.6.0",
-    "electron-notarize": "^1.2.2",
     "electron-packager": "^15.5.2",
     "node-pre-gyp": "^0.11.0",
     "typescript": "^3.9.10"
