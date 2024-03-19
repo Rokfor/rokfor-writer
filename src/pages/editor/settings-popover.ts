@@ -175,7 +175,7 @@ export class PopoverSettings {
         ["size2", "Full Bleed Images"],
         ["size3", "Double Page Images"],
         ["nocaptiondefault", "Default Placement for Images without Captions", "By default, images without captions are placed as full page images. Enabling this option will place images without captions the same way as images with captions."],
-        ["noadjacent", "Disable Layout Exceptions for Ajacent Images", "By default, adjacent images are placed inline as floating elements. Enabling this option will place adjacent images the like single images on a full page."],
+        ["noadjacent", "Place Single Images on extra Page", "By default, single (not adjacent) images are placed inline as floating elements. Enabling this option places single images on extra pages."],
       ],
       meta: [
         ["author", "Autor"],
