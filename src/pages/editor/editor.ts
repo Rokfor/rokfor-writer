@@ -71,10 +71,12 @@ export class Editor {
     modal.present();
     modal.onDidDismiss(d => {
       
-      this.api._call('/assets',false,{id: data.id, mode: 'get'},true).then(d => {
+      this.api._call('/assets',false,{id: data.id, mode: 'get'},true).then(ass_refresh => {
         console.log('---> updated attachement in couch/pouch')
-        this.api.getCurrentData()._attachements = d
-        this.api.change()
+        if (ass_refresh.length) {
+          this.api.getCurrentData()._attachements = ass_refresh
+          this.api.change()
+        }
       })
 
       if (d !== undefined && d !== null) {

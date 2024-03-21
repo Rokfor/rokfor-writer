@@ -110,11 +110,17 @@ export class PopoverEditor {
 
   async delete(i, variant = false) {
     this.api.showLoadingCtrl('Deletion in Progress');
-    await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i, variant: variant},true)
+    let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'delete', assets: this.assets, delete: i, variant: variant},true)
+    if (_assets.error === true) {
+      this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+    }
     if (variant === false) {
       this.assets.splice(i,1);
     } else {
       let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
+      if (_assets.error === true) {
+        this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+      } 
       if (_assets.length) {
         this.assets = _assets
       }
@@ -137,8 +143,14 @@ export class PopoverEditor {
     const file = event.target.files[0];
     reader.readAsDataURL(file);
     reader.onload = async () => { // note using fat arrow function here if we intend to point at current Class context.
-      await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post', index: i, variant: variant},true)
+      let _passets = await this.api._call('/assets',false,{id: this.i.id, binary: reader.result, size: file.size, type: file.type, name: file.name, mode: 'post', index: i, variant: variant},true)
+      if (_passets.error === true) {
+        this.api.showAlert("Connection Failed", _passets.message ?? "Backend problem. Close and reopen the application", null);
+      }
       let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
+      if (_assets.error === true) {
+        this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+      }  
       if (_assets.length) {
         this.assets = _assets
       }
@@ -176,11 +188,17 @@ export class PopoverEditor {
 
   async updateData() {
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'update', assets: this.assets},true)
+    if (_assets.error === true) {
+      this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+    }
     console.log(_assets);
   }
 
   async loadData() {
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
+    if (_assets.error === true) {
+      this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+    }
     if (_assets.length) {
       this.assets = _assets
     }
@@ -189,7 +207,7 @@ export class PopoverEditor {
   ngOnInit() {
     this.i = this.navParams.data.data;
     this.api = this.navParams.data.api;
-    console.log(this.i)
+    //console.log(this.i)
     this.loadData();
     /*    
     this.i:
