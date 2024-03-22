@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NavParams, ViewController } from 'ionic-angular';
+import { ModalController, NavParams, ViewController } from 'ionic-angular';
+import { MarkdownPopover } from '../book/markdown-popover';
 //import { FileTransfer, FileUploadOptions, FileTransferObject } from '@ionic-native/file-transfer';
 //import { File } from '@ionic-native/file';
 
@@ -7,8 +8,13 @@ import { NavParams, ViewController } from 'ionic-angular';
   template: `
   <ion-header>
     <ion-navbar>
-      <ion-buttons start>
+      <ion-buttons end>
         <button ion-button (click)="dismiss()">Close</button>
+      </ion-buttons>
+      <ion-buttons start>
+        <button ion-button clear  icon-only [disabled]="busy == 0">
+          <ion-icon name="sync" [ngClass]="{'rotating-icon': updating}"></ion-icon>
+        </button>
       </ion-buttons>
       <ion-title>Files for {{i.name}}</ion-title>
     </ion-navbar>
@@ -25,12 +31,29 @@ import { NavParams, ViewController } from 'ionic-angular';
           <input class="custom-variant-input" type="file" (change)="loadImageFromDevice($event, _in, true)" id="file-input"  accept="image/png, image/jpeg, application/pdf">
         </ion-card-content>
         <ion-card-content>
+          <button class="mdbutton" icon-only color="dark" clear small ion-button (click)="showModal(i, 0, 'Caption')"><ion-icon name="logo-markdown"></ion-icon></button>                  
           <ion-label stacked>Caption</ion-label>
-          <ion-textarea autoresize autocapitalize=off type="text" (ionChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[0]"></ion-textarea>
+          <button class="mdbutton" icon-only color="dark" clear small ion-button (click)="showModal(i, 1, 'Copyright')"><ion-icon name="logo-markdown"></ion-icon></button>                  
           <ion-label stacked>Copyright</ion-label>
-          <ion-textarea autoresize autocapitalize=off type="text" (ionChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[1]"></ion-textarea>
+          <button class="mdbutton" icon-only color="dark" clear small ion-button (click)="showModal(i, 3, 'Alternate Caption (Web)')"><ion-icon name="logo-markdown"></ion-icon></button>                  
           <ion-label stacked>Alternate Caption (Web)</ion-label>
-          <ion-textarea autoresize autocapitalize=off type="text" (ionChange)="changeCaption()" [(ngModel)]="i.Captions[3]"></ion-textarea>
+          <ion-textarea autoresize autocapitalize=off type="text" (ngModelChange)="changeCaption()" [(ngModel)]="i.Captions[3]"></ion-textarea>
+          <ion-label stacked>Force Floating Placement (Print)</ion-label>
+          <ion-item class="floatitem" radio-group [(ngModel)]="i.Captions[4]" (ngModelChange)="changeCaption()">
+            <ion-label>Default</ion-label>
+            <ion-radio value="false"></ion-radio>
+          </ion-item>
+          <ion-item class="floatitem" radio-group [(ngModel)]="i.Captions[4]" (ngModelChange)="changeCaption()">
+            <ion-label>Floating</ion-label>
+            <ion-radio value="floating"></ion-radio>
+          </ion-item>
+          <ion-item class="floatitem" radio-group [(ngModel)]="i.Captions[4]" (ngModelChange)="changeCaption()">            
+            <ion-label>Extra Page</ion-label>
+            <ion-radio value="extra"></ion-radio>            
+          </ion-item>
+
         </ion-card-content>
       </div>
       <ion-row padding>
@@ -92,19 +115,39 @@ export class PopoverEditor {
   assets: any;
   timeout: any;
   api: any;
-
+  busy: boolean;
+  updating: boolean;
       
   constructor(
     public viewCtrl: ViewController,
     private navParams: NavParams,
+    private modalCtrl: ModalController
+
     //private transfer: FileTransfer, 
     //private file: File
    ) {
      this.timeout = [];
      this.assets = [];
+     this.busy = false;
+     this.updating = false;
   }
 
+  showModal(element:any, index:number, label:string) {
+    const before = element.Captions[index] ?? "";
+    const modal = this.modalCtrl.create(
+      MarkdownPopover, {value: before, label: label, api: this.api}, {showBackdrop: true, enableBackdropDismiss: false}
+    )
+    modal.onDidDismiss(data => {
+      if (data != null && data != before) {
+        element.Captions[index] = data
+        this.changeCaption()
+      }
+    })
+    modal.present();
+  }  
+
   dismiss() {
+    console.log(this.assets);
     this.viewCtrl.dismiss();
   }
 
@@ -125,10 +168,13 @@ export class PopoverEditor {
         this.assets = _assets
       }
     }
+    this.api.getCurrentData()._attachements = this.assets
+    this.api.change()
     this.api.hideLoadingCtrl();
   }
 
   changeCaption() {
+    this.busy = true;
     if (this.timeout.caption !== null) {
       clearTimeout(this.timeout.caption);
     }
@@ -153,6 +199,8 @@ export class PopoverEditor {
       }  
       if (_assets.length) {
         this.assets = _assets
+        this.api.getCurrentData()._attachements = this.assets
+        this.api.change()
       }
       this.api.hideLoadingCtrl();
     };
@@ -165,42 +213,29 @@ export class PopoverEditor {
     this.viewCtrl.dismiss({element: element, isImage: isImage, original: original, anchorIndex: 1 + (anchorIndex || 0), fieldName: 'Attachements'});
   }
 
-  /*upload() {
-    const fileTransfer: FileTransferObject = this.transfer.create();
-    let _file = "";
-    let _upload_api = "/upload"
-
-    let _options: FileUploadOptions = {
-      fileKey: 'ionicfile',
-      fileName: 'ionicfile', 
-      chunkedMode: false,
-      mimeType: "image/jpeg",
-      headers: {}
-    }
-    
-    fileTransfer.upload(_file, _upload_api, _options).then((entry) => {
-      console.log('upload complete - refresh');
-      this.loadData();
-    }, (error) => {
-      console.log('download error');
-    });
-  }*/
-
   async updateData() {
+    this.busy = true;
+    this.updating = true;
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'update', assets: this.assets},true)
     if (_assets.error === true) {
       this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
+    } else {
+      this.api.getCurrentData()._attachements = this.assets
+      this.api.change()
     }
-    console.log(_assets);
+    this.busy = false;
+    this.updating = false;
+    console.log(this.assets);
   }
 
   async loadData() {
     let _assets = await this.api._call('/assets',false,{id: this.i.id, mode: 'get'},true)
-    if (_assets.error === true) {
-      this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", null);
-    }
-    if (_assets.length) {
-      this.assets = _assets
+    if (_assets.error === true || _assets.length == undefined) {
+      this.api.showAlert("Connection Failed", _assets.message ?? "Backend problem. Close and reopen the application", this.dismiss());
+    } else {
+      if (_assets.length) {
+        this.assets = _assets
+      }
     }
   }
 

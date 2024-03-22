@@ -71,13 +71,14 @@ export class Editor {
     modal.present();
     modal.onDidDismiss(d => {
       
-      this.api._call('/assets',false,{id: data.id, mode: 'get'},true).then(ass_refresh => {
+      /*this.api._call('/assets',false,{id: data.id, mode: 'get'},true).then(ass_refresh => {
         console.log('---> updated attachement in couch/pouch')
+        console.log(ass_refresh);
         if (ass_refresh.length) {
           this.api.getCurrentData()._attachements = ass_refresh
           this.api.change()
         }
-      })
+      })*/
 
       if (d !== undefined && d !== null) {
         this.prosemirror.insertAttachement(d)

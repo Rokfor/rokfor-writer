@@ -791,17 +791,6 @@ let _assets = await this.api._call('/assets',false,{id: id, mode: 'get'},true)
 
                 if (d.doc.Status == 'Complete') {
                   for (let _file in d.doc.File) {
-                    //console.log(d.doc._attachments[_file + '.pdf']);
-                    
-                    //let _data = "";
-                    //let _mime = "";
-                    //try {
-                    //  _data = d.doc._attachments[_file + '.pdf'].data;
-                    //  _mime = d.doc._attachments[_file + '.pdf'].content_type;
-                    //} catch (err) {
-                    //  console.log("no attachement/mime");
-                    //}
-
                     self.current.exports.FilesArray.push({
                       "Name": _file,
                       "Status": d.doc.Status || 'Error',
