@@ -378,7 +378,11 @@ autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
   }
  
   dialog.showMessageBox(dialogOpts, (returnValue) => {
-    if (returnValue && returnValue.response && returnValue.response === 0) autoUpdater.quitAndInstall()
+    if (returnValue && returnValue.response && returnValue.response === 0) {
+      setImmediate(() => {
+        autoUpdater.quitAndInstall();
+      })
+    }
   })
  })
 
