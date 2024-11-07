@@ -93,7 +93,15 @@ import { Events, NavParams, ViewController } from "ionic-angular";
             placeholder="Alternative Author with new Lines"
             [(ngModel)]="values.settings[schema.meta[7][0]]"
           ></ion-textarea>
-        </ion-item>        
+        </ion-item>
+        <ion-item>
+          <ion-label>{{ schema.meta[9][1] }}</ion-label>
+          <ion-input
+            autocapitalize="off"
+            placeholder="Alternate Author in Running Header"
+            [(ngModel)]="values.settings[schema.meta[9][0]]"
+          ></ion-input>
+        </ion-item>                
         <ion-item>
           <ion-label>{{ schema.meta[1][1] }}</ion-label>
           <ion-input
@@ -203,6 +211,7 @@ export class PopoverSettings {
         ["download", "Download"],
         ["altauthor", "Alt. Autor"],
         ["runningheader", "Header"],
+        ["runningauthor", "Header Author"]
       ],
     };
 
