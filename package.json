@@ -3,7 +3,7 @@
   "author": "Rokfor & Urs Hofer",
   "homepage": "http://www.rokfor.ch/",
   "private": false,
-  "version": "2.2.16",
+  "version": "2.2.17",
   "license": "mit",
   "main": "./www/index.js",
   "scripts": {
@@ -24,8 +24,20 @@
       "entitlements": "build/entitlements.mac.plist",
       "entitlementsInherit": "build/entitlements.mac.plist",
       "target": [
-        "zip",
-        "dmg"
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
       ]
     },
     "dmg": {
